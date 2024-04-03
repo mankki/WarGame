@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://celmponwc2n1g"]
+
+[ext_resource type="Texture2D" uid="uid://y8o2utfsl4m7" path="res://Pieces/airplane_blue.png" id="1_eo1q4"]
+
+[node name="BlueAirplanePreviewNode" type="Node2D"]
+
+[node name="BlueAirplanePreview" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.419608)
+scale = Vector2(0.04, 0.04)
+texture = ExtResource("1_eo1q4")

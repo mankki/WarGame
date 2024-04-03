@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://d4anjjpa5xy63"]
+
+[ext_resource type="Texture2D" uid="uid://c0cavgircfgbd" path="res://Pieces/tank_blue_flipped.png" id="1_3yxxr"]
+
+[node name="BlueTankPreviewNode" type="Node2D"]
+
+[node name="BlueTankPreview" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.466667)
+scale = Vector2(0.04, 0.04)
+texture = ExtResource("1_3yxxr")

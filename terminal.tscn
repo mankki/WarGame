@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://fubkmfvydhjp"]
+
+[node name="Terminal" type="Node2D"]
+
+[node name="TerminalText" type="TextEdit" parent="."]
+offset_left = 529.0
+offset_top = 76.0
+offset_right = 1060.0
+offset_bottom = 275.0
+text = ">>> Commander, our nation is under attack!"
+wrap_mode = 1
+
+[node name="TerminalLabel" type="Label" parent="."]
+offset_left = 528.0
+offset_top = 42.0
+offset_right = 1054.0
+offset_bottom = 65.0
+text = "SUPER TERMINAL:"
+horizontal_alignment = 1

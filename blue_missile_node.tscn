@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://ce5t5dgn75iw3"]
+
+[ext_resource type="Texture2D" uid="uid://cp2r2xkf2g5l2" path="res://Pieces/missile_blue.png" id="1_nsmt7"]
+
+[node name="BlueMissileNode" type="Node2D"]
+
+[node name="BlueMissile" type="Sprite2D" parent="."]
+scale = Vector2(0.04, 0.04)
+texture = ExtResource("1_nsmt7")
