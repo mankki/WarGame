@@ -1,9 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://csjx0aqvsnen7"]
-
-[ext_resource type="Texture2D" uid="uid://ct4tj4wmhauc1" path="res://Pieces/airplane_red.png" id="1_7gtku"]
-
-[node name="RedAirplaneNode" type="Node2D"]
-
-[node name="RedAirplane" type="Sprite2D" parent="."]
-scale = Vector2(0.04, 0.04)
-texture = ExtResource("1_7gtku")
