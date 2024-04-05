@@ -1,3 +1,5 @@
+If you would like to participate in making the game, send me an email (mankkisoftware@gmail.com).
+
 WarGame (this is not the final name of the game) is a chess-like war game. 
 
 Charasteristics:
