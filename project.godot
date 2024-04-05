@@ -11,13 +11,14 @@ config_version=5
 [application]
 
 config/name="WarGame"
-run/main_scene="res://menu.tscn"
+run/main_scene="res://Scenes/menu.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
-Network="*res://network.gd"
+Network="*res://scripts/network.gd"
+GameNetwork="*res://game_network.gd"
 
 [display]
 
