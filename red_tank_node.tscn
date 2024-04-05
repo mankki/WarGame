@@ -1,9 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://cy2i41ur24plh"]
-
-[ext_resource type="Texture2D" uid="uid://bkkjw70a6cesa" path="res://Pieces/tank_red.png" id="2_qgyog"]
-
-[node name="RedTankNode" type="Node2D" groups=["tanks"]]
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.04, 0.04)
-texture = ExtResource("2_qgyog")
