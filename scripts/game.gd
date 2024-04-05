@@ -76,8 +76,13 @@ var red_missile_positions = []
 var red_airplane_positions = []
 var red = false
 var blue = false
+var piece_positions_ints = []
+var moving = false
+var old_tile_position
 
 func _ready():
+	# Configurate RPC
+	rpc_config("receive_data", MultiplayerAPI.RPC_MODE_ANY_PEER)
 	# Create the server
 	# Create the world
 	add_child(world_node)
@@ -109,6 +114,8 @@ func _process(delta):
 	save_pieces_to_send()
 	mouse_position = get_global_mouse_position()
 	tile_position = tilemap.local_to_map(mouse_position)
+	if moving == false:
+		old_tile_position = tile_position
 	if tilemap and mouse_position:
 		preview_piece()
 		preview(preview_type)
@@ -144,32 +151,14 @@ func _process(delta):
 			moving_range_func()
 	if selected_instance != null:
 		# If an instance has been selected, follow the mouse
+		moving = true
 		mouse_position = get_global_mouse_position()
 		tile_position = tilemap.local_to_map(mouse_position)
 		moving_range.connect("mouse_button_left_held_over_rect", Callable(self, "move_mouse"))
 		if Input.is_action_just_released("ui_select"):
+			moving = false
 			var new_position = selected_instance.global_position
 			var new_tile_position = tilemap.local_to_map(new_position)
-			### Send data to the other player
-			# Data formatting
-			var red_positions_ints = []
-			for i in len(red_soldier_positions):
-				red_positions_ints.append(red_soldier_positions[i].x)
-				red_positions_ints.append(red_soldier_positions[i].y)
-			for i in len(red_tank_positions):
-				red_positions_ints.append(red_tank_positions[i].x)
-				red_positions_ints.append(red_tank_positions[i].y)
-			for i in len(red_radar_positions):
-				red_positions_ints.append(red_radar_positions[i].x)
-				red_positions_ints.append(red_radar_positions[i].y)
-			for i in len(red_missile_positions):
-				red_positions_ints.append(red_missile_positions[i].x)
-				red_positions_ints.append(red_missile_positions[i].y)
-			for i in len(red_airplane_positions):
-				red_positions_ints.append(red_airplane_positions[i].x)
-				red_positions_ints.append(red_airplane_positions[i].y)
-				# Send data to the other player
-			send_data(red_positions_ints)
 			# Let's update the piece_positions list
 			print("moving_range_center: ", tilemap.local_to_map(moving_range_center))
 			for i in range(len(piece_positions)):
@@ -181,13 +170,24 @@ func _process(delta):
 			selected_instance = null	
 			moving_range.size = Vector2(0, 0)
 			tile_position = new_tile_position
+			# Send the new position to the other player
+			for i in len(piece_positions_ints):
+				if old_tile_position and old_tile_position.x == piece_positions_ints[i]:
+					piece_positions_ints[i] = new_tile_position.x
+				if old_tile_position and old_tile_position.y == piece_positions_ints[i]:
+					piece_positions_ints[i] = new_tile_position.y
+			send_data(piece_positions_ints)
+			print("piece_position_ints", piece_positions_ints)
 
 # Funktion to send data
 func send_data(positions: Array):
-	rpc("receive_instance_positions", positions)
+	print("Sending data...")
+	rpc("receive_positions", positions)
 
 # Function to receive data
+@rpc("any_peer", "call_local")
 func receive_data(positions: Array):
+	print("Receiving data...")
 	print("Received instance positions:", positions)
 
 
@@ -224,7 +224,6 @@ func move_mouse():
 	mouse_position = get_global_mouse_position()
 	tile_position = tilemap.local_to_map(mouse_position)
 	selected_instance.global_position = mouse_position
-	print("Mouse moved!")
 
 func plant(tile_position: Vector2, scene, num_of_pieces: int) -> int:
 	if tile_position not in piece_positions:
@@ -236,6 +235,10 @@ func plant(tile_position: Vector2, scene, num_of_pieces: int) -> int:
 		instances.append(piece_instance)
 		piece_positions.append(tile_position)
 		$Terminal/TerminalText.text += '\n>>>' + 'Roger that!'
+		piece_positions_ints.append(tile_position.x)
+		piece_positions_ints.append(tile_position.y)
+		send_data(piece_positions_ints)
+		print("piece_position_ints", piece_positions_ints)
 		return num_of_pieces + 1
 	else:
 		return num_of_pieces
