@@ -1,9 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://baseb1ubi4v5o"]
-
-[ext_resource type="Texture2D" uid="uid://b370htpely35d" path="res://Pieces/radar_blue.png" id="1_wy7lh"]
-
-[node name="BlueRadarNode" type="Node2D"]
-
-[node name="BlueRadar" type="Sprite2D" parent="."]
-scale = Vector2(0.04, 0.04)
-texture = ExtResource("1_wy7lh")
