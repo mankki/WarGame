@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://bnywqncd5kbg8"]
+
+[ext_resource type="Texture2D" uid="uid://cp2r2xkf2g5l2" path="res://PieceNodes/Pieces/missile_blue.png" id="1_ibnag"]
+
+[node name="BlueMissilePreviewNode" type="Node2D"]
+
+[node name="BlueMissilePreview" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.337255)
+scale = Vector2(0.04, 0.04)
+texture = ExtResource("1_ibnag")

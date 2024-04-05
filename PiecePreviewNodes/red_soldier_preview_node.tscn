@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://bm53p5umkwtnc"]
+
+[ext_resource type="Texture2D" uid="uid://d05ontyjh6xh8" path="res://PieceNodes/Pieces/soldier_red.png" id="1_wo36w"]
+
+[node name="RedSoldierPreviewNode" type="Node2D"]
+
+[node name="RedSoldierPreview" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.403922)
+scale = Vector2(0.04, 0.04)
+texture = ExtResource("1_wo36w")

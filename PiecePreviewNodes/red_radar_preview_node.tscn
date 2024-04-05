@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://c24cb7wnxoydm"]
+
+[ext_resource type="Texture2D" uid="uid://crhnpxwg0e2sb" path="res://PieceNodes/Pieces/radar_red.png" id="1_vtu6c"]
+
+[node name="RedRadarPreviewNode" type="Node2D"]
+
+[node name="RedRadarPreview" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.54902)
+scale = Vector2(0.04, 0.04)
+texture = ExtResource("1_vtu6c")

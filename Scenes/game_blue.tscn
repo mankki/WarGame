@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3 uid="uid://2morlwadfugu"]
+
+[ext_resource type="Script" path="res://scripts/game_blue.gd" id="1_dwies"]
+[ext_resource type="PackedScene" uid="uid://beg5dqywxg5on" path="res://Scenes/world.tscn" id="2_y5nsm"]
+[ext_resource type="PackedScene" uid="uid://fubkmfvydhjp" path="res://Scenes/terminal.tscn" id="3_yty2v"]
+[ext_resource type="PackedScene" uid="uid://dpxojkhsba7ir" path="res://Scenes/messaging.tscn" id="4_hxdgl"]
+
+[node name="GameBlue" type="Node2D"]
+script = ExtResource("1_dwies")
+
+[node name="World" parent="." instance=ExtResource("2_y5nsm")]
+
+[node name="Terminal" parent="." instance=ExtResource("3_yty2v")]
+position = Vector2(-662, -324)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = -1
+offset_left = -660.0
+offset_top = -321.0
+offset_right = 499.0
+offset_bottom = 326.0
+mouse_filter = 2
+color = Color(0.231373, 0.662745, 1, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="."]
+z_index = 1
+offset_left = -35.0
+offset_top = -39.0
+offset_right = 35.0
+offset_bottom = 41.0
+mouse_filter = 2
+color = Color(0.231373, 0.662745, 1, 1)
+
+[node name="Messaging" parent="." instance=ExtResource("4_hxdgl")]
+position = Vector2(-587, -318)

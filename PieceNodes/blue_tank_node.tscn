@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://bpl0fvw5eoo5l"]
+
+[ext_resource type="Texture2D" uid="uid://c0cavgircfgbd" path="res://PieceNodes/Pieces/tank_blue_flipped.png" id="1_fcayb"]
+
+[node name="BlueTankNode" type="Node2D"]
+
+[node name="BlueTank" type="Sprite2D" parent="."]
+scale = Vector2(0.04, 0.04)
+texture = ExtResource("1_fcayb")
