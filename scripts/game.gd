@@ -186,11 +186,9 @@ func _process(delta):
 func send_data(positions: Array):
 	rpc("receive_instance_positions", positions)
 
-# Vastaanottava funktio vastapelaajalla
+# Function to receive data
 func receive_data(positions: Array):
-	# Käsittele vastaanotetut instanssien sijainnit täällä
 	print("Received instance positions:", positions)
-	# Tee jotain vastaanotetuilla sijainneilla
 
 
 func playing_red():
