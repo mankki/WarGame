@@ -47,11 +47,18 @@ var num_of_red_tanks := 0
 var num_of_red_radars := 0
 var num_of_red_missiles := 0
 var num_of_red_airplanes := 0
+var total_num_of_pieces = 1 # Should be 0, but 1 makes the code work
 const max_red_soldiers := 1
 const max_red_tanks := 1
 const max_red_radars := 1
 const max_red_missiles := 1
 const max_red_airplanes := 1
+const max_blue_soldiers := 1
+const max_blue_tanks := 1
+const max_blue_radars := 1
+const max_blue_missiles := 1
+const max_blue_airplanes := 1
+const total_max_num_of_pieces = max_red_soldiers + max_red_tanks + max_red_radars + max_red_missiles + max_red_airplanes
 var is_placement_in_progress := false
 var radar_instance: Node2D
 var tilemap: TileMap
@@ -79,6 +86,8 @@ var blue = false
 var piece_positions_ints = []
 var moving = false
 var old_tile_position
+var piece_instance
+var old_piece_positions_ints = []
 
 func _ready():
 	# Configurate RPC
@@ -100,6 +109,7 @@ func _ready():
 	add_child(blue_airplane_preview)
 	add_child(moving_range)
 	add_child(messaging)
+
 	
 	### Signals
 	# Determine the color of the player (red or blue)
@@ -108,8 +118,6 @@ func _ready():
 
 
 func _process(delta):
-	if  Network.peer and Network.peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
-		print("Connected!")
 	# Send pieces to blue's script
 	save_pieces_to_send()
 	mouse_position = get_global_mouse_position()
@@ -156,7 +164,10 @@ func _process(delta):
 		tile_position = tilemap.local_to_map(mouse_position)
 		moving_range.connect("mouse_button_left_held_over_rect", Callable(self, "move_mouse"))
 		if Input.is_action_just_released("ui_select"):
-			moving = false
+			if game_on == true:
+				var terminal = $Terminal/TerminalText
+				terminal.text += "\n>>> " + "Moving!"
+				moving = false
 			var new_position = selected_instance.global_position
 			var new_tile_position = tilemap.local_to_map(new_position)
 			# Let's update the piece_positions list
@@ -182,23 +193,81 @@ func _process(delta):
 # Funktion to send data
 func send_data(positions: Array):
 	print("Sending data...")
-	rpc("receive_positions", positions)
+	rpc("receive_data", positions)
 
+# A function to plant enemy pieces
+func update_other_pieces(piece_positions_ints):
+	for piece in piece_positions_ints:
+		if len(old_piece_positions_ints) < len(piece_positions_ints):
+			old_piece_positions_ints.append(0)
+		print(old_piece_positions_ints)
+	if piece_positions_ints:
+		print("Determining the team...")
+		if blue == true:
+			print("Trying to update red's pieces on blue's board...")
+			print("old_piece_positions_ints: ", old_piece_positions_ints)
+			print("piece_positions_ints: ", piece_positions_ints)
+			var correction = -moving_range.size.x/2
+			for i in range(0, len(piece_positions_ints) - 1, 2):
+				if old_piece_positions_ints[i] != piece_positions_ints[i] and old_piece_positions_ints[i+1] != piece_positions_ints[i+1]:
+					print("Updating red's pieces on blue's board")
+					if i + 1 < max_red_soldiers * 2:
+						plant_enemy(Vector2(piece_positions_ints[i],piece_positions_ints[i+1]), red_soldier_scene)
+					elif i + 1 > max_red_soldiers * 2 and i < max_red_soldiers * 2 + max_red_tanks * 2:
+						plant_enemy(Vector2(piece_positions_ints[i],piece_positions_ints[i+1]), red_tank_scene)
+					elif i + 1 > max_red_tanks * 2 and i < max_red_soldiers * 2 + max_red_tanks * 2 + max_red_radars * 2:
+						plant_enemy(Vector2(piece_positions_ints[i],piece_positions_ints[i+1]), red_radar_scene)
+					elif i + 1 > max_red_radars * 2 and i < max_red_soldiers * 2 + max_red_tanks * 2 + max_red_radars * 2 + max_red_missiles * 2:
+						plant_enemy(Vector2(piece_positions_ints[i],piece_positions_ints[i+1]), red_missile_scene)
+					elif i + 1> max_red_missiles * 2 and i < max_red_soldiers * 2 + max_red_tanks * 2 + max_red_radars * 2 + max_red_missiles * 2 + max_red_airplanes * 2:
+						plant_enemy(Vector2(piece_positions_ints[i],piece_positions_ints[i+1]), red_airplane_scene)
+		elif red == true:
+			print("Trying to update blue's pieces on red's board...")
+			print("old_piece_positions_ints: ", old_piece_positions_ints)
+			print("piece_positions_ints: ", piece_positions_ints)
+			var correction = -moving_range.size.x/2
+			for i in range(0, len(piece_positions_ints) - 1, 2):
+				if old_piece_positions_ints[i] and old_piece_positions_ints[i] != piece_positions_ints[i] and old_piece_positions_ints[i+1] != piece_positions_ints[i+1]:
+					print("Updating blue's pieces on red's board")
+					if i + 1 < max_blue_soldiers * 2:
+						plant_enemy(Vector2(piece_positions_ints[i],piece_positions_ints[i+1]), blue_soldier_scene)
+					elif i + 1 > max_blue_soldiers * 2 and i < max_blue_soldiers * 2 + max_blue_tanks * 2:
+						plant_enemy(Vector2(piece_positions_ints[i],piece_positions_ints[i+1]), blue_tank_scene)
+					elif i +1 > max_blue_tanks * 2 and i < max_blue_soldiers * 2 + max_blue_tanks * 2 + max_blue_radars * 2:
+						plant_enemy(Vector2(piece_positions_ints[i],piece_positions_ints[i+1]), blue_radar_scene)
+					elif i + 1> max_red_radars * 2 and i < max_blue_soldiers * 2 + max_blue_tanks * 2 + max_blue_radars * 2 + max_blue_missiles * 2:
+						plant_enemy(Vector2(piece_positions_ints[i],piece_positions_ints[i+1]), blue_missile_scene)
+					elif i + 1> max_blue_missiles * 2 and i < max_blue_soldiers * 2 + max_blue_tanks * 2 + max_blue_radars * 2 + max_blue_missiles * 2 + max_blue_airplanes * 2:
+						plant_enemy(Vector2(piece_positions_ints[i],piece_positions_ints[i+1]), blue_airplane_scene)
+		old_piece_positions_ints = piece_positions_ints
+		
 # Function to receive data
-@rpc("any_peer", "call_local")
+@rpc("any_peer", "call_remote")
 func receive_data(positions: Array):
-	print("Receiving data...")
-	print("Received instance positions:", positions)
-
+	update_other_pieces(positions)
+	print("received_positions: ", positions)
 
 func playing_red():
 	red = true
 	print("Playing red")
-
+	var background = $Background
+	var middle_background = $MiddleBackground
+	var red_color = Color(0.7, 0.2, 0.3, 1)
+	background.set_color(red_color)
+	middle_background.set_color(red_color)
+	var terminal = $Terminal/TerminalText
+	terminal.text += "\n>>> " + "May the red nation be victorious! We will destroy the blue nation!"
 	
 func playing_blue():
 	blue = true
 	print("Playing blue")
+	var background = $Background
+	var middle_background = $MiddleBackground
+	var blue_color = Color(0.2, 0.3, 0.9, 1)
+	background.set_color(blue_color)
+	middle_background.set_color(blue_color)
+	var terminal = $Terminal/TerminalText
+	terminal.text += "\n>>> " + "May the blue nation be victorious! We will destroy the red nation!"
 
 
 func save_pieces_to_send():
@@ -234,14 +303,50 @@ func plant(tile_position: Vector2, scene, num_of_pieces: int) -> int:
 		piece_instance.global_position = world_position
 		instances.append(piece_instance)
 		piece_positions.append(tile_position)
-		$Terminal/TerminalText.text += '\n>>>' + 'Roger that!'
-		piece_positions_ints.append(tile_position.x)
-		piece_positions_ints.append(tile_position.y)
+		# $Terminal/TerminalText.text += '\n>>>' + 'Roger that!'
+		print("total_num_of_pieces: ", total_num_of_pieces)
+		print("total_max_num_of_pieces: ", total_max_num_of_pieces)
+		if total_num_of_pieces < total_max_num_of_pieces:
+			piece_positions_ints.append(tile_position.x)
+			piece_positions_ints.append(tile_position.y)
+		elif old_tile_position:
+			for i in range(0, len(piece_positions_ints) - 1, 2):
+				var matching_indices = []
+				#print("old_tile_position: ", old_tile_position)
+				#print("piece_positions_ints: ", piece_positions_ints)
+				if old_tile_position and old_tile_position.x - 1  == piece_positions_ints[i] and old_tile_position.y == piece_positions_ints[i+1]: # I'm not sure why it only works with the "+1"
+					matching_indices.append(i)
+					matching_indices.append(i+1)
+				print("matching_indices: ", matching_indices)
+				if len(matching_indices) == 2:
+					piece_positions_ints.insert(matching_indices[0] + 1, tile_position.x) # See the "id olf_tile_position..." statement's comment. It'll explain the mysterious "-1"
+					piece_positions_ints.insert(matching_indices[1], tile_position.y)
 		send_data(piece_positions_ints)
+		total_num_of_pieces += 1
 		print("piece_position_ints", piece_positions_ints)
 		return num_of_pieces + 1
 	else:
 		return num_of_pieces
+	
+# A function to plant the enemy pieces (and remove the piece instance from the initial tile, that is, the tile we're moving from)
+var piece_instances = {}
+func plant_enemy(tile_position: Vector2, scene):
+	# Remove the piece_instance from the initial tile
+	var key = str(tile_position.x) + "," + str(tile_position.y)
+	if piece_instance and piece_instances.has(key):
+		var piece_instance_to_remove = piece_instances[key]
+		remove_child(piece_instance_to_remove)
+		piece_instance_to_remove.queue_free() # Free th resources
+		piece_instances.erase(key) # Remove the piece instance from the dictionary
+	# Plant the enemy pieces
+	print("Planting enemy pieces...")
+	var world_position = tilemap.map_to_local(tile_position)
+	piece_instance = scene.instantiate()
+	piece_instance.position = world_position
+	add_child(piece_instance)
+	
+	# Save the piece_instance to a dictionary
+	piece_instances[key] = piece_instance
 
 func preview(preview):
 	if mouse_position and tile_position:
