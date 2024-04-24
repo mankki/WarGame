@@ -2,13 +2,16 @@ extends Node2D
 
 signal red_signal
 signal blue_signal
+var connection_established = false
 
 func _ready():
-	pass
+	rpc_config("receive_message", MultiplayerAPI.RPC_MODE_ANY_PEER)
 
 func _process(delta):
-	pass
-
+	if connection_established == false and Network.peer and Network.peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
+		connection_established = true
+		$ReceivedMessages.text += "\n>>>" + "An enemy found!"
+		
 func _on_send_pressed():
 	send_message()
 

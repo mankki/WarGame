@@ -11,20 +11,30 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_26scd")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="."]
 modulate = Color(1, 0.698039, 1, 1)
 z_index = -1
 layout_mode = 0
 offset_right = 1150.0
 offset_bottom = 646.0
+color = Color(1, 0, 0.435294, 1)
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 0
-offset_left = 441.0
-offset_top = 175.0
-offset_right = 619.0
-offset_bottom = 219.0
+offset_left = 466.0
+offset_top = 313.0
+offset_right = 644.0
+offset_bottom = 357.0
 text = "BACK
 "
+
+[node name="OptionsLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 479.0
+offset_top = 165.0
+offset_right = 644.0
+offset_bottom = 207.0
+theme_override_font_sizes/font_size = 30
+text = "OPTIONS:"
 
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

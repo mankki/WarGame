@@ -7,7 +7,7 @@ func _ready():
 	
 # Make sure to properly configure the function to be called remotely
 func _init():
-	rpc_config("receive_message", MultiplayerAPI.RPC_MODE_ANY_PEER)
+	pass
 	
 func create_server(port: int):
 	print("Creating the server...")

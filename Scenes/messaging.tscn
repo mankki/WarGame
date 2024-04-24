@@ -49,6 +49,7 @@ offset_left = 639.0
 offset_top = 544.0
 offset_right = 818.0
 offset_bottom = 575.0
+text = "localhost"
 placeholder_text = "IP ADDRESS"
 
 [node name="Port" type="LineEdit" parent="."]
@@ -56,6 +57,7 @@ offset_left = 825.0
 offset_top = 544.0
 offset_right = 994.0
 offset_bottom = 575.0
+text = "8080"
 placeholder_text = "PORT"
 
 [node name="Host" type="Button" parent="."]

@@ -9,6 +9,7 @@ offset_right = 1060.0
 offset_bottom = 275.0
 text = ">>> Commander, our nation is under attack!"
 wrap_mode = 1
+scroll_smooth = true
 
 [node name="TerminalLabel" type="Label" parent="."]
 offset_left = 528.0
