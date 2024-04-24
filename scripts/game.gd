@@ -88,6 +88,7 @@ var moving = false
 var old_tile_position
 var piece_instance
 var old_piece_positions_ints = []
+var ready_to_move = false
 
 func _ready():
 	# Configurate RPC
@@ -138,8 +139,10 @@ func _process(delta):
 			num_of_red_missiles = plant(tile_position, red_missile_scene, num_of_red_missiles)
 		elif num_of_red_missiles == max_red_missiles and num_of_red_airplanes < max_red_airplanes:
 			num_of_red_airplanes = plant(tile_position, red_airplane_scene, num_of_red_airplanes)
-		elif num_of_red_airplanes == max_red_airplanes:
+		if num_of_red_airplanes == max_red_airplanes:
 			game_on = true
+			set_moving_to_false.call_deferred()
+			print("Game on!")
 	elif blue == true and Input.is_action_just_pressed("ui_select") and mouse_position.y < -3 and -30  < tile_position.x and tile_position.x < -9:
 		if num_of_red_soldiers < max_red_soldiers:
 			num_of_red_soldiers = plant(tile_position, blue_soldier_scene, num_of_red_soldiers)
@@ -151,12 +154,15 @@ func _process(delta):
 			num_of_red_missiles = plant(tile_position, blue_missile_scene, num_of_red_missiles)
 		elif num_of_red_missiles == max_red_missiles and num_of_red_airplanes < max_red_airplanes:
 			num_of_red_airplanes = plant(tile_position, blue_airplane_scene, num_of_red_airplanes)
-		elif num_of_red_airplanes == max_red_airplanes:
+		if num_of_red_airplanes == max_red_airplanes:
 			game_on = true
+			print("Game on!")
 	if Input.is_action_just_pressed("ui_select") and num_of_red_airplanes == max_red_airplanes and game_on == true:
 			hide_previews()
-			how_far_can_a_piece_move()
-			moving_range_func()
+			if ready_to_move == true:
+				how_far_can_a_piece_move()
+				moving_range_func()
+			ready_to_move = true
 	if selected_instance != null:
 		# If an instance has been selected, follow the mouse
 		moving = true
@@ -189,6 +195,9 @@ func _process(delta):
 					piece_positions_ints[i] = new_tile_position.y
 			send_data(piece_positions_ints)
 			print("piece_position_ints", piece_positions_ints)
+
+func set_moving_to_false():
+	moving = false
 
 # Funktion to send data
 func send_data(positions: Array):
@@ -331,22 +340,42 @@ func plant(tile_position: Vector2, scene, num_of_pieces: int) -> int:
 # A function to plant the enemy pieces (and remove the piece instance from the initial tile, that is, the tile we're moving from)
 var piece_instances = {}
 func plant_enemy(tile_position: Vector2, scene):
-	# Remove the piece_instance from the initial tile
-	var key = str(tile_position.x) + "," + str(tile_position.y)
-	if piece_instance and piece_instances.has(key):
-		var piece_instance_to_remove = piece_instances[key]
-		remove_child(piece_instance_to_remove)
-		piece_instance_to_remove.queue_free() # Free th resources
-		piece_instances.erase(key) # Remove the piece instance from the dictionary
-	# Plant the enemy pieces
-	print("Planting enemy pieces...")
-	var world_position = tilemap.map_to_local(tile_position)
-	piece_instance = scene.instantiate()
-	piece_instance.position = world_position
-	add_child(piece_instance)
-	
-	# Save the piece_instance to a dictionary
-	piece_instances[key] = piece_instance
+	if game_on == true:
+		for i in range(0, len(piece_positions_ints) - 1, 2):
+			var piece_positions_Vector2_list = []
+			piece_positions_Vector2_list.append(Vector2(old_piece_positions_ints[i], old_piece_positions_ints[i+1]))
+			if tile_position not in piece_positions_Vector2_list:
+				# Remove the piece_instance from the initial tile
+				var key = str(tile_position.x) + "," + str(tile_position.y)
+				if piece_instance and piece_instances.has(key):
+					var piece_instance_to_remove = piece_instances[key]
+					remove_child(piece_instance_to_remove)
+					piece_instance_to_remove.queue_free() # Free th resources
+					piece_instances.erase(key) # Remove the piece instance from the dictionary
+				# Plant the enemy pieces
+				print("Planting enemy pieces...")
+				var world_position = tilemap.map_to_local(tile_position)
+				piece_instance = scene.instantiate()
+				piece_instance.position = world_position
+				add_child(piece_instance)
+				# Save the piece_instance to a dictionary
+				piece_instances[key] = piece_instance
+	else:
+		# Remove the piece_instance from the initial tile
+		var key = str(tile_position.x) + "," + str(tile_position.y)
+		if piece_instance and piece_instances.has(key):
+			var piece_instance_to_remove = piece_instances[key]
+			remove_child(piece_instance_to_remove)
+			piece_instance_to_remove.queue_free() # Free th resources
+			piece_instances.erase(key) # Remove the piece instance from the dictionary
+		# Plant the enemy pieces
+		print("Planting enemy pieces...")
+		var world_position = tilemap.map_to_local(tile_position)
+		piece_instance = scene.instantiate()
+		piece_instance.position = world_position
+		add_child(piece_instance)
+		# Save the piece_instance to a dictionary
+		piece_instances[key] = piece_instance
 
 func preview(preview):
 	if mouse_position and tile_position:
