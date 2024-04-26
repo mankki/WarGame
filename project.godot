@@ -25,9 +25,13 @@ GameNetwork="*res://game_network.gd"
 window/stretch/mode="viewport"
 mouse_cursor/custom_image="res://WarGameAssets/cursor.png"
 
+[dotnet]
+
+project/assembly_name="WarGame"
+
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godotgpt/plugin.cfg")
+enabled=PackedStringArray()
 
 [input]
 
