@@ -132,8 +132,9 @@ var total_max_num_of_pieces = unit_data.soldier.max + unit_data.tank.max + unit_
 var game_state :GameState = GameState.TEAM
 
 var is_placement_in_progress := false
-var instances = []
-var piece_positions = []
+
+var instances :Dictionary = {}
+var old_piece_positions_ints = []
 
 var preview_type
 var preview_type_str = ""
@@ -150,12 +151,9 @@ var selected_instance: Node2D = null	# Viittaus valittuun instanssiin, jonka hal
 
 
 var team = TeamColor.NONE
-var piece_positions_ints = []
 var moving = false
 var old_tile_position
 var piece_instance
-var old_piece_positions_ints = []
-var ready_to_move = false
 
 @onready var world_node = $World
 @onready var moving_range = moving_range_scene.instantiate()
@@ -167,6 +165,9 @@ class GridPosition:
 
     func _init (x :int, y :int) -> void:
         pos = Vector2i(x, y)
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qCp ''' ... ,,, --- --- --- --- - ##
 
 
 func _ready():
@@ -192,42 +193,7 @@ func _ready():
     ## - --- --- --- --- ,,, ... ''' qp ''' ... ,,, --- --- --- --- - ##
 
 
-func _input(event_ :InputEvent) -> void:
-    if event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_LEFT and event_.pressed: match game_state:
-        GameState.PLACEMENT:
-            if not (-30 < tile_position.x and tile_position.x < -9): return
-            if team == TeamColor.NONE: return 
-            if team == TeamColor.BLUE and mouse_position.y > 20: return 
-            if team == TeamColor.RED and mouse_position.y < -3: return
-
-            # for unit in unit_data.keys():
-            #     var flag = unit_plant_id_counter == unit_data[unit].id
-            var unit = units[unit_plant_id_counter]
-            if unit_data[unit].number < unit_data[unit].max:
-                unit_data[unit].number = plant(tile_position, unit_data[unit].scene[TEAM_STRINGS[int(team)]], unit_data[unit].number)
-            if unit_data[unit].number == unit_data[unit].max: unit_plant_id_counter += 1
-
-            if unit_plant_id_counter == len(units):
-                game_state = GameState.PLAYING
-                set_moving_to_false.call_deferred()
-                print("Game on!")
-        
-        GameState.PLAYING:
-            # Määritellään hiiren klikkauksen sijainti ja tarkistetaan osuuko se mihinkään instanssiin.
-            var mouse_position = get_global_mouse_position()
-            var clicked_tile_position = tilemap.local_to_map(mouse_position)
-            
-            for instance in instances:
-                if tilemap.local_to_map(instance.global_position) == clicked_tile_position:
-                    # Tallennetaan viite valittuun instanssiin.
-                    selected_instance = instance
-                    return
-#...
-
-    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-
-
-func _process(delta):
+func _process (delta) -> void:
     mouse_position = get_global_mouse_position()
     tile_position = tilemap.local_to_map(mouse_position)
 
@@ -238,65 +204,97 @@ func _process(delta):
         preview(preview_type)
 
 
-
-    
-
-
-
-    if Input.is_action_just_pressed("ui_select") and unit_data.airplane.number == unit_data.airplane.max and game_state == GameState.PLAYING:
-            hide_previews()
-            if ready_to_move == true:
-                how_far_can_a_piece_move()
-                moving_range_func()
-            ready_to_move = true
-
     if selected_instance != null:
-        # If an instance has been selected, follow the mouse
         moving = true
-        mouse_position = get_global_mouse_position()
-        tile_position = tilemap.local_to_map(mouse_position)
-        moving_range.connect("mouse_button_left_held_over_rect", Callable(self, "move_mouse"))
+        move_mouse() # If an instance has been selected, follow the mouse
 
-        if Input.is_action_just_released("ui_select"):
-            if game_state == GameState.PLAYING:
-                var terminal = $Terminal/TerminalText
-                terminal.text += "\n>>> " + "Moving!"
-                moving = false
-
-            var new_position = selected_instance.global_position
-            var new_tile_position = tilemap.local_to_map(new_position)
-
-            # Let's update the piece_positions list
-            print("moving_range_center: ", tilemap.local_to_map(moving_range_center))
-            for i in range(len(piece_positions)):
-                var correction = + (moving_range.size.x - 20) / 40
-                if piece_positions[i] == Vector2(tilemap.local_to_map(moving_range_center).x + correction, tilemap.local_to_map(moving_range_center).y + correction):
-                    print("Updating the piece_positions list...")
-                    piece_positions[i] = Vector2(new_tile_position.x, new_tile_position.y)
-            selected_instance.global_position = tilemap.map_to_local(new_tile_position)
-            selected_instance = null	
-            moving_range.size = Vector2(0, 0)
-            tile_position = new_tile_position
-            # Send the new position to the other player
-            for i in len(piece_positions_ints):
-                if old_tile_position and old_tile_position.x == piece_positions_ints[i]:
-                    piece_positions_ints[i] = new_tile_position.x
-                if old_tile_position and old_tile_position.y == piece_positions_ints[i]:
-                    piece_positions_ints[i] = new_tile_position.y
-            send_data(piece_positions_ints)
-            print("piece_position_ints", piece_positions_ints)
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 
+func _input(event_ :InputEvent) -> void:
+    if event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_LEFT and event_.pressed: match game_state:
+        GameState.PLACEMENT:
+            if not (-30 < tile_position.x and tile_position.x < -9): return
+            if team == TeamColor.NONE: return 
+            if team == TeamColor.BLUE and mouse_position.y > 20: return 
+            if team == TeamColor.RED and mouse_position.y < -3: return
+
+            var unit = units[unit_plant_id_counter]
+            if unit_data[unit].number < unit_data[unit].max:
+                unit_data[unit].number = plant(tile_position, unit_data[unit].scene[TEAM_STRINGS[int(team)]], unit_data[unit].number)
+            if unit_data[unit].number == unit_data[unit].max: unit_plant_id_counter += 1
+
+            if unit_plant_id_counter == len(units):
+                game_state = GameState.PLAYING
+                set_moving_to_false.call_deferred()
+                hide_previews()
+                print("Game on!")
+        
+        GameState.PLAYING:
+            how_far_can_a_piece_move()
+            moving_range_func()
+
+            var clicked_tile_position = tilemap.local_to_map(get_global_mouse_position())
+            for instance in instances.values():
+                if tilemap.local_to_map(instance.global_position) == clicked_tile_position:
+                    selected_instance = instance
+
+    if event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_LEFT and !event_.pressed: match game_state:
+        GameState.PLAYING:
+
+            if not selected_instance: return
+            var terminal = $Terminal/TerminalText
+            terminal.text += "\n>>> " + "Moving!" #TODO: update to print which team and unit has moved
+            moving = false
+
+            var new_position = selected_instance.global_position
+            var new_tile_position = tilemap.local_to_map(new_position)
+
+            # Let's update the piece_positions list
+            for pos in instances.keys(): if pos == new_tile_position: instances.erase(pos)
+            instances[new_tile_position] = selected_instance
+            selected_instance.global_position = tilemap.map_to_local(new_tile_position)
+
+            selected_instance = null	
+
+            moving_range.size = Vector2(0, 0)
+            tile_position = new_tile_position
+            send_data(instances)
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+
+func how_far_can_a_piece_move():
+    if not instances.has(tile_position): return
+    var piece_type = instances[tile_position].get_meta("piece_type").get_slice('_', 0)
+    moving_range.size = unit_data[piece_type].range
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+
+func moving_range_func():
+    if not tile_position in instances.keys(): return
+    var correction = Vector2(-moving_range.size.x/2, -moving_range.size.y/2)
+    moving_range.global_position = tilemap.map_to_local(tile_position) + correction
+    moving_range_center = moving_range.position
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+
+
+
 func set_moving_to_false():
     moving = false
+#...
 
-# Funktion to send data
-func send_data(positions: Array):
-    print("Sending data...")
-    rpc("receive_data", positions)
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+
 
 # A function to plant enemy pieces
 func update_other_pieces(piece_positions_ints):
@@ -349,76 +347,7 @@ func update_other_pieces(piece_positions_ints):
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
-        
-# Function to receive data
-@rpc("any_peer", "call_remote")
-func receive_data(positions: Array):
-    update_other_pieces(positions)
-    print("received_positions: ", positions)
-#...
 
-    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-
-
-func playing_team (team_ :TeamColor) -> void:
-    team = team_
-    print("Playing %s" %TEAM_STRINGS[int(team)])
-    $Background.set_color(TEAM_COLORS[int(team)])
-    $Terminal/TerminalText.text += "\n>>> May the %s nation be victorious! We will destroy the %s nation!" %[TEAM_STRINGS[int(team)], TEAM_STRINGS[(int(team)+1) %2]]
-    game_state = GameState.PLACEMENT
-#...
-
-    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-
-
-func move_mouse():
-    mouse_position = get_global_mouse_position()
-    tile_position = tilemap.local_to_map(mouse_position)
-    selected_instance.global_position = mouse_position
-#...
-
-    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-
-
-func plant(tile_position: Vector2, scene, num_of_pieces: int) -> int:
-    if tile_position not in piece_positions:
-        var world_position: Vector2 = tilemap.map_to_local(tile_position)
-        var piece_instance = scene.instantiate()
-        add_child(piece_instance)
-        piece_instance.set_meta("piece_type", preview_type_str)
-        piece_instance.global_position = world_position
-        instances.append(piece_instance)
-        piece_positions.append(tile_position)
-        # $Terminal/TerminalText.text += '\n>>>' + 'Roger that!'
-        print("total_num_of_pieces: ", total_num_of_pieces)
-        print("total_max_num_of_pieces: ", total_max_num_of_pieces)
-        if total_num_of_pieces < total_max_num_of_pieces:
-            piece_positions_ints.append(tile_position.x)
-            piece_positions_ints.append(tile_position.y)
-        elif old_tile_position:
-            for i in range(0, len(piece_positions_ints) - 1, 2):
-                var matching_indices = []
-                #print("old_tile_position: ", old_tile_position)
-                #print("piece_positions_ints: ", piece_positions_ints)
-                if old_tile_position and old_tile_position.x - 1  == piece_positions_ints[i] and old_tile_position.y == piece_positions_ints[i+1]: # I'm not sure why it only works with the "+1"
-                    matching_indices.append(i)
-                    matching_indices.append(i+1)
-                print("matching_indices: ", matching_indices)
-                if len(matching_indices) == 2:
-                    piece_positions_ints.insert(matching_indices[0] + 1, tile_position.x) # See the "id olf_tile_position..." statement's comment. It'll explain the mysterious "-1"
-                    piece_positions_ints.insert(matching_indices[1], tile_position.y)
-        send_data(piece_positions_ints)
-        total_num_of_pieces += 1
-        print("piece_position_ints", piece_positions_ints)
-        return num_of_pieces + 1
-    else:
-        return num_of_pieces
-#...
-
-    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-
-
-    
 # A function to plant the enemy pieces (and remove the piece instance from the initial tile, that is, the tile we're moving from)
 var piece_instances = {}
 func plant_enemy(tile_position: Vector2, scene):
@@ -463,6 +392,60 @@ func plant_enemy(tile_position: Vector2, scene):
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 
+# Funktion to send data
+func send_data(positions :Dictionary):
+    rpc("receive_data", positions)
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+        
+
+# Function to receive data
+@rpc("any_peer", "call_remote")
+func receive_data(positions :Dictionary):
+    update_other_pieces(positions)
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+
+func playing_team (team_ :TeamColor) -> void:
+    team = team_
+    $Background.set_color(TEAM_COLORS[int(team)])
+    $Terminal/TerminalText.text += "\n>>> May the %s nation be victorious! We will destroy the %s nation!" %[TEAM_STRINGS[int(team)], TEAM_STRINGS[(int(team)+1) %2]]
+    game_state = GameState.PLACEMENT
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+
+func move_mouse():
+    selected_instance.global_position = mouse_position
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+
+func plant(tile_pos :Vector2, scene :PackedScene, num_of_pieces :int) -> int:
+    if tile_pos in instances.keys(): return num_of_pieces
+
+    var world_position: Vector2 = tilemap.map_to_local(tile_pos)
+    var piece_instance = scene.instantiate()
+    add_child(piece_instance)
+
+    piece_instance.set_meta("piece_type", preview_type_str.get_slice('_', 0))
+    piece_instance.global_position = world_position
+    instances[tile_position] = piece_instance
+    # $Terminal/TerminalText.text += '\n>>>' + 'Roger that!'
+
+    send_data(instances)
+
+    return num_of_pieces + 1
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+
 func preview(preview):
     if mouse_position and tile_position:
         if team == TeamColor.RED:
@@ -492,35 +475,6 @@ func preview_piece():
     var unit = units[unit_plant_id_counter]
     preview_type = unit_data[unit].preview[TEAM_STRINGS[int(team)]]
     preview_type_str = unit_data[unit].preview.string
-#...
-
-    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-
-
-func how_far_can_a_piece_move():
-    var mouse_position = get_global_mouse_position()
-    var tile_position = tilemap.map_to_local(tilemap.local_to_map(mouse_position))
-    for instance in instances:
-        if instance.global_position != tile_position: continue
-        if not instance.has_meta("piece_type"): continue
-        var piece_type = instance.get_meta("piece_type").get_slice('_', 0)
-        moving_range.size = unit_data[piece_type].range
-#...
-
-    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-
-
-func moving_range_func():
-    mouse_position = get_global_mouse_position()
-    tile_position = tilemap.local_to_map(mouse_position)
-    print("tile_position: ", tile_position)
-    print("piece_positions: ", piece_positions)
-    var tile_position_Vector2 = Vector2(tile_position.x, tile_position.y)
-    if Input.is_action_just_pressed("ui_select") and tile_position_Vector2 in piece_positions:
-        var correction = Vector2(-moving_range.size.x/2, -moving_range.size.y/2)
-        moving_range.global_position = tilemap.map_to_local(tile_position) + correction
-        moving_range_center = moving_range.position
-        print("The moving range should now be visible")
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
