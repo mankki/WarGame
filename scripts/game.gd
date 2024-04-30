@@ -4,35 +4,12 @@ extends Node2D
 
 
 var world_scene = load("res://Scenes/world.tscn")
-var red_soldier_preview_scene = load("res://PiecePreviewNodes/red_soldier_preview_node.tscn")
-var red_tank_preview_scene = load("res://PiecePreviewNodes/red_tank_preview_node.tscn")
-var red_radar_preview_scene = load("res://PiecePreviewNodes/red_radar_preview_node.tscn")
-var red_missile_preview_scene = load("res://PiecePreviewNodes/red_missile_preview_node.tscn")
-var red_airplane_preview_scene = load("res://PiecePreviewNodes/red_airplane_preview_node.tscn")
-var blue_soldier_preview_scene = load("res://PiecePreviewNodes/blue_soldier_preview_node.tscn")
-var blue_tank_preview_scene = load("res://PiecePreviewNodes/blue_tank_preview_node.tscn")
-var blue_radar_preview_scene = load("res://PiecePreviewNodes/blue_radar_preview_node.tscn")
-var blue_missile_preview_scene = load("res://PiecePreviewNodes/blue_missile_preview_node.tscn")
-var blue_airplane_preview_scene = load("res://PiecePreviewNodes/blue_airplane_preview_node.tscn")
+
 var moving_range_scene = load("res://Scenes/moving_range_node.tscn")
 var moving_range_script = load("res://scripts/moving_range_node.gd")
 var messaging_scene = load("res://Scenes/messaging.tscn")
 
 # Instantiate things
-@onready var world_node = world_scene.instantiate()
-@onready var red_soldier_preview = red_soldier_preview_scene.instantiate()
-@onready var red_tank_preview = red_tank_preview_scene.instantiate()
-@onready var red_radar_preview = red_radar_preview_scene.instantiate()
-@onready var red_missile_preview = red_missile_preview_scene.instantiate()
-@onready var red_airplane_preview = red_airplane_preview_scene.instantiate()
-@onready var blue_soldier_preview = blue_soldier_preview_scene.instantiate()
-@onready var blue_tank_preview = blue_tank_preview_scene.instantiate()
-@onready var blue_radar_preview = blue_radar_preview_scene.instantiate()
-@onready var blue_missile_preview = blue_missile_preview_scene.instantiate()
-@onready var blue_airplane_preview = blue_airplane_preview_scene.instantiate()
-@onready var moving_range = moving_range_scene.instantiate()
-@onready var messaging = messaging_scene.instantiate()
-
 var unit_plant_id_counter = 0
 
 var unit_data = {
@@ -44,7 +21,19 @@ var unit_data = {
             red = load("res://PieceNodes/red_soldier_node.tscn"),
             blue = load("res://PieceNodes/blue_soldier_node.tscn"),
         },
+        preview = { 
+            red = {
+                scene = load("res://PiecePreviewNodes/red_soldier_preview_node.tscn"),
+                instance = null,
+            },
+            blue = {
+                scene = load("res://PiecePreviewNodes/blue_soldier_preview_node.tscn"),
+                instance = null,
+            },
+            string = "soldier_preview",
+        },
     }, 
+
     tank = {
         id = 1,
         number = 0,
@@ -52,6 +41,17 @@ var unit_data = {
         scene = {
             red = load("res://PieceNodes/red_tank_node.tscn"),
             blue = load("res://PieceNodes/blue_tank_node.tscn"),
+        },
+        preview = {
+            red = {
+                scene = load("res://PiecePreviewNodes/red_tank_preview_node.tscn"),
+                instance = null,
+            },
+            blue = {
+                scene = load("res://PiecePreviewNodes/blue_tank_preview_node.tscn"),
+                instance = null,
+            },
+            string = "tank_preview",
         }
     },
     radar = {
@@ -62,6 +62,17 @@ var unit_data = {
             red = load("res://PieceNodes/red_radar_node.tscn"),
             blue = load("res://PieceNodes/blue_radar_node.tscn"),
         },
+        preview = {
+            red = {
+                scene = load("res://PiecePreviewNodes/red_radar_preview_node.tscn"),
+                instance = null,
+            },
+            blue = {
+                scene = load("res://PiecePreviewNodes/blue_radar_preview_node.tscn"),
+                instance = null,
+            },
+            string = "radar_preview",
+        },
     },
     missile = {
         id = 3,
@@ -71,6 +82,17 @@ var unit_data = {
             red = load("res://PieceNodes/red_missile_node.tscn"),
             blue = load("res://PieceNodes/blue_missile_node.tscn"),
         },
+        preview = {
+            red = {
+                scene = load("res://PiecePreviewNodes/red_missile_preview_node.tscn"),
+                instance = null,
+            },
+            blue = {
+                scene = load("res://PiecePreviewNodes/blue_missile_preview_node.tscn"),
+                instance = null,
+            },
+            string = "missile_preview",
+        },
     },
     airplane = {
         id = 4,
@@ -79,6 +101,17 @@ var unit_data = {
         scene = {
             red = load("res://PieceNodes/red_airplane_node.tscn"),
             blue = load("res://PieceNodes/blue_airplane_node.tscn"),
+        },
+        preview = {
+            red = {
+                scene = load("res://PiecePreviewNodes/red_airplane_preview_node.tscn"),
+                instance = null,
+            },
+            blue = {
+                scene = load("res://PiecePreviewNodes/blue_airplane_preview_node.tscn"),
+                instance = null,
+            },
+            string = "airplane_preview",
         },
     },
 }
@@ -108,11 +141,14 @@ var game_on = false
 var tile_position
 var mouse_position
 var selected_instance: Node2D = null	# Viittaus valittuun instanssiin, jonka haluat liikuttaa.
-var red_soldier_positions = []
-var red_tank_positions = []
-var red_radar_positions = []
-var red_missile_positions = []
-var red_airplane_positions = []
+
+#  potentially unneeded
+# var red_soldier_positions = []
+# var red_tank_positions = []
+# var red_radar_positions = []
+# var red_missile_positions = []
+# var red_airplane_positions = []
+
 var red = false
 var blue = false
 var piece_positions_ints = []
@@ -121,6 +157,10 @@ var old_tile_position
 var piece_instance
 var old_piece_positions_ints = []
 var ready_to_move = false
+
+@onready var world_node = world_scene.instantiate()
+@onready var moving_range = moving_range_scene.instantiate()
+@onready var messaging = messaging_scene.instantiate()
 
 
 class GridPosition:
@@ -138,16 +178,10 @@ func _ready():
     add_child(world_node)
     tilemap = world_node.get_node("TileMap") as TileMap
     # Add children
-    add_child(red_soldier_preview)
-    add_child(red_tank_preview)
-    add_child(red_radar_preview)
-    add_child(red_missile_preview)
-    add_child(red_airplane_preview)
-    add_child(blue_soldier_preview)
-    add_child(blue_tank_preview)
-    add_child(blue_radar_preview)
-    add_child(blue_missile_preview)
-    add_child(blue_airplane_preview)
+    for unit in unit_data.keys(): for color in ['red', 'blue']:
+        unit_data[unit].preview[color].instance = unit_data[unit].preview[color].scene.instantiate()
+        add_child(unit_data[unit].preview[color].instance)
+
     add_child(moving_range)
     add_child(messaging)
 
@@ -160,7 +194,7 @@ func _ready():
 
 func _process(delta):
     # Send pieces to blue's script
-    save_pieces_to_send()
+    # save_pieces_to_send()
     mouse_position = get_global_mouse_position()
     tile_position = tilemap.local_to_map(mouse_position)
     if moving == false:
@@ -320,24 +354,6 @@ func playing_blue():
     terminal.text += "\n>>> " + "May the blue nation be victorious! We will destroy the red nation!"
 
 
-func save_pieces_to_send():
-    red_soldier_positions = []
-    red_tank_positions = []
-    red_radar_positions = []
-    red_missile_positions = []
-    red_airplane_positions = []
-
-    for position in piece_positions:
-        if position in red_soldier_positions and red_soldier_positions.size() < unit_data.soldier.max:
-            red_soldier_positions.append(position)
-        elif position in red_tank_positions and red_tank_positions.size() < unit_data.tank.max:
-            red_tank_positions.append(position)
-        elif position in red_radar_positions and red_radar_positions.size() < unit_data.radar.max:
-            red_radar_positions.append(position)
-        elif position in red_missile_positions and red_missile_positions.size() < unit_data.missile.max:
-            red_missile_positions.append(position)
-        elif position in red_airplane_positions and red_airplane_positions.size() < unit_data.airplane.max:
-            red_airplane_positions.append(position)
 
 func move_mouse():
     mouse_position = get_global_mouse_position()
@@ -438,42 +454,12 @@ func preview(preview):
                         last_mouse_position = mouse_position
 
 func preview_piece():
-    if red == true:
-        if unit_data.soldier.number < unit_data.soldier.max:
-            preview_type = red_soldier_preview
-            preview_type_str = 'soldier_preview'
-        if unit_data.soldier.number == max_radar_soldiers and unit_data.tank.number < unit_data.tank.max:
-            preview_type = red_tank_preview
-            preview_type_str = 'tank_preview'
-        if unit_data.tank.number == unit_data.tank.max and unit_data.radar.number < unit_data.radar.max:
-            preview_type = red_radar_preview
-            preview_type_str = 'radar_preview'
-        if unit_data.radar.number == unit_data.radar.max and unit_data.missile.number < unit_data.missile.max:
-            preview_type = red_missile_preview
-            preview_type_str = 'missile_preview'
-        if unit_data.missile.number == unit_data.missile.max and unit_data.airplane.number < unit_data.airplane.max:
-            preview_type = red_airplane_preview
-            preview_type_str = 'airplane_preview'
-        if unit_data.airplane.number == unit_data.airplane.max:
-            preview_type = null
-    elif blue == true:
-        if unit_data.soldier.number < unit_data.soldier.max:
-            preview_type = blue_soldier_preview
-            preview_type_str = 'soldier_preview'
-        if unit_data.soldier.number == max_radar_soldiers and unit_data.tank.number < unit_data.tank.max:
-            preview_type = blue_tank_preview
-            preview_type_str = 'tank_preview'
-        if unit_data.tank.number == unit_data.tank.max and unit_data.radar.number < unit_data.radar.max:
-            preview_type = blue_radar_preview
-            preview_type_str = 'radar_preview'
-        if unit_data.radar.number == unit_data.radar.max and unit_data.missile.number < unit_data.missile.max:
-            preview_type = blue_missile_preview
-            preview_type_str = 'missile_preview'
-        if unit_data.missile.number == unit_data.missile.max and unit_data.airplane.number < unit_data.airplane.max:
-            preview_type = blue_airplane_preview
-            preview_type_str = 'airplane_preview'
-        if unit_data.airplane.number == unit_data.airplane.max:
-            preview_type = null
+
+    var scene_color := "red" if red == true else "blue" 
+    for unit in unit_data.keys():
+        if unit_plant_id_counter == unit_data[unit].id:
+            preview_type = unit_data[unit].preview[scene_color]
+            preview_type_str = unit_data[unit].preview.string
 
 func how_far_can_a_piece_move():
     var mouse_position = get_global_mouse_position()
@@ -511,16 +497,16 @@ func moving_range_func():
         print("The moving range should now be visible")
         
 func hide_previews():
-    remove_child(red_soldier_preview)
-    remove_child(red_tank_preview)
-    remove_child(red_radar_preview)
-    remove_child(red_missile_preview)
-    remove_child(red_airplane_preview)
-    remove_child(blue_soldier_preview)
-    remove_child(blue_tank_preview)
-    remove_child(blue_radar_preview)
-    remove_child(blue_missile_preview)
-    remove_child(blue_airplane_preview)
+    remove_child(unit_data['soldier'].preview['red'].instance)
+    remove_child(unit_data['tank'].preview['red'].instance)
+    remove_child(unit_data['radar'].preview['red'].instance)
+    remove_child(unit_data['missile'].preview['red'].instance)
+    remove_child(unit_data['airplane'].preview['red'].instance)
+    remove_child(unit_data['soldier'].preview['blue'].instance)
+    remove_child(unit_data['tank'].preview['blue'].instance)
+    remove_child(unit_data['radar'].preview['blue'].instance)
+    remove_child(unit_data['missile'].preview['blue'].instance)
+    remove_child(unit_data['airplane'].preview['blue'].instance)
     
 
 func _input(event):
@@ -535,3 +521,22 @@ func _input(event):
                 selected_instance = instance
                 return
 
+#  potentially uneeded
+# func save_pieces_to_send():
+#     red_soldier_positions = []
+#     red_tank_positions = []
+#     red_radar_positions = []
+#     red_missile_positions = []
+#     red_airplane_positions = []
+
+#     for position in piece_positions:
+#         if position in red_soldier_positions and red_soldier_positions.size() < unit_data.soldier.max:
+#             red_soldier_positions.append(position)
+#         elif position in red_tank_positions and red_tank_positions.size() < unit_data.tank.max:
+#             red_tank_positions.append(position)
+#         elif position in red_radar_positions and red_radar_positions.size() < unit_data.radar.max:
+#             red_radar_positions.append(position)
+#         elif position in red_missile_positions and red_missile_positions.size() < unit_data.missile.max:
+#             red_missile_positions.append(position)
+#         elif position in red_airplane_positions and red_airplane_positions.size() < unit_data.airplane.max:
+#             red_airplane_positions.append(position)
