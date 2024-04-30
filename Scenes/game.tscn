@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://beg5dqywxg5on" path="res://Scenes/world.tscn" id="2_1cblr"]
 [ext_resource type="PackedScene" uid="uid://fubkmfvydhjp" path="res://Scenes/terminal.tscn" id="3_ngqcr"]
 [ext_resource type="PackedScene" uid="uid://dpxojkhsba7ir" path="res://Scenes/messaging.tscn" id="4_hws3d"]
-[ext_resource type="PackedScene" uid="uid://dna6e5oicw8lf" path="res://Scenes/gui_buttons.tscn" id="5_35413"]
+[ext_resource type="PackedScene" path="res://Scenes/gui_buttons.tscn" id="5_35413"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_1sewb")
