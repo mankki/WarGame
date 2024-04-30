@@ -3,17 +3,19 @@
 extends Node2D
 
 
-enum TeamColor { NONE, RED, BLUE }
+enum TeamColor { RED = 0, BLUE = 1, NONE = 2}
+enum GameState { TEAM = 0, PLACEMENT, PLAYING, OVER }
 
-
+const TEAM_STRINGS :Array[String] = ['red', 'blue']
+const TEAM_COLORS :Array[Color] = [Color(0.7, 0.2, 0.3, 1), Color(0.2, 0.3, 0.9, 1)]
 var moving_range_scene = load("res://Scenes/moving_range_node.tscn")
 
 # Instantiate things
 var unit_plant_id_counter = 0
-
+var units = ['soldier', 'tank', 'radar', 'missile', 'airplane']
 var unit_data = {
     soldier = {
-        id = 0,
+        range = Vector2(60, 60),
         number = 0,
         max = 1,
         scene = { 
@@ -34,7 +36,7 @@ var unit_data = {
     }, 
 
     tank = {
-        id = 1,
+        range = Vector2(100, 100),
         number = 0,
         max = 1,
         scene = {
@@ -53,8 +55,9 @@ var unit_data = {
             string = "tank_preview",
         }
     },
+
     radar = {
-        id = 2,
+        range = Vector2(100, 100),
         number = 0,
         max = 1,
         scene = {
@@ -73,8 +76,9 @@ var unit_data = {
             string = "radar_preview",
         },
     },
+
     missile = {
-        id = 3,
+        range = Vector2(140, 140),
         number = 0,
         max = 1,
         scene = {
@@ -93,8 +97,9 @@ var unit_data = {
             string = "missile_preview",
         },
     },
+
     airplane = {
-        id = 4,
+        range = Vector2(180, 180),
         number = 0,
         max = 1,
         scene = {
@@ -124,7 +129,8 @@ const max_blue_missiles := 1
 const max_blue_airplanes := 1
 var total_max_num_of_pieces = unit_data.soldier.max + unit_data.tank.max + unit_data.radar.max + unit_data.missile.max + unit_data.airplane.max
 
-var game_on = false
+var game_state :GameState = GameState.TEAM
+
 var is_placement_in_progress := false
 var instances = []
 var piece_positions = []
@@ -173,27 +179,58 @@ func _ready():
     tilemap = world_node.get_node("TileMap") as TileMap
 
     # Add units
-    for unit in unit_data.keys(): for color in ['red', 'blue']:
+    for unit in unit_data.keys(): for color in TEAM_STRINGS:
         unit_data[unit].preview[color].instance = unit_data[unit].preview[color].scene.instantiate()
         add_child(unit_data[unit].preview[color].instance)
 
     add_child(moving_range)
 
-    
-    ### Signals
-    # Determine the color of the player (red or blue)
-    $Messaging.connect("red_signal", Callable(self, "playing_red"))
-    $Messaging.connect("blue_signal", Callable(self, "playing_blue"))
+    $Messaging.connect("red_signal", playing_team.bind(TeamColor.RED))
+    $Messaging.connect("blue_signal", playing_team.bind(TeamColor.BLUE))
 #...
 
     ## - --- --- --- --- ,,, ... ''' qp ''' ... ,,, --- --- --- --- - ##
 
 
+func _input(event_ :InputEvent) -> void:
+    if event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_LEFT and event_.pressed: match game_state:
+        GameState.PLACEMENT:
+            if not (-30 < tile_position.x and tile_position.x < -9): return
+            if team == TeamColor.NONE: return 
+            if team == TeamColor.BLUE and mouse_position.y > 20: return 
+            if team == TeamColor.RED and mouse_position.y < -3: return
+
+            # for unit in unit_data.keys():
+            #     var flag = unit_plant_id_counter == unit_data[unit].id
+            var unit = units[unit_plant_id_counter]
+            if unit_data[unit].number < unit_data[unit].max:
+                unit_data[unit].number = plant(tile_position, unit_data[unit].scene[TEAM_STRINGS[int(team)]], unit_data[unit].number)
+            if unit_data[unit].number == unit_data[unit].max: unit_plant_id_counter += 1
+
+            if unit_plant_id_counter == len(units):
+                game_state = GameState.PLAYING
+                set_moving_to_false.call_deferred()
+                print("Game on!")
+        
+        GameState.PLAYING:
+            # Määritellään hiiren klikkauksen sijainti ja tarkistetaan osuuko se mihinkään instanssiin.
+            var mouse_position = get_global_mouse_position()
+            var clicked_tile_position = tilemap.local_to_map(mouse_position)
+            
+            for instance in instances:
+                if tilemap.local_to_map(instance.global_position) == clicked_tile_position:
+                    # Tallennetaan viite valittuun instanssiin.
+                    selected_instance = instance
+                    return
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+
 func _process(delta):
-    # Send pieces to blue's script
-    # save_pieces_to_send()
     mouse_position = get_global_mouse_position()
     tile_position = tilemap.local_to_map(mouse_position)
+
     if moving == false:
         old_tile_position = tile_position
     if tilemap and mouse_position:
@@ -202,28 +239,11 @@ func _process(delta):
 
 
 
-    if Input.is_action_just_pressed("ui_select") and -30 < tile_position.x and tile_position.x < -9:
-        
-        
-        var scene_color :String 
-        if team == TeamColor.RED and mouse_position.y > 20: scene_color = "red" 
-        elif team == TeamColor.BLUE and mouse_position.y < -3: scene_color = "blue"
-
-        for unit in unit_data.keys():
-            var flag = unit_plant_id_counter == unit_data[unit].id
-            if flag and unit_data[unit].number < unit_data[unit].max:
-                unit_data[unit].number = plant(tile_position, unit_data[unit].scene[scene_color], unit_data[unit].number)
-            elif flag and unit_data[unit].number == unit_data[unit].max:
-                unit_plant_id_counter += 1
-
-        if unit_data.airplane.number == unit_data.airplane.max:
-            game_on = true
-            set_moving_to_false.call_deferred()
-            print("Game on!")
+    
 
 
 
-    if Input.is_action_just_pressed("ui_select") and unit_data.airplane.number == unit_data.airplane.max and game_on == true:
+    if Input.is_action_just_pressed("ui_select") and unit_data.airplane.number == unit_data.airplane.max and game_state == GameState.PLAYING:
             hide_previews()
             if ready_to_move == true:
                 how_far_can_a_piece_move()
@@ -238,7 +258,7 @@ func _process(delta):
         moving_range.connect("mouse_button_left_held_over_rect", Callable(self, "move_mouse"))
 
         if Input.is_action_just_released("ui_select"):
-            if game_on == true:
+            if game_state == GameState.PLAYING:
                 var terminal = $Terminal/TerminalText
                 terminal.text += "\n>>> " + "Moving!"
                 moving = false
@@ -325,41 +345,40 @@ func update_other_pieces(piece_positions_ints):
                 elif i + 1> max_blue_missiles * 2 and i < max_blue_soldiers * 2 + max_blue_tanks * 2 + max_blue_radars * 2 + max_blue_missiles * 2 + max_blue_airplanes * 2:
                     plant_enemy(Vector2(piece_positions_ints[i],piece_positions_ints[i+1]), unit_data.airplane.scene.blue)
     old_piece_positions_ints = piece_positions_ints
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
         
 # Function to receive data
 @rpc("any_peer", "call_remote")
 func receive_data(positions: Array):
     update_other_pieces(positions)
     print("received_positions: ", positions)
+#...
 
-func playing_red():
-    team = TeamColor.RED
-    print("Playing red")
-    var background = $Background
-    var middle_background = $MiddleBackground
-    var red_color = Color(0.7, 0.2, 0.3, 1)
-    background.set_color(red_color)
-    middle_background.set_color(red_color)
-    var terminal = $Terminal/TerminalText
-    terminal.text += "\n>>> " + "May the red nation be victorious! We will destroy the blue nation!"
-    
-func playing_blue():
-    team = TeamColor.BLUE
-    print("Playing blue")
-    var background = $Background
-    var middle_background = $MiddleBackground
-    var blue_color = Color(0.2, 0.3, 0.9, 1)
-    background.set_color(blue_color)
-    middle_background.set_color(blue_color)
-    var terminal = $Terminal/TerminalText
-    terminal.text += "\n>>> " + "May the blue nation be victorious! We will destroy the red nation!"
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
+
+func playing_team (team_ :TeamColor) -> void:
+    team = team_
+    print("Playing %s" %TEAM_STRINGS[int(team)])
+    $Background.set_color(TEAM_COLORS[int(team)])
+    $Terminal/TerminalText.text += "\n>>> May the %s nation be victorious! We will destroy the %s nation!" %[TEAM_STRINGS[int(team)], TEAM_STRINGS[(int(team)+1) %2]]
+    game_state = GameState.PLACEMENT
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 
 func move_mouse():
     mouse_position = get_global_mouse_position()
     tile_position = tilemap.local_to_map(mouse_position)
     selected_instance.global_position = mouse_position
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
 
 func plant(tile_position: Vector2, scene, num_of_pieces: int) -> int:
     if tile_position not in piece_positions:
@@ -394,11 +413,16 @@ func plant(tile_position: Vector2, scene, num_of_pieces: int) -> int:
         return num_of_pieces + 1
     else:
         return num_of_pieces
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+
     
 # A function to plant the enemy pieces (and remove the piece instance from the initial tile, that is, the tile we're moving from)
 var piece_instances = {}
 func plant_enemy(tile_position: Vector2, scene):
-    if game_on == true:
+    if game_state == GameState.PLAYING:
         for i in range(0, len(piece_positions_ints) - 1, 2):
             var piece_positions_Vector2_list = []
             piece_positions_Vector2_list.append(Vector2(old_piece_positions_ints[i], old_piece_positions_ints[i+1]))
@@ -434,6 +458,10 @@ func plant_enemy(tile_position: Vector2, scene):
         add_child(piece_instance)
         # Save the piece_instance to a dictionary
         piece_instances[key] = piece_instance
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
 
 func preview(preview):
     if mouse_position and tile_position:
@@ -459,12 +487,11 @@ func preview(preview):
 
 
 func preview_piece():
-
-    var scene_color := "red" if team == TeamColor.RED else "blue" 
-    for unit in unit_data.keys():
-        if unit_plant_id_counter == unit_data[unit].id:
-            preview_type = unit_data[unit].preview[scene_color]
-            preview_type_str = unit_data[unit].preview.string
+    if unit_plant_id_counter == len(units): return
+    if team == TeamColor.NONE: return
+    var unit = units[unit_plant_id_counter]
+    preview_type = unit_data[unit].preview[TEAM_STRINGS[int(team)]]
+    preview_type_str = unit_data[unit].preview.string
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
@@ -474,24 +501,10 @@ func how_far_can_a_piece_move():
     var mouse_position = get_global_mouse_position()
     var tile_position = tilemap.map_to_local(tilemap.local_to_map(mouse_position))
     for instance in instances:
-        if instance.global_position == tile_position:
-            if instance.has_meta("piece_type"):
-                var piece_type = instance.get_meta("piece_type")
-                if piece_type == "soldier_preview":
-                    moving_range.size = Vector2(60, 60)
-                    return
-                elif piece_type == "tank_preview":
-                    moving_range.size = Vector2(100, 100)
-                    return
-                elif piece_type == "radar_preview":
-                    moving_range.size = Vector2(140, 140)
-                    return
-                elif piece_type == "missile_preview":
-                    moving_range.size = Vector2(0, 0)
-                    return
-                elif piece_type == "airplane_preview":
-                    moving_range.size = Vector2(180, 180)
-                    return
+        if instance.global_position != tile_position: continue
+        if not instance.has_meta("piece_type"): continue
+        var piece_type = instance.get_meta("piece_type").get_slice('_', 0)
+        moving_range.size = unit_data[piece_type].range
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
@@ -514,32 +527,11 @@ func moving_range_func():
 
         
 func hide_previews():
-    remove_child(unit_data['soldier'].preview['red'].instance)
-    remove_child(unit_data['tank'].preview['red'].instance)
-    remove_child(unit_data['radar'].preview['red'].instance)
-    remove_child(unit_data['missile'].preview['red'].instance)
-    remove_child(unit_data['airplane'].preview['red'].instance)
-    remove_child(unit_data['soldier'].preview['blue'].instance)
-    remove_child(unit_data['tank'].preview['blue'].instance)
-    remove_child(unit_data['radar'].preview['blue'].instance)
-    remove_child(unit_data['missile'].preview['blue'].instance)
-    remove_child(unit_data['airplane'].preview['blue'].instance)
+
+    for unit in unit_data.keys(): for color in TEAM_STRINGS:
+        remove_child(unit_data[unit].preview[color].instance)
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
     
 
-func _input(event):
-    if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-        # Määritellään hiiren klikkauksen sijainti ja tarkistetaan osuuko se mihinkään instanssiin.
-        var mouse_position = get_global_mouse_position()
-        var clicked_tile_position = tilemap.local_to_map(mouse_position)
-        
-        for instance in instances:
-            if tilemap.local_to_map(instance.global_position) == clicked_tile_position:
-                # Tallennetaan viite valittuun instanssiin.
-                selected_instance = instance
-                return
-#...
-
-    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##

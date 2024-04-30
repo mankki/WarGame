@@ -27,6 +27,7 @@ mouse_filter = 2
 color = Color(0.745098, 0.662745, 0.490196, 1)
 
 [node name="MiddleBackground" type="ColorRect" parent="."]
+visible = false
 z_index = 1
 offset_left = -154.0
 offset_top = -50.0
