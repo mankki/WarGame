@@ -3,11 +3,18 @@
 extends Node2D
 
 
-enum TeamColor { RED = 0, BLUE = 1, NONE = 2}
+enum TeamColor { RED = 0, BLUE = 1, NUM_TEAMS = 2, NONE = 3}
 enum GameState { TEAM = 0, PLACEMENT, PLAYING, OVER }
 
+# Must be indexed using TeamColor
 const TEAM_STRINGS :Array[String] = ['red', 'blue']
 const TEAM_COLORS :Array[Color] = [Color(0.7, 0.2, 0.3, 1), Color(0.2, 0.3, 0.9, 1)]
+const TEAM_BOUNDS:Array = [[0, 16], [-17, -1]]
+
+const GRID_X_RIGHT_BOUND = -9
+const GRID_X_LEFT_BOUND = -30
+const GRID_Y_BLUE_BOUND = -2
+const GRID_Y_RED_BOUND = 1
 var moving_range_scene = load("res://Scenes/moving_range_node.tscn")
 
 # Instantiate things
@@ -132,8 +139,8 @@ var preview_type_str = ""
 var moving_range_center: Vector2
 
 var last_mouse_position = Vector2.ZERO
-var tile_position
-var mouse_position
+var tile_position = Vector2i.ZERO
+var mouse_position = Vector2.ZERO
 
 var tilemap: TileMap
 var selected_instance: Node2D = null	# Viittaus valittuun instanssiin, jonka haluat liikuttaa.
@@ -169,8 +176,10 @@ func _ready():
     # Add units
     for unit in unit_data.keys(): for color in TEAM_STRINGS:
         unit_data[unit].preview[color].instance = unit_data[unit].preview[color].scene.instantiate()
+        unit_data[unit].preview[color].instance.global_position = Vector2(0, -400)
         add_child(unit_data[unit].preview[color].instance)
 
+    moving_range.size = Vector2.ZERO
     add_child(moving_range)
 
     $Messaging.connect("red_signal", playing_team.bind(TeamColor.RED))
@@ -184,9 +193,9 @@ func _process (delta) -> void:
     mouse_position = get_global_mouse_position()
     tile_position = tilemap.local_to_map(mouse_position)
 
-    if tilemap and mouse_position:
-        preview_piece()
-        preview(preview_type)
+    # if tilemap and mouse_position:
+    preview_piece()
+    preview(preview_type)
 
 
     if selected_instance != null:
@@ -201,10 +210,10 @@ func _process (delta) -> void:
 func _input(event_ :InputEvent) -> void:
     if event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_LEFT and event_.pressed: match game_state:
         GameState.PLACEMENT:
-            if not (-30 < tile_position.x and tile_position.x < -9): return
+            if not (GRID_X_LEFT_BOUND < tile_position.x and tile_position.x < GRID_X_RIGHT_BOUND): return
             if team == TeamColor.NONE: return 
-            if team == TeamColor.BLUE and mouse_position.y > 20: return 
-            if team == TeamColor.RED and mouse_position.y < -3: return
+            if team == TeamColor.BLUE and tile_position.y > GRID_Y_BLUE_BOUND: return 
+            if team == TeamColor.RED and tile_position.y < GRID_Y_RED_BOUND: return
 
             var unit = units[unit_plant_id_counter]
             if unit_data[unit].number < unit_data[unit].max:
@@ -234,11 +243,8 @@ func _input(event_ :InputEvent) -> void:
             terminal.text += "\n>>> " + "Moving!" #TODO: update to print which team and unit has moved
             moving = false
 
-            var new_position = selected_instance.global_position
-            var new_tile_position = tilemap.local_to_map(new_position)
-
-            # Let's update the piece_positions list
-            for pos in instances.keys(): if pos == new_tile_position: instances.erase(pos)
+            var new_tile_position = tilemap.local_to_map(selected_instance.global_position)
+            for pos in instances.keys(): if instances[pos] == selected_instance: instances.erase(pos)
             instances[new_tile_position] = selected_instance
             selected_instance.global_position = tilemap.map_to_local(new_tile_position)
 
@@ -280,8 +286,10 @@ func set_moving_to_false():
 
 # A function to plant enemy pieces
 func update_other_pieces(instances_):
-    print(instances_)
+    # print(instances_)
     if instances_.is_empty(): return
+    print(enemies)
+    for enemy in enemies.values(): enemy.free()
     enemies.clear()
     var scene_color = TEAM_STRINGS[(int(team)+1) %2]
     for pos in instances_.keys():    
@@ -339,7 +347,7 @@ func receive_data(recieve_data_ :Dictionary):
 func playing_team (team_ :TeamColor) -> void:
     team = team_
     $Background.set_color(TEAM_COLORS[int(team)])
-    $Terminal/TerminalText.text += "\n>>> May the %s nation be victorious! We will destroy the %s nation!" %[TEAM_STRINGS[int(team)], TEAM_STRINGS[(int(team)+1) %2]]
+    $Terminal/TerminalText.text += "\n>>> May the %s nation be victorious! We will destroy the %s nation!" %[TEAM_STRINGS[int(team)], TEAM_STRINGS[(int(team)+1) %TeamColor.NUM_TEAMS]]
     game_state = GameState.PLACEMENT
 #...
 
@@ -354,23 +362,11 @@ func move_mouse():
 
 
 func preview(preview):
-    if mouse_position and tile_position:
-        if team == TeamColor.RED:
-            if mouse_position.y > 20 and -30  < tile_position.x and tile_position.x < -9:
-                var mouse_position = get_global_mouse_position()
-                var tile_position = tilemap.local_to_map(mouse_position)
-                if tilemap and mouse_position:
-                    if preview and mouse_position != last_mouse_position:
-                        preview.global_position = tilemap.map_to_local(tile_position)
-                        last_mouse_position = mouse_position
-        elif team == TeamColor.BLUE:
-            if mouse_position.y < -3 and -30  < tile_position.x and tile_position.x < -9:
-                var mouse_position = get_global_mouse_position()
-                var tile_position = tilemap.local_to_map(mouse_position)
-                if tilemap and mouse_position:
-                    if preview and mouse_position != last_mouse_position:
-                        preview.global_position = tilemap.map_to_local(tile_position)
-                        last_mouse_position = mouse_position
+
+    if team == TeamColor.NONE: return
+    if GRID_X_LEFT_BOUND < tile_position.x and tile_position.x < GRID_X_RIGHT_BOUND: 
+        if TEAM_BOUNDS[int(team)][0] < tile_position.y and tile_position.y < TEAM_BOUNDS[int(team)][1]:
+            preview.global_position = tilemap.map_to_local(tile_position)
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
@@ -380,7 +376,7 @@ func preview_piece():
     if unit_plant_id_counter == len(units): return
     if team == TeamColor.NONE: return
     var unit = units[unit_plant_id_counter]
-    preview_type = unit_data[unit].preview[TEAM_STRINGS[int(team)]]
+    preview_type = unit_data[unit].preview[TEAM_STRINGS[int(team)]].instance
     preview_type_str = unit_data[unit].preview.string
 #...
 
