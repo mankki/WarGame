@@ -1,0 +1,21 @@
+
+# Godot 7+ specific ignores
+.godot/
+
+# Godot-specific ignores
+.import/
+*.import
+*.translation
+
+addons/*
+assets/*
+
+export.cfg
+export_presets.cfg
+
+*.glb
+*.res
+
+
+# Mono-specific ignores
+.mono/

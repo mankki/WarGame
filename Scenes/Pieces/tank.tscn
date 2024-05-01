@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://cy2i41ur24plh"]
+
+[ext_resource type="Texture2D" uid="uid://b2kxqqpmb3r4d" path="res://assets/Pieces/tank_blue.png" id="2_cpvsu"]
+[ext_resource type="Texture2D" uid="uid://bkkjw70a6cesa" path="res://assets/Pieces/tank_red.png" id="2_qgyog"]
+
+[node name="Tank" type="Node2D" groups=["tanks"]]
+
+[node name="Red" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2(0.04, 0.04)
+texture = ExtResource("2_qgyog")
+
+[node name="Blue" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2(0.04, 0.04)
+texture = ExtResource("2_cpvsu")

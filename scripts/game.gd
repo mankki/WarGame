@@ -15,123 +15,21 @@ const GRID_X_RIGHT_BOUND = -9
 const GRID_X_LEFT_BOUND = -30
 const GRID_Y_BLUE_BOUND = -2
 const GRID_Y_RED_BOUND = 1
+
+@export var unit_data_tres :Array[UnitData] = []
 var moving_range_scene = load("res://Scenes/moving_range_node.tscn")
 
 # Instantiate things
 var unit_plant_id_counter = 0
 var units = ['soldier', 'tank', 'radar', 'missile', 'airplane']
-var unit_data = {
-    soldier = {
-        range = Vector2(60, 60),
-        number = 0,
-        max = 1,
-        scene = { 
-            red = load("res://PieceNodes/red_soldier_node.tscn"),
-            blue = load("res://PieceNodes/blue_soldier_node.tscn"),
-        },
-        preview = { 
-            red = {
-                scene = load("res://PiecePreviewNodes/red_soldier_preview_node.tscn"),
-                instance = null,
-            },
-            blue = {
-                scene = load("res://PiecePreviewNodes/blue_soldier_preview_node.tscn"),
-                instance = null,
-            },
-            string = "soldier_preview",
-        },
-    }, 
-
-    tank = {
-        range = Vector2(100, 100),
-        number = 0,
-        max = 1,
-        scene = {
-            red = load("res://PieceNodes/red_tank_node.tscn"),
-            blue = load("res://PieceNodes/blue_tank_node.tscn"),
-        },
-        preview = {
-            red = {
-                scene = load("res://PiecePreviewNodes/red_tank_preview_node.tscn"),
-                instance = null,
-            },
-            blue = {
-                scene = load("res://PiecePreviewNodes/blue_tank_preview_node.tscn"),
-                instance = null,
-            },
-            string = "tank_preview",
-        }
-    },
-
-    radar = {
-        range = Vector2(100, 100),
-        number = 0,
-        max = 1,
-        scene = {
-            red = load("res://PieceNodes/red_radar_node.tscn"),
-            blue = load("res://PieceNodes/blue_radar_node.tscn"),
-        },
-        preview = {
-            red = {
-                scene = load("res://PiecePreviewNodes/red_radar_preview_node.tscn"),
-                instance = null,
-            },
-            blue = {
-                scene = load("res://PiecePreviewNodes/blue_radar_preview_node.tscn"),
-                instance = null,
-            },
-            string = "radar_preview",
-        },
-    },
-
-    missile = {
-        range = Vector2(140, 140),
-        number = 0,
-        max = 1,
-        scene = {
-            red = load("res://PieceNodes/red_missile_node.tscn"),
-            blue = load("res://PieceNodes/blue_missile_node.tscn"),
-        },
-        preview = {
-            red = {
-                scene = load("res://PiecePreviewNodes/red_missile_preview_node.tscn"),
-                instance = null,
-            },
-            blue = {
-                scene = load("res://PiecePreviewNodes/blue_missile_preview_node.tscn"),
-                instance = null,
-            },
-            string = "missile_preview",
-        },
-    },
-
-    airplane = {
-        range = Vector2(180, 180),
-        number = 0,
-        max = 1,
-        scene = {
-            red = load("res://PieceNodes/red_airplane_node.tscn"),
-            blue = load("res://PieceNodes/blue_airplane_node.tscn"),
-        },
-        preview = {
-            red = {
-                scene = load("res://PiecePreviewNodes/red_airplane_preview_node.tscn"),
-                instance = null,
-            },
-            blue = {
-                scene = load("res://PiecePreviewNodes/blue_airplane_preview_node.tscn"),
-                instance = null,
-            },
-            string = "airplane_preview",
-        },
-    },
-}
+var unit_data :Dictionary = {} 
 
 
 var team = TeamColor.NONE
 var game_state :GameState = GameState.TEAM
 var instances :Dictionary = {}
 var enemies :Dictionary = {}
+var previews :Dictionary = {}
 
 var preview_type
 var preview_type_str = ""
@@ -173,11 +71,6 @@ func _ready():
     add_child(world_node)
     tilemap = world_node.get_node("TileMap") as TileMap
 
-    # Add units
-    for unit in unit_data.keys(): for color in TEAM_STRINGS:
-        unit_data[unit].preview[color].instance = unit_data[unit].preview[color].scene.instantiate()
-        unit_data[unit].preview[color].instance.global_position = Vector2(0, -400)
-        add_child(unit_data[unit].preview[color].instance)
 
     moving_range.size = Vector2.ZERO
     add_child(moving_range)
@@ -217,7 +110,7 @@ func _input(event_ :InputEvent) -> void:
 
             var unit = units[unit_plant_id_counter]
             if unit_data[unit].number < unit_data[unit].max:
-                unit_data[unit].number = plant(tile_position, unit_data[unit].scene[TEAM_STRINGS[int(team)]], unit_data[unit].number)
+                unit_data[unit].number = plant(tile_position, unit_data[unit].scene, unit_data[unit].number)
             if unit_data[unit].number == unit_data[unit].max: unit_plant_id_counter += 1
 
             if unit_plant_id_counter == len(units):
@@ -291,9 +184,8 @@ func update_other_pieces(instances_):
     print(enemies)
     for enemy in enemies.values(): enemy.free()
     enemies.clear()
-    var scene_color = TEAM_STRINGS[(int(team)+1) %2]
     for pos in instances_.keys():    
-        plant_enemy(pos, unit_data[ instances_[pos] ].scene[scene_color])
+        plant_enemy(pos, unit_data[ instances_[pos] ].scene)
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
@@ -302,6 +194,7 @@ func update_other_pieces(instances_):
 # A function to plant the enemy pieces (and remove the piece instance from the initial tile, that is, the tile we're moving from)
 func plant_enemy(tile_pos_: Vector2, scene):
     enemies[tile_pos_] = scene.instantiate()
+    enemies[tile_pos_].get_node(TEAM_STRINGS[(int(team)+1) %2].capitalize()).visible = true
     enemies[tile_pos_].global_position = tilemap.map_to_local(tile_pos_)
     add_child(enemies[tile_pos_])
 #...
@@ -313,6 +206,7 @@ func plant(tile_pos :Vector2, scene :PackedScene, num_of_pieces :int) -> int:
     if tile_pos in instances.keys(): return num_of_pieces
 
     instances[tile_position] = scene.instantiate()
+    instances[tile_position].get_node(TEAM_STRINGS[int(team)].capitalize()).visible = true
     instances[tile_position].set_meta("piece_type", preview_type_str.get_slice('_', 0))
     instances[tile_position].global_position = tilemap.map_to_local(tile_pos)
     add_child(instances[tile_position])
@@ -346,6 +240,27 @@ func receive_data(recieve_data_ :Dictionary):
 
 func playing_team (team_ :TeamColor) -> void:
     team = team_
+
+    # create unit_data
+    for data in unit_data_tres:
+        var unit_name = data.resource_path.get_file().get_slice('.', 0)
+        unit_data[unit_name] = {
+            range = data.range,
+            number = 0,
+            max = data.max,
+            scene = data.scene,
+            preview = null,
+            string = "%s_preview" %unit_name
+        }
+
+    # Add preview units
+    for unit in unit_data.keys():
+        previews[unit] = unit_data[unit].scene.instantiate()
+        previews[unit].global_position = Vector2(0, -400)
+        previews[unit].get_node(TEAM_STRINGS[int(team)].capitalize()).visible = true
+        previews[unit].get_node(TEAM_STRINGS[int(team)].capitalize()).modulate = Color(1, 1, 1, 0.5)
+        add_child(previews[unit])
+
     $Background.set_color(TEAM_COLORS[int(team)])
     $Terminal/TerminalText.text += "\n>>> May the %s nation be victorious! We will destroy the %s nation!" %[TEAM_STRINGS[int(team)], TEAM_STRINGS[(int(team)+1) %TeamColor.NUM_TEAMS]]
     game_state = GameState.PLACEMENT
@@ -363,6 +278,7 @@ func move_mouse():
 
 func preview(preview):
 
+    if previews.is_empty(): return
     if team == TeamColor.NONE: return
     if GRID_X_LEFT_BOUND < tile_position.x and tile_position.x < GRID_X_RIGHT_BOUND: 
         if TEAM_BOUNDS[int(team)][0] < tile_position.y and tile_position.y < TEAM_BOUNDS[int(team)][1]:
@@ -376,8 +292,8 @@ func preview_piece():
     if unit_plant_id_counter == len(units): return
     if team == TeamColor.NONE: return
     var unit = units[unit_plant_id_counter]
-    preview_type = unit_data[unit].preview[TEAM_STRINGS[int(team)]].instance
-    preview_type_str = unit_data[unit].preview.string
+    preview_type = previews[unit]
+    preview_type_str = unit_data[unit].string
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
@@ -385,8 +301,9 @@ func preview_piece():
         
 func hide_previews():
 
-    for unit in unit_data.keys(): for color in TEAM_STRINGS:
-        remove_child(unit_data[unit].preview[color].instance)
+    for unit in previews:
+        previews[unit].queue_free()
+    previews.clear()
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##

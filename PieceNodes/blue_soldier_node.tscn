@@ -1,9 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dbf8k6n1g8a00"]
-
-[ext_resource type="Texture2D" uid="uid://cxyhhm6xe4sxj" path="res://PieceNodes/Pieces/soldier_blue.png" id="1_bjby6"]
-
-[node name="BlueSoldierNode" type="Node2D"]
-
-[node name="BlueSoldier" type="Sprite2D" parent="."]
-scale = Vector2(0.04, 0.04)
-texture = ExtResource("1_bjby6")

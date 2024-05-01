@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="UnitData" load_steps=3 format=3 uid="uid://c4u71hj7la25l"]
+
+[ext_resource type="PackedScene" uid="uid://b6afw04s1rerp" path="res://Scenes/Pieces/soldier.tscn" id="1_dkutg"]
+[ext_resource type="Script" path="res://custom/unit_data/UnitData.gd" id="1_ecj3q"]
+
+[resource]
+script = ExtResource("1_ecj3q")
+range = Vector2(60, 60)
+max = 1
+scene = ExtResource("1_dkutg")

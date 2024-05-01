@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="UnitData" load_steps=3 format=3 uid="uid://cmvmi6gtstcaw"]
+
+[ext_resource type="Script" path="res://custom/unit_data/UnitData.gd" id="1_anaml"]
+[ext_resource type="PackedScene" uid="uid://csjx0aqvsnen7" path="res://Scenes/Pieces/airplane.tscn" id="1_n0m5t"]
+
+[resource]
+script = ExtResource("1_anaml")
+range = Vector2(180, 180)
+max = 1
+scene = ExtResource("1_n0m5t")
