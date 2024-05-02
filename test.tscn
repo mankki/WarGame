@@ -4,15 +4,17 @@
 script/source = "extends Node
 
 
-var arr = []
-var arr2 = [0]
+var br = Vector2i(1, 1)
+var bl = Vector2i(-1, 1)
+var tl = Vector2i(-1, -1)
+var tr = Vector2i(1, -1)
 
 func _ready ():
     
-    if arr: print (\"arr %s is true\" %arr)
-    else: print(\"false\")
-    if arr2: print (\"arr %s is true\" %arr2)
-    else: print(\"false\")
+    if tl > Vector2i.ZERO: print(\"tl\")
+    if tr > Vector2i.ZERO: print(\"tr\")
+    if bl > Vector2i.ZERO: print(\"bl\")
+    if br > Vector2i.ZERO: print(\"br\")
 "
 
 [node name="Test" type="Node"]

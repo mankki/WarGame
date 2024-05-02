@@ -42,6 +42,7 @@ var mouse_position = Vector2.ZERO
 
 var tilemap: TileMap
 var selected_instance: Node2D = null	# Viittaus valittuun instanssiin, jonka haluat liikuttaa.
+var selected_instance_tile_position :Vector2i
 
 
 var moving = false
@@ -66,8 +67,6 @@ func _ready():
     # Configurate RPC
     rpc_config("receive_data", MultiplayerAPI.RPC_MODE_ANY_PEER)
 
-    # Create the server
-    # Create the world  TODO: change to get tilemap from existing world node
     add_child(world_node)
     tilemap = world_node.get_node("TileMap") as TileMap
 
@@ -83,18 +82,20 @@ func _ready():
 
 
 func _process (delta) -> void:
+
     mouse_position = get_global_mouse_position()
     tile_position = tilemap.local_to_map(mouse_position)
 
-    # if tilemap and mouse_position:
-    preview_piece()
-    preview(preview_type)
+    match game_state:
+        GameState.PLACEMENT:
 
+            preview_piece()
+            preview(preview_type)
 
-    if selected_instance != null:
-        moving = true
-        move_mouse() # If an instance has been selected, follow the mouse
-
+        GameState.PLAYING:
+            if selected_instance == null: return
+            moving = true
+            selected_instance.global_position = mouse_position
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
@@ -115,18 +116,17 @@ func _input(event_ :InputEvent) -> void:
 
             if unit_plant_id_counter == len(units):
                 game_state = GameState.PLAYING
-                set_moving_to_false.call_deferred()
+                (func(): moving = false).call_deferred()
                 hide_previews()
                 print("Game on!")
         
         GameState.PLAYING:
+            if not instances.has(tile_position): return
+
             how_far_can_a_piece_move()
             moving_range_func()
-
-            var clicked_tile_position = tilemap.local_to_map(get_global_mouse_position())
-            for instance in instances.values():
-                if tilemap.local_to_map(instance.global_position) == clicked_tile_position:
-                    selected_instance = instance
+            selected_instance_tile_position = tile_position
+            selected_instance = instances[tile_position]
 
     if event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_LEFT and !event_.pressed: match game_state:
         GameState.PLAYING:
@@ -137,14 +137,21 @@ func _input(event_ :InputEvent) -> void:
             moving = false
 
             var new_tile_position = tilemap.local_to_map(selected_instance.global_position)
-            for pos in instances.keys(): if instances[pos] == selected_instance: instances.erase(pos)
-            instances[new_tile_position] = selected_instance
-            selected_instance.global_position = tilemap.map_to_local(new_tile_position)
+
+            var old_world_pos = tilemap.map_to_local(selected_instance_tile_position)
+            var hsize = moving_range.size/2
+            var flag :bool = Rect2(old_world_pos -hsize, moving_range.size).has_point(selected_instance.global_position)
+            if !flag or new_tile_position in instances.keys():
+                selected_instance.global_position = old_world_pos             
+            else:
+                instances.erase(selected_instance_tile_position)
+                instances[new_tile_position] = selected_instance
+                selected_instance.global_position = tilemap.map_to_local(new_tile_position)
 
             selected_instance = null	
 
             moving_range.size = Vector2(0, 0)
-            tile_position = new_tile_position
+            # tile_position = new_tile_position
             send_data(instances)
 #...
 
@@ -152,7 +159,6 @@ func _input(event_ :InputEvent) -> void:
 
 
 func how_far_can_a_piece_move():
-    if not instances.has(tile_position): return
     var piece_type = instances[tile_position].get_meta("piece_type").get_slice('_', 0)
     moving_range.size = unit_data[piece_type].range
 #...
@@ -165,13 +171,6 @@ func moving_range_func():
     var correction = Vector2(-moving_range.size.x/2, -moving_range.size.y/2)
     moving_range.global_position = tilemap.map_to_local(tile_position) + correction
     moving_range_center = moving_range.position
-#...
-
-    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-
-
-func set_moving_to_false():
-    moving = false
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
@@ -202,7 +201,7 @@ func plant_enemy(tile_pos_: Vector2, scene):
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 
-func plant(tile_pos :Vector2, scene :PackedScene, num_of_pieces :int) -> int:
+func plant(tile_pos :Vector2i, scene :PackedScene, num_of_pieces :int) -> int:
     if tile_pos in instances.keys(): return num_of_pieces
 
     instances[tile_position] = scene.instantiate()
@@ -269,16 +268,9 @@ func playing_team (team_ :TeamColor) -> void:
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 
-func move_mouse():
-    selected_instance.global_position = mouse_position
-#...
-
-    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-
-
 func preview(preview):
 
-    if previews.is_empty(): return
+    # if previews.is_empty(): return
     if team == TeamColor.NONE: return
     if GRID_X_LEFT_BOUND < tile_position.x and tile_position.x < GRID_X_RIGHT_BOUND: 
         if TEAM_BOUNDS[int(team)][0] < tile_position.y and tile_position.y < TEAM_BOUNDS[int(team)][1]:
