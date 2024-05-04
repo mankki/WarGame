@@ -1,0 +1,65 @@
+[gd_scene load_steps=2 format=3 uid="uid://dpxojkhsba7ir"]
+
+[ext_resource type="Script" path="res://Scenes/messaging/messaging.gd" id="1_4tifn"]
+
+[node name="Messaging" type="VBoxContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_4tifn")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "MESSAGES:
+"
+horizontal_alignment = 1
+
+[node name="ReceivedMessages" type="TextEdit" parent="."]
+z_index = 2
+layout_mode = 2
+size_flags_vertical = 3
+wrap_mode = 1
+
+[node name="Message" type="LineEdit" parent="."]
+layout_mode = 2
+placeholder_text = "MESSAGE"
+
+[node name="BoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Host" type="Button" parent="BoxContainer"]
+layout_mode = 2
+text = "PLAY RED (HOST)"
+
+[node name="Ip" type="LineEdit" parent="BoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "localhost"
+placeholder_text = "IP ADDRESS"
+
+[node name="Port" type="LineEdit" parent="BoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "8080"
+placeholder_text = "PORT"
+
+[node name="BoxContainer2" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Join" type="Button" parent="BoxContainer2"]
+layout_mode = 2
+text = "PLAY BLUE (JOIN)
+"
+
+[node name="Username" type="LineEdit" parent="BoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "USERNAME"
+
+[node name="Send" type="Button" parent="BoxContainer2"]
+layout_mode = 2
+text = "SEND
+"
+
+[connection signal="pressed" from="BoxContainer/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="BoxContainer2/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="BoxContainer2/Send" to="." method="_on_send_pressed"]

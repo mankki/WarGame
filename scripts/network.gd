@@ -12,7 +12,7 @@ func _init():
 func create_server(port: int):
 	print("Creating the server...")
 	# Start as server.
-	var peer = ENetMultiplayerPeer.new()
+	peer = ENetMultiplayerPeer.new()
 	peer.create_server(port)
 	if peer.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
 		OS.alert("Failed to start multiplayer server.")
@@ -27,7 +27,7 @@ func create_client(ip: String, port: int):
 		OS.alert("Need a remote to connect to.")
 		print("Need a remote to connect to.")
 		return
-	var peer = ENetMultiplayerPeer.new()
+	peer = ENetMultiplayerPeer.new()
 	peer.create_client(ip, port)
 	if peer.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
 		OS.alert("Failed to start multiplayer client.")

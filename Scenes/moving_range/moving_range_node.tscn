@@ -1,6 +1,7 @@
 [gd_scene load_steps=2 format=3 uid="uid://deaqpgthnhfip"]
 
-[ext_resource type="Script" path="res://scripts/moving_range_node.gd" id="1_mic5p"]
+[ext_resource type="Script" path="res://Scenes/moving_range/moving_range_node.gd" id="1_mic5p"]
+
 
 [node name="ColorRect" type="ColorRect"]
 anchors_preset = 8

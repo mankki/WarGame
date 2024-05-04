@@ -1,57 +1,42 @@
-[gd_scene load_steps=2 format=3 uid="uid://dna6e5oicw8lf"]
+[gd_scene load_steps=2 format=3 uid="uid://j6fvjbuxudii"]
 
-[ext_resource type="Script" path="res://Scenes/gui_buttons.gd" id="1_sflee"]
+[ext_resource type="Script" path="res://Scenes/gui_buttons/gui_buttons.gd" id="1_sflee"]
 
-[node name="GUIButtons" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="GUIButtons" type="BoxContainer"]
+offset_right = 182.0
+offset_bottom = 31.0
+size_flags_horizontal = 8
+vertical = true
 script = ExtResource("1_sflee")
 
-[node name="Exit" type="Button" parent="."]
-z_index = 1
-layout_mode = 0
-offset_left = 1115.0
-offset_top = 9.0
-offset_right = 1141.0
-offset_bottom = 30.0
-text = "X"
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
 
-[node name="Menu" type="Button" parent="."]
+[node name="Help" type="Button" parent="HBoxContainer"]
 z_index = 1
-layout_mode = 0
-offset_left = 1048.0
-offset_top = 9.0
-offset_right = 1105.0
-offset_bottom = 40.0
-text = "MENU"
-
-[node name="Options" type="Button" parent="."]
-z_index = 1
-layout_mode = 0
-offset_left = 958.0
-offset_top = 9.0
-offset_right = 1037.0
-offset_bottom = 40.0
-text = "OPTIONS"
-
-[node name="Help" type="Button" parent="."]
-z_index = 1
-layout_mode = 0
-offset_left = 19.0
-offset_top = 10.0
-offset_right = 45.0
-offset_bottom = 41.0
+layout_mode = 2
 text = "?
 "
+
+[node name="Menu" type="Button" parent="HBoxContainer"]
+z_index = 1
+layout_mode = 2
+text = "MENU"
+
+[node name="Options" type="Button" parent="HBoxContainer"]
+z_index = 1
+layout_mode = 2
+text = "OPTIONS"
+
+[node name="Exit" type="Button" parent="HBoxContainer"]
+z_index = 1
+layout_mode = 2
+text = "X"
 
 [node name="Popup" type="Popup" parent="."]
 title = "HELP"
 initial_position = 1
-size = Vector2i(500, 600)
+size = Vector2i(500, 628)
 
 [node name="PopupLabelLabel" type="Label" parent="Popup"]
 anchors_preset = 5
@@ -101,7 +86,7 @@ text = "- The objective is to destroy all enemies - the first player to do so wi
 fit_content = true
 scroll_following = true
 
-[connection signal="pressed" from="Exit" to="." method="_on_exit_pressed"]
-[connection signal="pressed" from="Menu" to="." method="_on_menu_pressed"]
-[connection signal="pressed" from="Options" to="." method="_on_options_pressed"]
-[connection signal="pressed" from="Help" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/Help" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/Menu" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="HBoxContainer/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="HBoxContainer/Exit" to="." method="_on_exit_pressed"]

@@ -5,6 +5,6 @@
 
 [resource]
 script = ExtResource("1_anaml")
-range = Vector2(180, 180)
-max = 1
+move_range = Vector2(180, 180)
+max_number = 1
 scene = ExtResource("1_n0m5t")
