@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bei2xeixe067h"
-path="res://.godot/imported/soldier.png-b2e572892ece97463a2743cecaa52cba.ctex"
+path="res://.godot/imported/soldier.png-5e83f472d7203c059dcbee84d1a7a24a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Pieces/NewPieces/soldier.png"
-dest_files=["res://.godot/imported/soldier.png-b2e572892ece97463a2743cecaa52cba.ctex"]
+source_file="res://NewPieces/soldier.png"
+dest_files=["res://.godot/imported/soldier.png-5e83f472d7203c059dcbee84d1a7a24a.ctex"]
 
 [params]
 

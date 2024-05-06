@@ -1,24 +1,57 @@
-[gd_scene load_steps=2 format=3 uid="uid://fubkmfvydhjp"]
+[gd_scene load_steps=6 format=3 uid="uid://fubkmfvydhjp"]
 
 [ext_resource type="Script" path="res://Scenes/terminal/terminal.gd" id="1_cw61l"]
+[ext_resource type="FontFile" uid="uid://dgomg720kkooq" path="res://fonts/ds_terminal/DS-TERM.TTF" id="2_n4r8h"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hch54"]
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ia56"]
+bg_color = Color(0.133333, 0.219608, 0.0784314, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="Theme" id="Theme_jff3d"]
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_hch54")
+TextEdit/fonts/font = ExtResource("2_n4r8h")
+TextEdit/styles/read_only = SubResource("StyleBoxFlat_5ia56")
 
 [node name="Terminal" type="VBoxContainer"]
-offset_left = 2.0
-offset_top = 2.0
-offset_right = 140.0
-offset_bottom = 37.0
+offset_right = 56.0
+offset_bottom = 40.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_cw61l")
 
-[node name="TerminalLabel" type="Label" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 2
-text = "SUPER TERMINAL:"
-horizontal_alignment = 1
+size_flags_vertical = 3
+theme = SubResource("Theme_jff3d")
 
-[node name="TerminalText" type="TextEdit" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 16
+
+[node name="TerminalText" type="TextEdit" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 text = ">>> Commander, our nation is under attack!"
+editable = false
+context_menu_enabled = false
+shortcut_keys_enabled = false
+selecting_enabled = false
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false
+virtual_keyboard_enabled = false
+middle_mouse_paste_enabled = false
 wrap_mode = 1
 scroll_smooth = true
