@@ -1,8 +1,8 @@
 
 
-extends VBoxContainer
+extends Control
 
-@onready var terminal :TextEdit = $PanelContainer/MarginContainer/TerminalText
+@onready var terminal :TextEdit = $MarginContainer/TerminalText
 
 func print_message (message_ :String) -> void:
     terminal.text += "\n>>> %s" %message_
