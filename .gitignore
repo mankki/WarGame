@@ -8,7 +8,7 @@
 *.translation
 
 addons/*
-assets/*
+#assets/*
 
 export.cfg
 export_presets.cfg
