@@ -1,16 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://du1jxymkddq6o"]
+[gd_scene load_steps=2 format=3 uid="uid://du1jxymkddq6o"]
 
-[ext_resource type="Texture2D" uid="uid://bwtt3elp8sjnp" path="res://assets/Pieces/missile_red.png" id="1_h5xs2"]
-[ext_resource type="Texture2D" uid="uid://cp2r2xkf2g5l2" path="res://assets/Pieces/missile_blue.png" id="2_dncnx"]
+[ext_resource type="Texture2D" uid="uid://b1wleuutkp8o4" path="res://NewPieces/missile.png" id="1_vqqtf"]
 
 [node name="Missile" type="Node2D"]
 
 [node name="Red" type="Sprite2D" parent="."]
 visible = false
-scale = Vector2(0.04, 0.04)
-texture = ExtResource("1_h5xs2")
+self_modulate = Color(0.768627, 0.294118, 0.321569, 1)
+texture_filter = 1
+texture = ExtResource("1_vqqtf")
 
 [node name="Blue" type="Sprite2D" parent="."]
 visible = false
-scale = Vector2(0.04, 0.04)
-texture = ExtResource("2_dncnx")
+self_modulate = Color(0.14902, 0.298039, 0.505882, 1)
+texture_filter = 1
+texture = ExtResource("1_vqqtf")

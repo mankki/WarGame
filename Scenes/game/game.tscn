@@ -7,15 +7,15 @@
 [ext_resource type="Resource" uid="uid://1nslhxw3wotc" path="res://custom/unit_data/missile.tres" id="5_ji0a1"]
 [ext_resource type="Resource" uid="uid://cmvmi6gtstcaw" path="res://custom/unit_data/airplane.tres" id="6_cqb5m"]
 [ext_resource type="Script" path="res://Scenes/game/turn_action_system.gd" id="7_plssi"]
+[ext_resource type="Texture2D" uid="uid://bei2xeixe067h" path="res://NewPieces/soldier.png" id="8_1kriu"]
 [ext_resource type="PackedScene" uid="uid://beg5dqywxg5on" path="res://Scenes/game/world.tscn" id="8_ovuaw"]
-[ext_resource type="Texture2D" uid="uid://d05ontyjh6xh8" path="res://assets/Pieces/soldier_red.png" id="8_rsx13"]
 [ext_resource type="PackedScene" uid="uid://fubkmfvydhjp" path="res://Scenes/terminal/terminal.tscn" id="9_am1rv"]
-[ext_resource type="Texture2D" uid="uid://bkkjw70a6cesa" path="res://assets/Pieces/tank_red.png" id="9_kunwo"]
+[ext_resource type="Texture2D" uid="uid://b0lfvb8yhhib0" path="res://NewPieces/tank.png" id="9_hog0p"]
+[ext_resource type="Texture2D" uid="uid://33536jp3wj3r" path="res://NewPieces/radar.png" id="10_3jup0"]
 [ext_resource type="PackedScene" uid="uid://dpxojkhsba7ir" path="res://Scenes/messaging/messaging.tscn" id="10_u6axs"]
-[ext_resource type="Texture2D" uid="uid://crhnpxwg0e2sb" path="res://assets/Pieces/radar_red.png" id="10_wysuo"]
+[ext_resource type="Texture2D" uid="uid://b1wleuutkp8o4" path="res://NewPieces/missile.png" id="11_kdily"]
 [ext_resource type="PackedScene" uid="uid://j6fvjbuxudii" path="res://Scenes/gui_buttons/gui_buttons.tscn" id="11_m2n8l"]
-[ext_resource type="Texture2D" uid="uid://bwtt3elp8sjnp" path="res://assets/Pieces/missile_red.png" id="11_p7axw"]
-[ext_resource type="Texture2D" uid="uid://ct4tj4wmhauc1" path="res://assets/Pieces/airplane_red.png" id="12_26rpg"]
+[ext_resource type="Texture2D" uid="uid://uduc0c1bnk73" path="res://NewPieces/airplane.png" id="12_d1ye2"]
 
 [sub_resource type="Gradient" id="Gradient_xkbak"]
 offsets = PackedFloat32Array(0, 0.529032, 1)
@@ -23,7 +23,8 @@ colors = PackedColorArray(0, 0.257495, 0.0152751, 1, 0, 0.462745, 0.027451, 1, 0
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_qwi3k"]
 gradient = SubResource("Gradient_xkbak")
-width = 20
+width = 30
+height = 20
 fill_from = Vector2(0.542735, 1)
 fill_to = Vector2(0.491453, 0)
 
@@ -33,7 +34,8 @@ colors = PackedColorArray(0.257495, 0.230847, 0, 1, 0.462745, 0.430847, 0, 1, 0.
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_xik4v"]
 gradient = SubResource("Gradient_gv1tl")
-width = 20
+width = 30
+height = 20
 fill_from = Vector2(0.542735, 1)
 fill_to = Vector2(0.491453, 0)
 
@@ -43,7 +45,8 @@ colors = PackedColorArray(0.257495, 0.0671882, 0, 1, 0.462745, 0.0591888, 0, 1, 
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_51ks5"]
 gradient = SubResource("Gradient_r3bip")
-width = 20
+width = 30
+height = 20
 fill_from = Vector2(0.542735, 1)
 fill_to = Vector2(0.491453, 0)
 
@@ -93,8 +96,9 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Soldier"]
+texture_filter = 1
 layout_mode = 2
-texture = ExtResource("8_rsx13")
+texture = ExtResource("8_1kriu")
 expand_mode = 2
 
 [node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Soldier"]
@@ -106,8 +110,9 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Tank"]
+texture_filter = 1
 layout_mode = 2
-texture = ExtResource("9_kunwo")
+texture = ExtResource("9_hog0p")
 expand_mode = 2
 
 [node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Tank"]
@@ -119,8 +124,9 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Radar"]
+texture_filter = 1
 layout_mode = 2
-texture = ExtResource("10_wysuo")
+texture = ExtResource("10_3jup0")
 expand_mode = 2
 
 [node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Radar"]
@@ -132,8 +138,9 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Missile"]
+texture_filter = 1
 layout_mode = 2
-texture = ExtResource("11_p7axw")
+texture = ExtResource("11_kdily")
 expand_mode = 2
 
 [node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Missile"]
@@ -145,8 +152,9 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Airplane"]
+texture_filter = 1
 layout_mode = 2
-texture = ExtResource("12_26rpg")
+texture = ExtResource("12_d1ye2")
 expand_mode = 2
 
 [node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Airplane"]
@@ -161,29 +169,6 @@ size_flags_stretch_ratio = 8.25
 [node name="World" parent="GUI/HBoxContainer" instance=ExtResource("8_ovuaw")]
 layout_mode = 2
 
-[node name="Actions" type="VBoxContainer" parent="GUI/HBoxContainer"]
-layout_mode = 2
-
-[node name="Buffer" type="Control" parent="GUI/HBoxContainer/Actions"]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.13
-
-[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Actions"]
-layout_mode = 2
-size_flags_vertical = 3
-texture = SubResource("GradientTexture2D_qwi3k")
-
-[node name="TextureRect2" type="TextureRect" parent="GUI/HBoxContainer/Actions"]
-layout_mode = 2
-size_flags_vertical = 3
-texture = SubResource("GradientTexture2D_xik4v")
-
-[node name="TextureRect3" type="TextureRect" parent="GUI/HBoxContainer/Actions"]
-layout_mode = 2
-size_flags_vertical = 3
-texture = SubResource("GradientTexture2D_51ks5")
-
 [node name="VBoxContainer" type="VBoxContainer" parent="GUI/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -194,6 +179,34 @@ layout_mode = 2
 
 [node name="Terminal" parent="GUI/HBoxContainer/VBoxContainer" instance=ExtResource("9_am1rv")]
 layout_mode = 2
+
+[node name="Actions" type="HBoxContainer" parent="GUI/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Buffer" type="Control" parent="GUI/HBoxContainer/VBoxContainer/Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/VBoxContainer/Actions"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = SubResource("GradientTexture2D_qwi3k")
+
+[node name="TextureRect2" type="TextureRect" parent="GUI/HBoxContainer/VBoxContainer/Actions"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = SubResource("GradientTexture2D_xik4v")
+
+[node name="TextureRect3" type="TextureRect" parent="GUI/HBoxContainer/VBoxContainer/Actions"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = SubResource("GradientTexture2D_51ks5")
+
+[node name="Buffer2" type="Control" parent="GUI/HBoxContainer/VBoxContainer/Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Messaging" parent="GUI/HBoxContainer/VBoxContainer" instance=ExtResource("10_u6axs")]
 layout_mode = 2

@@ -18,3 +18,7 @@ static func to_index (grid_pos_ :Vector2i) -> String:
 
 static func to_grid (index :String) -> Vector2i:
     return Vector2i.ZERO
+
+
+static func translate_180 (pos_ :Vector2i) -> Vector2i:
+    return pos_ * Vector2i(-1, -1) - Vector2i(1, 1)

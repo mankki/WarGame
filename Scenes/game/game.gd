@@ -9,7 +9,8 @@ enum GameState { TEAM = 0, PLACEMENT, PLAYING, OVER }
 # Must be indexed using TeamColor
 const TEAM_STRINGS :Array[String] = ['red', 'blue']
 const TEAM_COLORS :Array[Color] = [Color(0.7, 0.2, 0.3, 1), Color(0.2, 0.3, 0.9, 1)]
-const TEAM_BOUNDS:Array = [[0, 16], [-17, -1]]
+# const TEAM_BOUNDS:Array = [[0, 16], [-17, -1]]
+const TEAM_BOUNDS:Array = [[0, 16], [0, 16]]
 
 const GRID_X_RIGHT_BOUND = 10
 const GRID_X_LEFT_BOUND = -11
@@ -101,8 +102,9 @@ func _input(event_ :InputEvent) -> void:
             if unit_plant_id_counter == len(units): return
             if not (GRID_X_LEFT_BOUND < tile_pos.x and tile_pos.x < GRID_X_RIGHT_BOUND): return
             if team == TeamColor.NONE: return 
-            if team == TeamColor.BLUE and tile_pos.y > GRID_Y_BLUE_BOUND: return 
-            if team == TeamColor.RED and tile_pos.y < GRID_Y_RED_BOUND: return
+            # if team == TeamColor.BLUE and tile_pos.y > GRID_Y_BLUE_BOUND: return 
+            # if team == TeamColor.RED and tile_pos.y < GRID_Y_RED_BOUND: return
+            if tile_pos.y < GRID_Y_RED_BOUND: return
 
             var unit = units[unit_plant_id_counter]
             if unit_data[unit].number < unit_data[unit].max:
@@ -204,7 +206,7 @@ func update_enemy_pieces(instances_ :Dictionary) -> void:
 func place_enemy(tile_pos_ :Vector2i, scene_ :PackedScene) -> void:
     enemies[tile_pos_] = scene_.instantiate()
     enemies[tile_pos_].get_node(TEAM_STRINGS[(int(team)+1) %2].capitalize()).visible = true
-    enemies[tile_pos_].global_position = tilemap.to_global(tilemap.map_to_local(tile_pos_))
+    enemies[tile_pos_].global_position = tilemap.to_global(tilemap.map_to_local(GridToIndex.translate_180(tile_pos_)))
     add_child(enemies[tile_pos_])
 #...
 
