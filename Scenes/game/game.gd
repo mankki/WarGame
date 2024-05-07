@@ -11,6 +11,7 @@ const TEAM_STRINGS :Array[String] = ['red', 'blue']
 const TEAM_COLORS :Array[Color] = [Color(0.7, 0.2, 0.3, 1), Color(0.2, 0.3, 0.9, 1)]
 # const TEAM_BOUNDS:Array = [[0, 16], [-17, -1]]
 const TEAM_BOUNDS:Array = [[0, 16], [0, 16]]
+const BOUNDARY := Rect2i(-10, -16, 20, 32)
 
 const GRID_X_RIGHT_BOUND = 10
 const GRID_X_LEFT_BOUND = -11
@@ -18,13 +19,13 @@ const GRID_Y_BLUE_BOUND = -2
 const GRID_Y_RED_BOUND = 1
 
 @export var unit_data_tres :Array[UnitData] = []
-var moving_range_scene = load("res://Scenes/moving_range/moving_range_node.tscn")
+@export var _Turn_Action_System :Node
 
+var moving_range_scene = load("res://Scenes/moving_range/moving_range_node.tscn")
 
 var unit_plant_id_counter = 0
 var units = ['soldier', 'tank', 'radar', 'missile', 'airplane']
 var unit_data :Dictionary = {} 
-
 
 var team = TeamColor.NONE
 var game_state :GameState = GameState.TEAM
@@ -32,7 +33,6 @@ var num_players_ready :int = 0:
     set (value_):
         num_players_ready += 1
         if num_players_ready == 2: game_state = GameState.PLAYING
-
 
 var instances :Dictionary = {}
 var enemies :Dictionary = {}
@@ -119,6 +119,7 @@ func _input(event_ :InputEvent) -> void:
                 hide_previews()
         
         GameState.PLAYING:
+            if not _Turn_Action_System.check_is_turn(int(team)): return
             if not instances.has(tile_pos): return
 
             var piece_type = instances[tile_pos].get_meta("piece_type").get_slice('_', 0)
@@ -139,19 +140,26 @@ func _input(event_ :InputEvent) -> void:
 
             var new_tile_pos :Vector2i = tilemap.local_to_map(tilemap.to_local(selected_instance.global_position))
             var old_world_pos :Vector2 = tilemap.to_global(tilemap.map_to_local(selected_instance_tile_pos))
-
-            # check unit movement is in range
-            if !Rect2(old_world_pos -(moving_range.size/2), moving_range.size).has_point(selected_instance.global_position):
+            
+            var reset_unit :Callable = func (message_ :String):
                 selected_instance.global_position = old_world_pos             
                 if new_tile_pos != selected_instance_tile_pos:
-                    terminal.print_message("Cannot move outside of range")
+                    terminal.print_message(message_)
+
+            if !BOUNDARY.has_point(new_tile_pos):
+                reset_unit.call("Cannot move outside of game area")
+
+            if not _Turn_Action_System.can_take_action(1):
+                reset_unit.call("not enough points to take action")
+
+            # check unit movement is in range
+            elif !Rect2(old_world_pos -(moving_range.size/2), moving_range.size).has_point(selected_instance.global_position):
+                reset_unit.call("Cannot move outside of range")
 
             # check movement location is empty
             #TODO: check if enemy unit is present HANDLE HERE
             elif new_tile_pos in instances.keys():
-                selected_instance.global_position = old_world_pos             
-                if new_tile_pos != selected_instance_tile_pos:
-                    terminal.print_message("Cannot move into space of other units")
+                reset_unit.call("Cannot move into space of other units")
 
             
             else: # movement is successful
@@ -164,6 +172,8 @@ func _input(event_ :InputEvent) -> void:
                     TEAM_STRINGS[int(team)].capitalize(), selected_instance.get_meta("piece_type"),
                     GridToIndex.to_index(selected_instance_tile_pos), GridToIndex.to_index(new_tile_pos)
                 ])
+                _Turn_Action_System.take_action(1)
+                
 
             selected_instance = null	
             moving = false

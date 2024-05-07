@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cy2i41ur24plh"]
 
-[ext_resource type="Texture2D" uid="uid://b0lfvb8yhhib0" path="res://NewPieces/tank.png" id="1_0ov2y"]
+[ext_resource type="Texture2D" uid="uid://b0lfvb8yhhib0" path="res://assets/NewPieces/tank.png" id="1_0ov2y"]
 
 [node name="Tank" type="Node2D" groups=["tanks"]]
 

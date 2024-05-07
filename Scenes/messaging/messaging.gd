@@ -55,6 +55,8 @@ func _on_host_pressed():
     emit_signal("red_signal")
     var port = int(_Port.text)
     Network.create_server(port)
+    _Host.disabled = true
+    _Join.disabled = true
 
 
 func _on_join_pressed():
@@ -63,3 +65,5 @@ func _on_join_pressed():
     var ip = _Ip.text
     var port = int(_Port.text)
     Network.create_client(ip, port)
+    _Host.disabled = true
+    _Join.disabled = true

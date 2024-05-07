@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://csjx0aqvsnen7"]
 
-[ext_resource type="Texture2D" uid="uid://uduc0c1bnk73" path="res://NewPieces/airplane.png" id="1_4yd8s"]
+[ext_resource type="Texture2D" uid="uid://uduc0c1bnk73" path="res://assets/NewPieces/airplane.png" id="1_4yd8s"]
 
 [node name="Airplane" type="Node2D"]
 

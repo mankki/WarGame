@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://du1jxymkddq6o"]
 
-[ext_resource type="Texture2D" uid="uid://b1wleuutkp8o4" path="res://NewPieces/missile.png" id="1_vqqtf"]
+[ext_resource type="Texture2D" uid="uid://b1wleuutkp8o4" path="res://assets/NewPieces/missile.png" id="1_vqqtf"]
 
 [node name="Missile" type="Node2D"]
 

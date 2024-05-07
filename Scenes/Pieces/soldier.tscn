@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b6afw04s1rerp"]
 
-[ext_resource type="Texture2D" uid="uid://bei2xeixe067h" path="res://NewPieces/soldier.png" id="1_eapnx"]
+[ext_resource type="Texture2D" uid="uid://bei2xeixe067h" path="res://assets/NewPieces/soldier.png" id="1_eapnx"]
 
 [node name="Soldier" type="Node2D"]
 

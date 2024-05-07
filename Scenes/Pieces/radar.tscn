@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://ke2qqvqq85fd"]
 
-[ext_resource type="Texture2D" uid="uid://33536jp3wj3r" path="res://NewPieces/radar.png" id="1_5ubeu"]
+[ext_resource type="Texture2D" uid="uid://33536jp3wj3r" path="res://assets/NewPieces/radar.png" id="1_5ubeu"]
 
 [sub_resource type="GDScript" id="GDScript_5mvpv"]
 
