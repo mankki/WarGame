@@ -8,6 +8,7 @@ script = ExtResource("1_mtdwd")
 move_range = Vector2(100, 100)
 max_number = 1
 scene = ExtResource("1_2kjq4")
+enemy_scan = Vector2i(2, 2)
 health = 2
 hit_chance = 0.8
 damage = 2

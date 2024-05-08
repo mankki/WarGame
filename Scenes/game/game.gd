@@ -62,6 +62,8 @@ var piece_instance
 
 
 func _ready():
+    randomize()
+
     tilemap = world_node.tilemap
 
     moving_range.size = Vector2.ZERO
@@ -124,14 +126,24 @@ func _input(event_ :InputEvent) -> void:
 
             var piece_type = instances[tile_pos].type.get_slice('_', 0)
             moving_range.size = unit_data[piece_type].move_range
+            var scan = unit_data[piece_type].enemy_scan
 
-            if not tile_pos in instances.keys(): return
             var correction = Vector2(-moving_range.size.x/2, -moving_range.size.y/2)
             moving_range.global_position = _get_global_pos(tile_pos) + correction
             moving_range_center = moving_range.position
 
             selected_instance_tile_pos = tile_pos
             selected_instance = instances[tile_pos]
+
+            for i in range(-scan.x, scan.x +1): for j in range(-scan.y, scan.y +1):
+                var vec := Vector2i(i, j)
+                if vec == Vector2i.ZERO: continue
+                var new_loc = selected_instance_tile_pos + vec
+                if enemies.has(new_loc): 
+                    enemies[new_loc].visible = true
+                    rpc("reveal_enemy", new_loc)
+
+            #...
 
     # left mouse button released
     if event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_LEFT and !event_.pressed: match game_state:
@@ -162,6 +174,20 @@ func _input(event_ :InputEvent) -> void:
 
                     _Turn_Action_System.take_action(1)
 
+                    var attack_roll :float = randf_range(0.0, 1.0)
+                    if attack_roll <= hit_chance:
+                        terminal.print_message("attack HITS")
+                        var damage = unit_data[selected_instance.type].damage
+                        var health = enemies[new_tile_pos].current_health
+                        if damage >= health:
+                            enemies[new_tile_pos].queue_free()
+                            enemies.erase(new_tile_pos)
+                            rpc("remove_enemy", new_tile_pos)
+                        else:
+                            enemies[new_tile_pos].current_health -= damage
+                            rpc("damage_enemy", new_tile_pos, damage)
+                    else: terminal.print_message("attack MISSES")
+
             # check movement is on board
             elif !BOUNDARY.has_point(new_tile_pos):
                 reset_unit.call("Cannot move outside of game area")
@@ -188,7 +214,7 @@ func _input(event_ :InputEvent) -> void:
                     GridToIndex.to_index(selected_instance_tile_pos), GridToIndex.to_index(new_tile_pos)
                 ])
                 _Turn_Action_System.take_action(1)
-                
+                selected_instance.isit_visible = false
 
             selected_instance = null	
             moving = false
@@ -213,7 +239,7 @@ func update_enemy_pieces(instances_ :Dictionary) -> void:
     for enemy in enemies.values(): enemy.free()
     enemies.clear()
     for pos in instances_.keys():    
-        place_enemy(pos, unit_data[ instances_[pos] ].scene, instances_[pos])
+        place_enemy(pos, unit_data[ instances_[pos].type ].scene, instances_[pos])
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
@@ -228,10 +254,14 @@ func update_enemy_pieces(instances_ :Dictionary) -> void:
 ##
 ## < void
 
-func place_enemy(tile_pos_ :Vector2i, scene_ :PackedScene, unit_ :String) -> void:
+func place_enemy(tile_pos_ :Vector2i, scene_ :PackedScene, unit_data_ :Dictionary) -> void:
     var translated_pos = GridToIndex.translate_180(tile_pos_)
     enemies[translated_pos] = scene_.instantiate()
-    enemies[translated_pos].type = unit_
+
+    enemies[translated_pos].type = unit_data_.type
+    enemies[translated_pos].current_health = unit_data_.health
+    enemies[translated_pos].visible = unit_data_.visible
+
     enemies[translated_pos].get_node(TEAM_STRINGS[(int(team)+1) %2].capitalize()).visible = true
     enemies[translated_pos].global_position = tilemap.to_global(tilemap.map_to_local(translated_pos))
     add_child(enemies[translated_pos])
@@ -257,6 +287,8 @@ func place_ally(tile_pos_ :Vector2i, scene_ :PackedScene, num_of_pieces_ :int) -
     instances[tile_pos_].get_node(TEAM_STRINGS[int(team)].capitalize()).visible = true
     # instances[tile_pos_].set_meta("piece_type", preview_type_str.get_slice('_', 0))
     instances[tile_pos_].type = preview_type_str.get_slice('_', 0)
+    instances[tile_pos_].current_health = unit_data[instances[tile_pos_].type].health
+    instances[tile_pos_].isit_visible = false
     instances[tile_pos_].global_position = tilemap.to_global(tilemap.map_to_local(tile_pos_))
     add_child(instances[tile_pos_])
     terminal.print_message("%s team placed %s unit at position %s" %[
@@ -273,7 +305,12 @@ func place_ally(tile_pos_ :Vector2i, scene_ :PackedScene, num_of_pieces_ :int) -
 
 func send_data(instances_ :Dictionary):
     var data_to_send :Dictionary = {}
-    for key in instances_.keys(): data_to_send[key] = instances_[key].type
+    for key in instances_.keys():
+        data_to_send[key] = {
+            health = instances_[key].current_health,
+            type = instances_[key].type,
+            visible = instances_[key].isit_visible
+        }
 
     rpc("receive_data", data_to_send)
 #...
@@ -292,6 +329,32 @@ func receive_data(recieve_data_ :Dictionary):
 func signal_end_placement () -> void:
     num_players_ready += 1
     terminal.print_message("%s's army is in position" %TEAM_STRINGS[(int(team)+1)%2])
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+@rpc("any_peer", "call_remote")
+func damage_enemy (pos_ :Vector2i, damage_ :int) -> void:
+    var pos = GridToIndex.translate_180(pos_)
+    instances[pos].current_health -= damage_
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+@rpc("any_peer", "call_remote")
+func remove_enemy (pos_ :Vector2i) -> void:
+    var pos = GridToIndex.translate_180(pos_)
+    instances[pos].queue_free()
+    instances.erase(pos)
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+
+@rpc("any_peer", "call_remote")
+func reveal_enemy (pos_ :Vector2i) -> void:
+    var pos = GridToIndex.translate_180(pos_)
+    instances[pos].isit_visible = true
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
