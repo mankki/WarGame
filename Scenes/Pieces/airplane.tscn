@@ -1,17 +1,17 @@
 [gd_scene load_steps=2 format=3 uid="uid://csjx0aqvsnen7"]
 
-[ext_resource type="Texture2D" uid="uid://uduc0c1bnk73" path="res://assets/NewPieces/airplane.png" id="1_4yd8s"]
+[ext_resource type="Texture2D" uid="uid://10wehnv886uf" path="res://assets/NewPieces/airplane.png" id="1_4yd8s"]
 
 [node name="Airplane" type="Node2D"]
 
 [node name="Red" type="Sprite2D" parent="."]
 visible = false
-self_modulate = Color(0.768627, 0.294118, 0.321569, 1)
+self_modulate = Color(100, 0, 0.05, 1)
 texture_filter = 1
 texture = ExtResource("1_4yd8s")
 
 [node name="Blue" type="Sprite2D" parent="."]
 visible = false
-self_modulate = Color(0.14902, 0.298039, 0.505882, 1)
+self_modulate = Color(0.149, 0.298, 100, 1)
 texture_filter = 1
 texture = ExtResource("1_4yd8s")
