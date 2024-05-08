@@ -107,9 +107,9 @@ func _input(event_ :InputEvent) -> void:
             if tile_pos.y < GRID_Y_RED_BOUND: return
 
             var unit = units[unit_plant_id_counter]
-            if unit_data[unit].number < unit_data[unit].max:
+            if unit_data[unit].number < unit_data[unit].max_number:
                 unit_data[unit].number = place_ally(tile_pos, unit_data[unit].scene, unit_data[unit].number)
-            if unit_data[unit].number == unit_data[unit].max: unit_plant_id_counter += 1
+            if unit_data[unit].number == unit_data[unit].max_number: unit_plant_id_counter += 1
 
             if unit_plant_id_counter == len(units):
                 terminal.print_message("Your army is in position")
@@ -122,8 +122,8 @@ func _input(event_ :InputEvent) -> void:
             if not _Turn_Action_System.check_is_turn(int(team)): return
             if not instances.has(tile_pos): return
 
-            var piece_type = instances[tile_pos].get_meta("piece_type").get_slice('_', 0)
-            moving_range.size = unit_data[piece_type].range
+            var piece_type = instances[tile_pos].type.get_slice('_', 0)
+            moving_range.size = unit_data[piece_type].move_range
 
             if not tile_pos in instances.keys(): return
             var correction = Vector2(-moving_range.size.x/2, -moving_range.size.y/2)
@@ -151,13 +151,16 @@ func _input(event_ :InputEvent) -> void:
                 reset_unit.call("not enough points to take action")
 
             elif new_tile_pos in enemies.keys():
-                var distance = Vector2(selected_instance_tile_pos).distance_to(Vector2(new_tile_pos))
-                var hit_chance = 1 - (1/32.0) *distance
-                reset_unit.call("%s is attacking enemy %s, with hit chance %.2f" %[
-                    selected_instance.get_meta('piece_type'), enemies[new_tile_pos].get_meta('piece_type'), hit_chance
-                ])
+                if not unit_data[selected_instance.type].can_attack:
+                    reset_unit.call("Unit cannot attack")
+                else:
+                    var distance = Vector2(selected_instance_tile_pos).distance_to(Vector2(new_tile_pos))
+                    var hit_chance = 1 - (unit_data[selected_instance.type].hit_chance/32.0) *distance
+                    reset_unit.call("%s is attacking enemy %s, with hit chance %.2f" %[
+                        selected_instance.type, enemies[new_tile_pos].type, hit_chance
+                    ])
 
-                _Turn_Action_System.take_action(1)
+                    _Turn_Action_System.take_action(1)
 
             # check movement is on board
             elif !BOUNDARY.has_point(new_tile_pos):
@@ -181,7 +184,7 @@ func _input(event_ :InputEvent) -> void:
 
                 selected_instance.global_position = _get_global_pos(new_tile_pos)
                 terminal.print_message("%s %s charging from %s to %s!" %[
-                    TEAM_STRINGS[int(team)].capitalize(), selected_instance.get_meta("piece_type"),
+                    TEAM_STRINGS[int(team)].capitalize(), selected_instance.type,
                     GridToIndex.to_index(selected_instance_tile_pos), GridToIndex.to_index(new_tile_pos)
                 ])
                 _Turn_Action_System.take_action(1)
@@ -228,7 +231,7 @@ func update_enemy_pieces(instances_ :Dictionary) -> void:
 func place_enemy(tile_pos_ :Vector2i, scene_ :PackedScene, unit_ :String) -> void:
     var translated_pos = GridToIndex.translate_180(tile_pos_)
     enemies[translated_pos] = scene_.instantiate()
-    enemies[translated_pos].set_meta("piece_type", unit_)
+    enemies[translated_pos].type = unit_
     enemies[translated_pos].get_node(TEAM_STRINGS[(int(team)+1) %2].capitalize()).visible = true
     enemies[translated_pos].global_position = tilemap.to_global(tilemap.map_to_local(translated_pos))
     add_child(enemies[translated_pos])
@@ -252,7 +255,8 @@ func place_ally(tile_pos_ :Vector2i, scene_ :PackedScene, num_of_pieces_ :int) -
 
     instances[tile_pos_] = scene_.instantiate()
     instances[tile_pos_].get_node(TEAM_STRINGS[int(team)].capitalize()).visible = true
-    instances[tile_pos_].set_meta("piece_type", preview_type_str.get_slice('_', 0))
+    # instances[tile_pos_].set_meta("piece_type", preview_type_str.get_slice('_', 0))
+    instances[tile_pos_].type = preview_type_str.get_slice('_', 0)
     instances[tile_pos_].global_position = tilemap.to_global(tilemap.map_to_local(tile_pos_))
     add_child(instances[tile_pos_])
     terminal.print_message("%s team placed %s unit at position %s" %[
@@ -269,7 +273,7 @@ func place_ally(tile_pos_ :Vector2i, scene_ :PackedScene, num_of_pieces_ :int) -
 
 func send_data(instances_ :Dictionary):
     var data_to_send :Dictionary = {}
-    for key in instances_.keys(): data_to_send[key] = instances_[key].get_meta('piece_type')
+    for key in instances_.keys(): data_to_send[key] = instances_[key].type
 
     rpc("receive_data", data_to_send)
 #...
@@ -299,14 +303,16 @@ func playing_team (team_ :TeamColor) -> void:
     # create unit_data
     for data in unit_data_tres:
         var unit_name = data.resource_path.get_file().get_slice('.', 0)
-        unit_data[unit_name] = {
-            range = data.move_range,
-            number = 0,
-            max = data.max_number,
-            scene = data.scene,
-            preview = null,
-            string = "%s_preview" %unit_name
-        }
+        unit_data[unit_name] = data
+        data.string = unit_name
+        # unit_data[unit_name] = {
+        #     range = data.move_range,
+        #     number = 0,
+        #     max = data.max_number,
+        #     scene = data.scene,
+        #     preview = null,
+        #     string = "%s_preview" %unit_name
+        # }
 
     # Add preview units
     for unit in unit_data.keys():
@@ -329,7 +335,7 @@ func preview(preview_):
     if team == TeamColor.NONE: return
     if GRID_X_LEFT_BOUND < tile_pos.x and tile_pos.x < GRID_X_RIGHT_BOUND: 
         if TEAM_BOUNDS[int(team)][0] < tile_pos.y and tile_pos.y < TEAM_BOUNDS[int(team)][1]:
-            preview_.global_position = tilemap.to_global(tilemap.map_to_local(tile_pos))
+            preview_.global_position = _get_global_pos(tile_pos)
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##

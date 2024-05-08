@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://du1jxymkddq6o"]
+[gd_scene load_steps=3 format=3 uid="uid://du1jxymkddq6o"]
 
+[ext_resource type="Script" path="res://Scenes/Pieces/piece.gd" id="1_b4xeb"]
 [ext_resource type="Texture2D" uid="uid://b1wleuutkp8o4" path="res://assets/NewPieces/missile.png" id="1_vqqtf"]
 
 [node name="Missile" type="Node2D"]
+script = ExtResource("1_b4xeb")
 
 [node name="Red" type="Sprite2D" parent="."]
 visible = false

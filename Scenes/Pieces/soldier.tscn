@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://b6afw04s1rerp"]
+[gd_scene load_steps=3 format=3 uid="uid://b6afw04s1rerp"]
 
+[ext_resource type="Script" path="res://Scenes/Pieces/piece.gd" id="1_6p6yd"]
 [ext_resource type="Texture2D" uid="uid://bei2xeixe067h" path="res://assets/NewPieces/soldier.png" id="1_eapnx"]
 
 [node name="Soldier" type="Node2D"]
+script = ExtResource("1_6p6yd")
 
 [node name="Red" type="Sprite2D" parent="."]
 visible = false
