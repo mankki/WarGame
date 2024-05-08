@@ -127,7 +127,7 @@ func _input(event_ :InputEvent) -> void:
 
             if not tile_pos in instances.keys(): return
             var correction = Vector2(-moving_range.size.x/2, -moving_range.size.y/2)
-            moving_range.global_position = tilemap.to_global(tilemap.map_to_local(tile_pos)) + correction
+            moving_range.global_position = _get_global_pos(tile_pos) + correction
             moving_range_center = moving_range.position
 
             selected_instance_tile_pos = tile_pos
@@ -139,18 +139,30 @@ func _input(event_ :InputEvent) -> void:
             if not selected_instance: return
 
             var new_tile_pos :Vector2i = tilemap.local_to_map(tilemap.to_local(selected_instance.global_position))
-            var old_world_pos :Vector2 = tilemap.to_global(tilemap.map_to_local(selected_instance_tile_pos))
+            var old_world_pos :Vector2 = _get_global_pos(selected_instance_tile_pos)
             
             var reset_unit :Callable = func (message_ :String):
                 selected_instance.global_position = old_world_pos             
                 if new_tile_pos != selected_instance_tile_pos:
                     terminal.print_message(message_)
 
-            if !BOUNDARY.has_point(new_tile_pos):
-                reset_unit.call("Cannot move outside of game area")
-
+            # check player has actions available
             if not _Turn_Action_System.can_take_action(1):
                 reset_unit.call("not enough points to take action")
+
+            elif new_tile_pos in enemies.keys():
+                var distance = Vector2(selected_instance_tile_pos).distance_to(Vector2(new_tile_pos))
+                var hit_chance = 1 - (1/32.0) *distance
+                reset_unit.call("%s is attacking enemy %s, with hit chance %.2f" %[
+                    selected_instance.get_meta('piece_type'), enemies[new_tile_pos].get_meta('piece_type'), hit_chance
+                ])
+
+                _Turn_Action_System.take_action(1)
+
+            # check movement is on board
+            elif !BOUNDARY.has_point(new_tile_pos):
+                reset_unit.call("Cannot move outside of game area")
+
 
             # check unit movement is in range
             elif !Rect2(old_world_pos -(moving_range.size/2), moving_range.size).has_point(selected_instance.global_position):
@@ -167,7 +179,7 @@ func _input(event_ :InputEvent) -> void:
                 instances.erase(selected_instance_tile_pos)
                 instances[new_tile_pos] = selected_instance
 
-                selected_instance.global_position = tilemap.to_global(tilemap.map_to_local(new_tile_pos))
+                selected_instance.global_position = _get_global_pos(new_tile_pos)
                 terminal.print_message("%s %s charging from %s to %s!" %[
                     TEAM_STRINGS[int(team)].capitalize(), selected_instance.get_meta("piece_type"),
                     GridToIndex.to_index(selected_instance_tile_pos), GridToIndex.to_index(new_tile_pos)
@@ -198,7 +210,7 @@ func update_enemy_pieces(instances_ :Dictionary) -> void:
     for enemy in enemies.values(): enemy.free()
     enemies.clear()
     for pos in instances_.keys():    
-        place_enemy(pos, unit_data[ instances_[pos] ].scene)
+        place_enemy(pos, unit_data[ instances_[pos] ].scene, instances_[pos])
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
@@ -213,11 +225,13 @@ func update_enemy_pieces(instances_ :Dictionary) -> void:
 ##
 ## < void
 
-func place_enemy(tile_pos_ :Vector2i, scene_ :PackedScene) -> void:
-    enemies[tile_pos_] = scene_.instantiate()
-    enemies[tile_pos_].get_node(TEAM_STRINGS[(int(team)+1) %2].capitalize()).visible = true
-    enemies[tile_pos_].global_position = tilemap.to_global(tilemap.map_to_local(GridToIndex.translate_180(tile_pos_)))
-    add_child(enemies[tile_pos_])
+func place_enemy(tile_pos_ :Vector2i, scene_ :PackedScene, unit_ :String) -> void:
+    var translated_pos = GridToIndex.translate_180(tile_pos_)
+    enemies[translated_pos] = scene_.instantiate()
+    enemies[translated_pos].set_meta("piece_type", unit_)
+    enemies[translated_pos].get_node(TEAM_STRINGS[(int(team)+1) %2].capitalize()).visible = true
+    enemies[translated_pos].global_position = tilemap.to_global(tilemap.map_to_local(translated_pos))
+    add_child(enemies[translated_pos])
 #...
 
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
@@ -342,3 +356,9 @@ func hide_previews():
     ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
     
 
+func _get_global_pos(pos_ :Vector2i) -> Vector2:
+
+    return tilemap.to_global(tilemap.map_to_local(pos_))
+#...
+
+    ## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
