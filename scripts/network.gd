@@ -12,14 +12,14 @@ func _init():
 func create_server(port: int):
     print("Creating the server...")
     # Start as server.
-    var upnp = UPNP.new()
-    var result = upnp.discover()
-    if result != UPNP.UPNP_RESULT_SUCCESS:
-        print("Could not connect to gateway")
-        return
-    var gateway = upnp.get_gateway()
-    result = gateway.add_port_mapping(8080, 8080)    
-    print("the result of the mapping is %s" %result)
+    # var upnp = UPNP.new()
+    # var result = upnp.discover()
+    # if result != UPNP.UPNP_RESULT_SUCCESS:
+    #     print("Could not connect to gateway")
+    #     return
+    # var gateway = upnp.get_gateway()
+    # result = gateway.add_port_mapping(17259, 8080)    
+    # print("the result of the mapping is %s" %result)
 
     peer = ENetMultiplayerPeer.new()
     peer.create_server(port)
