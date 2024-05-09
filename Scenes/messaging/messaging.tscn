@@ -115,7 +115,7 @@ text = "PLAY RED (HOST)"
 [node name="Ip" type="LineEdit" parent="MarginContainer/Messaging/BoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "localhost"
+text = "147.179.11.69"
 placeholder_text = "IP ADDRESS"
 
 [node name="Port" type="LineEdit" parent="MarginContainer/Messaging/BoxContainer"]
