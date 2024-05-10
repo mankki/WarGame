@@ -162,6 +162,7 @@ func _input(event_ :InputEvent) -> void:
             if not _Turn_Action_System.can_take_action(1):
                 reset_unit.call("not enough points to take action")
 
+            # check if player is attacking enemy
             elif new_tile_pos in enemies.keys():
                 if not unit_data[selected_instance.type].can_attack:
                     reset_unit.call("Unit cannot attack")
@@ -173,6 +174,7 @@ func _input(event_ :InputEvent) -> void:
                     ])
 
                     _Turn_Action_System.take_action(1)
+                    selected_instance.isit_visible = true
 
                     var attack_roll :float = randf_range(0.0, 1.0)
                     if attack_roll <= hit_chance:
@@ -368,14 +370,6 @@ func playing_team (team_ :TeamColor) -> void:
         var unit_name = data.resource_path.get_file().get_slice('.', 0)
         unit_data[unit_name] = data
         data.string = unit_name
-        # unit_data[unit_name] = {
-        #     range = data.move_range,
-        #     number = 0,
-        #     max = data.max_number,
-        #     scene = data.scene,
-        #     preview = null,
-        #     string = "%s_preview" %unit_name
-        # }
 
     # Add preview units
     for unit in unit_data.keys():
