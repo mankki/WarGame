@@ -19,51 +19,51 @@ var connection_established = false
 
 
 func _ready () -> void:
-    _Send.pressed.connect(_on_send_pressed)
-    _Host.pressed.connect(_on_host_pressed)
-    _Join.pressed.connect(_on_join_pressed)
+	_Send.pressed.connect(_on_send_pressed)
+	_Host.pressed.connect(_on_host_pressed)
+	_Join.pressed.connect(_on_join_pressed)
 
 
 func _process(delta):
-    if connection_established == false and Network.peer and Network.peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
-        connection_established = true
-        _Received.text += "\n>>>" + "An enemy found!"
+	if connection_established == false and Network.peer and Network.peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
+		connection_established = true
+		_Received.text += "\n>>>" + "An enemy found!"
 
-        
+		
 func _on_send_pressed():
-    send_message()
+	send_message()
 
 
 func send_message():
-    var message = _Message.text
-    var username = _Username.text
-    rpc("receive_message", username + ": " + message)
-    _Message.text = ''
-    print("Message sent!")
+	var message = _Message.text
+	var username = _Username.text
+	rpc("receive_message", username + ": " + message)
+	_Message.text = ''
+	print("Message sent!")
 
 
 @rpc("any_peer", "call_local")
 func receive_message(message: String):
-    if _Received.text == '':
-        _Received.text = "> " + message
-    else:
-        _Received.text += "\n> " + message
-    print("Message received: ", message)
+	if _Received.text == '':
+		_Received.text = "> " + message
+	else:
+		_Received.text += "\n> " + message
+	print("Message received: ", message)
 
 
 func _on_host_pressed():
-    emit_signal("red_signal")
-    var port = int(_Port.text)
-    Network.create_server(port)
-    _Host.disabled = true
-    _Join.disabled = true
+	emit_signal("red_signal")
+	var port = int(_Port.text)
+	Network.create_server(port)
+	_Host.disabled = true
+	_Join.disabled = true
 
 
 func _on_join_pressed():
-    emit_signal("blue_signal")
-    # var peer = ENetMultiplayerPeer.new()
-    var ip = _Ip.text
-    var port = int(_Port.text)
-    Network.create_client(ip, port)
-    _Host.disabled = true
-    _Join.disabled = true
+	emit_signal("blue_signal")
+	# var peer = ENetMultiplayerPeer.new()
+	var ip = _Ip.text
+	var port = int(_Port.text)
+	Network.create_client(ip, port)
+	_Host.disabled = true
+	_Join.disabled = true

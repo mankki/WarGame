@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://du1jxymkddq6o"]
 
 [ext_resource type="Script" path="res://Scenes/Pieces/piece.gd" id="1_b4xeb"]
-[ext_resource type="Texture2D" uid="uid://b1wleuutkp8o4" path="res://assets/NewPieces/missile.png" id="1_vqqtf"]
+[ext_resource type="Texture2D" uid="uid://bcf7gmsm71k8b" path="res://assets/NewPieces/missile.png" id="1_vqqtf"]
 
 [node name="Missile" type="Node2D"]
 script = ExtResource("1_b4xeb")
