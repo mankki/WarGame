@@ -8,7 +8,7 @@ enum GameState { TEAM = 0, PLACEMENT, PLAYING, OVER }
 
 # Must be indexed using TeamColor
 const TEAM_STRINGS :Array[String] = ['red', 'blue']
-const TEAM_COLORS :Array[Color] = [Color(0.596, 0.718, 0.518), Color(0.596, 0.718, 0.518)]
+const TEAM_COLORS :Array[Color] = [Color(0.7, 0.2, 0.3, 1), Color(0.2, 0.3, 0.9, 1)]
 # const TEAM_BOUNDS:Array = [[0, 16], [-17, -1]]
 const TEAM_BOUNDS:Array = [[0, 16], [0, 16]]
 const BOUNDARY := Rect2i(-10, -16, 20, 32)
@@ -47,7 +47,7 @@ var last_mouse_pos = Vector2.ZERO
 var tile_pos = Vector2i.ZERO
 var mouse_pos = Vector2.ZERO
 
-var selected_instance: Node2D = null
+var selected_instance: Node2D = null	# Viittaus valittuun instanssiin, jonka haluat liikuttaa.
 var selected_instance_tile_pos :Vector2i
 
 var tilemap
@@ -149,7 +149,7 @@ func _input(event_ :InputEvent) -> void:
 	if event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_LEFT and !event_.pressed: match game_state:
 		GameState.PLAYING:
 			if not selected_instance: return
-			
+
 			var new_tile_pos :Vector2i = tilemap.local_to_map(tilemap.to_local(selected_instance.global_position))
 			var old_world_pos :Vector2 = _get_global_pos(selected_instance_tile_pos)
 			
@@ -162,6 +162,7 @@ func _input(event_ :InputEvent) -> void:
 			if not _Turn_Action_System.can_take_action(1):
 				reset_unit.call("not enough points to take action")
 
+			# check if player is attacking enemy
 			elif new_tile_pos in enemies.keys():
 				if not unit_data[selected_instance.type].can_attack:
 					reset_unit.call("Unit cannot attack")
@@ -173,6 +174,7 @@ func _input(event_ :InputEvent) -> void:
 					])
 
 					_Turn_Action_System.take_action(1)
+					selected_instance.isit_visible = true
 
 					var attack_roll :float = randf_range(0.0, 1.0)
 					if attack_roll <= hit_chance:
@@ -215,7 +217,6 @@ func _input(event_ :InputEvent) -> void:
 				])
 				_Turn_Action_System.take_action(1)
 				selected_instance.isit_visible = false
-			
 
 			selected_instance = null	
 			moving = false
@@ -369,14 +370,6 @@ func playing_team (team_ :TeamColor) -> void:
 		var unit_name = data.resource_path.get_file().get_slice('.', 0)
 		unit_data[unit_name] = data
 		data.string = unit_name
-		# unit_data[unit_name] = {
-		#     range = data.move_range,
-		#     number = 0,
-		#     max = data.max_number,
-		#     scene = data.scene,
-		#     preview = null,
-		#     string = "%s_preview" %unit_name
-		# }
 
 	# Add preview units
 	for unit in unit_data.keys():

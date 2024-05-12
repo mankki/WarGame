@@ -67,3 +67,7 @@ func _on_join_pressed():
 	Network.create_client(ip, port)
 	_Host.disabled = true
 	_Join.disabled = true
+
+func _input(event):
+	if event.is_action_pressed("ui_accept"):
+		_on_send_pressed()

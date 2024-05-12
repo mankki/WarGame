@@ -5,11 +5,11 @@
 
 [resource]
 script = ExtResource("1_73wps")
-move_range = Vector2(140, 140)
+move_range = Vector2(180, 180)
 max_number = 2
 scene = ExtResource("1_d8dq0")
-enemy_scan = Vector2i(3, 3)
-health = 1
+enemy_scan = Vector2i(4, 4)
+health = 4
 hit_chance = 0.0
 damage = 0
 effect_area = 0
