@@ -115,21 +115,13 @@ text = "PLAY RED (HOST)"
 [node name="Ip" type="LineEdit" parent="MarginContainer/Messaging/BoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-<<<<<<< HEAD
 text = "localhost"
-=======
-text = "193.161.193.99"
->>>>>>> 5dc97c725df5fecc4234872abd6495a4e058ae8e
 placeholder_text = "IP ADDRESS"
 
 [node name="Port" type="LineEdit" parent="MarginContainer/Messaging/BoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-<<<<<<< HEAD
 text = "8080"
-=======
-text = "62779"
->>>>>>> 5dc97c725df5fecc4234872abd6495a4e058ae8e
 placeholder_text = "PORT"
 
 [node name="BoxContainer2" type="HBoxContainer" parent="MarginContainer/Messaging"]
