@@ -160,8 +160,6 @@ func _input(event_ :InputEvent) -> void:
 				if new_tile_pos != selected_instance_tile_pos:
 					terminal.print_message(message_)
 
-
-
 			# check player has actions available
 			if not _Turn_Action_System.can_take_action(1):
 				reset_unit.call("Not enough points to take action")
@@ -238,7 +236,10 @@ func _input(event_ :InputEvent) -> void:
 					TEAM_STRINGS[int(team)].capitalize(), selected_instance.type,
 					GridToIndex.to_index(selected_instance_tile_pos), GridToIndex.to_index(new_tile_pos)
 				])
-				_Turn_Action_System.take_action(1)
+				if selected_instance.type != 'airplane':
+					_Turn_Action_System.take_action(1)
+				else:
+					_Turn_Action_System.take_action(2)
 				selected_instance.isit_visible = false
 			
 			# This makes a click count as an action
