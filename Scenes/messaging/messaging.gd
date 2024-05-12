@@ -27,7 +27,7 @@ func _ready () -> void:
 func _process(delta):
 	if connection_established == false and Network.peer and Network.peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
 		connection_established = true
-		_Received.text += "\n>>>" + "An enemy found!"
+		_Received.text += "\n>>>" + "Connection established!"
 
 		
 func _on_send_pressed():
