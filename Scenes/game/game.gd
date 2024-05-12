@@ -55,6 +55,8 @@ var tilemap
 var moving = false
 var piece_instance
 
+var old_world_pos: Vector2
+
 @onready var world_node = $GUI/HBoxContainer/World
 @onready var terminal = $GUI/HBoxContainer/VBoxContainer/Terminal
 @onready var moving_range = moving_range_scene.instantiate()
@@ -89,8 +91,11 @@ func _process (delta) -> void:
 
 		GameState.PLAYING:
 			if selected_instance == null: return
-			moving = true
-			selected_instance.global_position = mouse_pos
+			# moving = true
+			if moving == true:
+				selected_instance.global_position = mouse_pos
+			else:
+				selected_instance.global_position = old_world_pos
 #...
 
 	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
@@ -123,6 +128,8 @@ func _input(event_ :InputEvent) -> void:
 		GameState.PLAYING:
 			if not _Turn_Action_System.check_is_turn(int(team)): return
 			if not instances.has(tile_pos): return
+			
+			moving = true
 
 			var piece_type = instances[tile_pos].type.get_slice('_', 0)
 			moving_range.size = unit_data[piece_type].move_range
@@ -153,7 +160,7 @@ func _input(event_ :InputEvent) -> void:
 			_Turn_Action_System.action_taken = false
 
 			var new_tile_pos :Vector2i = tilemap.local_to_map(tilemap.to_local(selected_instance.global_position))
-			var old_world_pos :Vector2 = _get_global_pos(selected_instance_tile_pos)
+			old_world_pos = _get_global_pos(selected_instance_tile_pos)
 			
 			var reset_unit :Callable = func (message_ :String):
 				selected_instance.global_position = old_world_pos             
@@ -228,7 +235,6 @@ func _input(event_ :InputEvent) -> void:
 			
 			else: # movement is successful
 				# swap dictionary keys for instance reference
-				instances.erase(selected_instance_tile_pos)
 				instances[new_tile_pos] = selected_instance
 
 				selected_instance.global_position = _get_global_pos(new_tile_pos)
@@ -238,9 +244,15 @@ func _input(event_ :InputEvent) -> void:
 				])
 				if selected_instance.type != 'airplane':
 					_Turn_Action_System.take_action(1)
-				else:
-					_Turn_Action_System.take_action(2)
+				elif selected_instance.type == 'airplane' and _Turn_Action_System.MAX_TURN_ACTIONS - _Turn_Action_System._curr_turn_actions > 1:
+					_Turn_Action_System.take_action(2) # Moving (not shooting) with an airplane takes two actions
+				elif selected_instance.type == 'airplane' and _Turn_Action_System.MAX_TURN_ACTIONS - _Turn_Action_System._curr_turn_actions < 2:
+					reset_unit.call("Not enough actions to move")
+					moving = false
+					moving_range.size = Vector2(0, 0)
+					return
 				selected_instance.isit_visible = false
+				instances.erase(selected_instance_tile_pos)
 			
 			# This makes a click count as an action
 			if _Turn_Action_System.action_taken == false:
