@@ -150,6 +150,8 @@ func _input(event_ :InputEvent) -> void:
 		GameState.PLAYING:
 			if not selected_instance: return
 
+			_Turn_Action_System.action_taken = false
+
 			var new_tile_pos :Vector2i = tilemap.local_to_map(tilemap.to_local(selected_instance.global_position))
 			var old_world_pos :Vector2 = _get_global_pos(selected_instance_tile_pos)
 			
@@ -158,9 +160,11 @@ func _input(event_ :InputEvent) -> void:
 				if new_tile_pos != selected_instance_tile_pos:
 					terminal.print_message(message_)
 
+
+
 			# check player has actions available
 			if not _Turn_Action_System.can_take_action(1):
-				reset_unit.call("not enough points to take action")
+				reset_unit.call("Not enough points to take action")
 
 			# check if player is attacking enemy
 			elif new_tile_pos in enemies.keys():
@@ -169,8 +173,8 @@ func _input(event_ :InputEvent) -> void:
 				else:
 					var distance = Vector2(selected_instance_tile_pos).distance_to(Vector2(new_tile_pos))
 					var hit_chance = 1 - (unit_data[selected_instance.type].hit_chance/32.0) *distance
-					reset_unit.call("%s is attacking enemy %s, with hit chance %.2f" %[
-						selected_instance.type, enemies[new_tile_pos].type, hit_chance
+					reset_unit.call("%s is attacking enemy %s with hit chance %.2f" %[
+						selected_instance.type.capitalize(), enemies[new_tile_pos].type, hit_chance
 					])
 
 					_Turn_Action_System.take_action(1)
@@ -178,8 +182,14 @@ func _input(event_ :InputEvent) -> void:
 
 					var attack_roll :float = randf_range(0.0, 1.0)
 					var effect_area = unit_data[selected_instance.type].effect_area
+					
+					if selected_instance.type == 'missile':
+						selected_instance.queue_free()
+						instances.erase(selected_instance_tile_pos)
+					
+					
 					if attack_roll <= hit_chance:
-						terminal.print_message("attack HITS")
+						terminal.print_message("Attack HITS")
 						var damage = unit_data[selected_instance.type].damage
 						var health = enemies[new_tile_pos].current_health
 						if damage >= health:
@@ -201,7 +211,7 @@ func _input(event_ :InputEvent) -> void:
 								for i in range(-1, 2): for j in range(-1, 2):
 									instances[Vector2i(new_tile_pos.x + i, new_tile_pos.y + j)].current_health -= damage
 							rpc("damage_enemy", new_tile_pos, damage)
-					else: terminal.print_message("attack MISSES")
+					else: terminal.print_message("Attack MISSES")
 
 			# check movement is on board
 			elif !BOUNDARY.has_point(new_tile_pos):
@@ -230,6 +240,10 @@ func _input(event_ :InputEvent) -> void:
 				])
 				_Turn_Action_System.take_action(1)
 				selected_instance.isit_visible = false
+			
+			# This makes a click count as an action
+			if _Turn_Action_System.action_taken == false:
+				_Turn_Action_System.take_action(1)
 
 			selected_instance = null	
 			moving = false
@@ -343,7 +357,7 @@ func receive_data(recieve_data_ :Dictionary):
 @rpc("any_peer", "call_remote")
 func signal_end_placement () -> void:
 	num_players_ready += 1
-	terminal.print_message("%s's army is in position" %TEAM_STRINGS[(int(team)+1)%2])
+	terminal.print_message("%s's army is in position" %TEAM_STRINGS[(int(team)+1)%2].capitalize())
 #...
 
 	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##

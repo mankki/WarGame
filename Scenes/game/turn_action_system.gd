@@ -36,9 +36,11 @@ func take_action (cost_ :int) -> void:
 
 	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
-
+var action_taken: bool
 @rpc("any_peer", "call_local")
 func _take_action (cost_ :int) -> bool:
+
+	action_taken = true
 
 	_curr_turn_actions += cost_
 	if _curr_turn_actions == MAX_TURN_ACTIONS: _pass_turn()
