@@ -175,19 +175,6 @@ func _input(event_ :InputEvent) -> void:
 
 					_Turn_Action_System.take_action(1)
 					selected_instance.isit_visible = true
-			# check if player is attacking enemy
-			elif new_tile_pos in enemies.keys():
-				if not unit_data[selected_instance.type].can_attack:
-					reset_unit.call("Unit cannot attack")
-				else:
-					var distance = Vector2(selected_instance_tile_pos).distance_to(Vector2(new_tile_pos))
-					var hit_chance = 1 - (unit_data[selected_instance.type].hit_chance/32.0) *distance
-					reset_unit.call("%s is attacking enemy %s, with hit chance %.2f" %[
-						selected_instance.type, enemies[new_tile_pos].type, hit_chance
-					])
-
-					_Turn_Action_System.take_action(1)
-					selected_instance.isit_visible = true
 
 					var attack_roll :float = randf_range(0.0, 1.0)
 					var effect_area = unit_data[selected_instance.type].effect_area
@@ -208,7 +195,11 @@ func _input(event_ :InputEvent) -> void:
 											enemies.erase(Vector2i(new_tile_pos.x + i, new_tile_pos.y + j))
 											rpc("remove_enemy", Vector2i(new_tile_pos.x + i, new_tile_pos.y + j))		
 						else:
-							enemies[new_tile_pos].current_health -= damage
+							if effect_area == 1:
+								enemies[new_tile_pos].current_health -= damage
+							elif effect_area == 2:
+								for i in range(-1, 2): for j in range(-1, 2):
+									instances[Vector2i(new_tile_pos.x + i, new_tile_pos.y + j)].current_health -= damage
 							rpc("damage_enemy", new_tile_pos, damage)
 					else: terminal.print_message("attack MISSES")
 
@@ -395,13 +386,6 @@ func playing_team (team_ :TeamColor) -> void:
 		var unit_name = data.resource_path.get_file().get_slice('.', 0)
 		unit_data[unit_name] = data
 		data.string = unit_name
-		
-	# create unit_data
-	for data in unit_data_tres:
-		var unit_name = data.resource_path.get_file().get_slice('.', 0)
-		unit_data[unit_name] = data
-		data.string = unit_name
-
 
 	# Add preview units
 	for unit in unit_data.keys():
