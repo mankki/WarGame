@@ -162,6 +162,7 @@ func _input(event_ :InputEvent) -> void:
 			if not _Turn_Action_System.can_take_action(1):
 				reset_unit.call("not enough points to take action")
 
+<<<<<<< HEAD
 			# check if player is attacking enemy
 			elif new_tile_pos in enemies.keys():
 				if not unit_data[selected_instance.type].can_attack:
@@ -175,6 +176,21 @@ func _input(event_ :InputEvent) -> void:
 
 					_Turn_Action_System.take_action(1)
 					selected_instance.isit_visible = true
+=======
+			# check if player is attacking enemy
+			elif new_tile_pos in enemies.keys():
+				if not unit_data[selected_instance.type].can_attack:
+					reset_unit.call("Unit cannot attack")
+				else:
+					var distance = Vector2(selected_instance_tile_pos).distance_to(Vector2(new_tile_pos))
+					var hit_chance = 1 - (unit_data[selected_instance.type].hit_chance/32.0) *distance
+					reset_unit.call("%s is attacking enemy %s, with hit chance %.2f" %[
+						selected_instance.type, enemies[new_tile_pos].type, hit_chance
+					])
+
+					_Turn_Action_System.take_action(1)
+					selected_instance.isit_visible = true
+>>>>>>> 5dc97c725df5fecc4234872abd6495a4e058ae8e
 
 					var attack_roll :float = randf_range(0.0, 1.0)
 					var effect_area = unit_data[selected_instance.type].effect_area
@@ -381,11 +397,19 @@ func reveal_enemy (pos_ :Vector2i) -> void:
 func playing_team (team_ :TeamColor) -> void:
 	team = team_
 
+<<<<<<< HEAD
 	# create unit_data
 	for data in unit_data_tres:
 		var unit_name = data.resource_path.get_file().get_slice('.', 0)
 		unit_data[unit_name] = data
 		data.string = unit_name
+=======
+	# create unit_data
+	for data in unit_data_tres:
+		var unit_name = data.resource_path.get_file().get_slice('.', 0)
+		unit_data[unit_name] = data
+		data.string = unit_name
+>>>>>>> 5dc97c725df5fecc4234872abd6495a4e058ae8e
 
 	# Add preview units
 	for unit in unit_data.keys():
