@@ -8,7 +8,7 @@ enum GameState { TEAM = 0, PLACEMENT, PLAYING, OVER }
 
 # Must be indexed using TeamColor
 const TEAM_STRINGS :Array[String] = ['red', 'blue']
-const TEAM_COLORS :Array[Color] = [Color(0.7, 0.2, 0.3, 1), Color(0.2, 0.3, 0.9, 1)]
+const TEAM_COLORS :Array[Color] = [Color(0.596, 0.718, 0.518), Color(0.596, 0.718, 0.518)]
 # const TEAM_BOUNDS:Array = [[0, 16], [-17, -1]]
 const TEAM_BOUNDS:Array = [[0, 16], [0, 16]]
 const BOUNDARY := Rect2i(-10, -16, 20, 32)
@@ -177,16 +177,29 @@ func _input(event_ :InputEvent) -> void:
 					selected_instance.isit_visible = true
 
 					var attack_roll :float = randf_range(0.0, 1.0)
+					var effect_area = unit_data[selected_instance.type].effect_area
 					if attack_roll <= hit_chance:
 						terminal.print_message("attack HITS")
 						var damage = unit_data[selected_instance.type].damage
 						var health = enemies[new_tile_pos].current_health
 						if damage >= health:
-							enemies[new_tile_pos].queue_free()
-							enemies.erase(new_tile_pos)
-							rpc("remove_enemy", new_tile_pos)
+							if effect_area == 1:
+								enemies[new_tile_pos].queue_free()
+								enemies.erase(new_tile_pos)
+								rpc("remove_enemy", new_tile_pos)
+							elif effect_area == 2:
+								for i in range(-1, 2): for j in range(-1, 2):
+									for enemy in enemies:
+										if enemy == Vector2i(new_tile_pos.x + i, new_tile_pos.y + j):
+											enemies[Vector2i(new_tile_pos.x + i, new_tile_pos.y + j)].queue_free()
+											enemies.erase(Vector2i(new_tile_pos.x + i, new_tile_pos.y + j))
+											rpc("remove_enemy", Vector2i(new_tile_pos.x + i, new_tile_pos.y + j))		
 						else:
-							enemies[new_tile_pos].current_health -= damage
+							if effect_area == 1:
+								enemies[new_tile_pos].current_health -= damage
+							elif effect_area == 2:
+								for i in range(-1, 2): for j in range(-1, 2):
+									instances[Vector2i(new_tile_pos.x + i, new_tile_pos.y + j)].current_health -= damage
 							rpc("damage_enemy", new_tile_pos, damage)
 					else: terminal.print_message("attack MISSES")
 
@@ -339,6 +352,9 @@ func signal_end_placement () -> void:
 func damage_enemy (pos_ :Vector2i, damage_ :int) -> void:
 	var pos = GridToIndex.translate_180(pos_)
 	instances[pos].current_health -= damage_
+		
+			
+				
 #...
 
 	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##

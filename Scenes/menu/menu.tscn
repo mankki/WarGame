@@ -42,7 +42,7 @@ layout_mode = 0
 offset_right = 1151.0
 offset_bottom = 682.0
 mouse_filter = 2
-color = Color(0.54902, 0.376471, 1, 1)
+color = Color(0.596078, 0.717647, 0.517647, 1)
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/PlayRed" to="." method="_on_play_red_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Options" to="." method="_on_options_pressed"]

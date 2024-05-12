@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://dpxojkhsba7ir"]
 
 [ext_resource type="Script" path="res://Scenes/messaging/messaging.gd" id="1_4tifn"]
-[ext_resource type="FontFile" uid="uid://dgomg720kkooq" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="1_jwrll"]
+[ext_resource type="FontFile" uid="uid://bi2yx0q5l38rq" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="1_jwrll"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_43y8f"]
 bg_color = Color(0.133333, 0.219608, 0.0784314, 1)
@@ -115,13 +115,13 @@ text = "PLAY RED (HOST)"
 [node name="Ip" type="LineEdit" parent="MarginContainer/Messaging/BoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "193.161.193.99"
+text = "localhost"
 placeholder_text = "IP ADDRESS"
 
 [node name="Port" type="LineEdit" parent="MarginContainer/Messaging/BoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "62779"
+text = "8080"
 placeholder_text = "PORT"
 
 [node name="BoxContainer2" type="HBoxContainer" parent="MarginContainer/Messaging"]
