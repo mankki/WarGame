@@ -5,12 +5,20 @@
 
 [resource]
 script = ExtResource("1_fy1f4")
-move_range = Vector2(0, 0)
-max_number = 1
 scene = ExtResource("1_nfwjv")
-enemy_scan = Vector2i(0, 0)
+max_number = 1
 health = 3
-hit_chance = 0.0
-damage = 3
-effect_area = 2
-can_attack = true
+cannot_attack = true
+move_range = Vector2i(0, 0)
+scan_range = Vector2i(0, 0)
+move_cost = 0
+primary_attack_damage = 0
+primary_attack_range = 0
+primary_attack_hit_chance = 0.0
+primary_attack_ammunition = 0
+primary_attack_cost = 0
+secondary_attack_damage = 0
+secondary_attack_range = 0
+secondary_attack_hit_chance = 0.0
+secondary_attack_ammunition = 0
+secondary_attack_cost = 0

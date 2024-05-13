@@ -5,12 +5,20 @@
 
 [resource]
 script = ExtResource("1_ecj3q")
-move_range = Vector2(100, 100)
-max_number = 1
 scene = ExtResource("1_dkutg")
-enemy_scan = Vector2i(2, 2)
+max_number = 1
 health = 1
-hit_chance = 1.0
-damage = 1
-effect_area = 1
-can_attack = true
+cannot_attack = false
+move_range = Vector2i(2, 2)
+scan_range = Vector2i(1, 1)
+move_cost = 1
+primary_attack_damage = 1
+primary_attack_range = 0
+primary_attack_hit_chance = 0.0
+primary_attack_ammunition = 0
+primary_attack_cost = 1
+secondary_attack_damage = 0
+secondary_attack_range = 0
+secondary_attack_hit_chance = 0.0
+secondary_attack_ammunition = 0
+secondary_attack_cost = 0

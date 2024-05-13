@@ -240,6 +240,7 @@ func _input(event_ :InputEvent) -> void:
 					TEAM_STRINGS[int(team)].capitalize(), selected_instance.type,
 					GridToIndex.to_index(selected_instance_tile_pos), GridToIndex.to_index(new_tile_pos)
 				])
+
 				if selected_instance.type != 'airplane':
 					_Turn_Action_System.take_action(1)
 				elif selected_instance.type == 'airplane' and _Turn_Action_System.MAX_TURN_ACTIONS - _Turn_Action_System._curr_turn_actions > 1:
