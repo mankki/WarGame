@@ -73,19 +73,17 @@ func _ready():
 
     $GUI/HBoxContainer/VBoxContainer/Messaging.connect("red_signal", playing_team.bind(TeamColor.RED))
     $GUI/HBoxContainer/VBoxContainer/Messaging.connect("blue_signal", playing_team.bind(TeamColor.BLUE))
-#...
 
 
 func _process (delta) -> void:
-
     mouse_pos = get_global_mouse_position()
     tile_pos = tilemap.local_to_map(tilemap.to_local(mouse_pos))
 
     match game_state:
         GameState.PLACEMENT:
             if previews.is_empty(): return
-            preview_piece()
-            preview(preview_type)
+            _preview_piece()
+            _preview(preview_type)
 
         GameState.PLAYING:
             if selected_instance == null: return
@@ -94,11 +92,9 @@ func _process (delta) -> void:
                 selected_instance.global_position = mouse_pos
             else:
                 selected_instance.global_position = old_world_pos
-#...
 
 
 func _input(event_ :InputEvent) -> void:
-    
     # left mouse button pressed
     if event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_LEFT and event_.pressed: match game_state:
         GameState.PLACEMENT:
@@ -109,7 +105,7 @@ func _input(event_ :InputEvent) -> void:
 
             var unit = units[unit_plant_id_counter]
             if unit_data[unit].number < unit_data[unit].max_number:
-                unit_data[unit].number = place_ally(tile_pos, unit_data[unit].scene, unit_data[unit].number)
+                unit_data[unit].number = _place_ally(tile_pos, unit_data[unit].scene, unit_data[unit].number)
             if unit_data[unit].number == unit_data[unit].max_number: unit_plant_id_counter += 1
 
             if unit_plant_id_counter == len(units):
@@ -117,7 +113,7 @@ func _input(event_ :InputEvent) -> void:
                 rpc("signal_end_placement")
                 num_players_ready += 1
                 (func(): moving = false).call_deferred()
-                hide_previews()
+                _hide_previews()
         
         GameState.PLAYING:
             if not _Turn_Action_System.check_is_turn(int(team)): return
@@ -155,24 +151,20 @@ func _input(event_ :InputEvent) -> void:
             var newTilePos :Vector2i = tilemap.local_to_map(tilemap.to_local(selected_instance.global_position))
             old_world_pos = _get_global_pos(selected_instance_tile_pos)
             
-            var reset_unit :Callable = func (message_ :String):
-                selected_instance.global_position = old_world_pos             
-                if newTilePos != selected_instance_tile_pos:
-                    terminal.print_message(message_)
 
             # check if player is attacking enemy
             if newTilePos in enemies.keys():
                 if unit_data[selected_instance.type].cannot_attack:
-                    reset_unit.call("Unit cannot attack")
+                    _reset_unit(newTilePos, "Unit cannot attack")
                 elif not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost):
-                    reset_unit.call("Not enough action points for primary attack")
+                    _reset_unit(newTilePos, "Not enough action points for primary attack")
                 else:
                     _Turn_Action_System.take_action(unit_data[selected_instance.type].primary_attack_cost)
                     selected_instance.isit_visible = true
 
                     var distance = Vector2(selected_instance_tile_pos).distance_to(Vector2(newTilePos))
                     var hit_chance = 1 - (unit_data[selected_instance.type].hit_chance/32.0) *distance
-                    reset_unit.call("%s is attacking enemy %s with hit chance %.2f" %[
+                    _reset_unit(newTilePos, "%s is attacking enemy %s with hit chance %.2f" %[
                         selected_instance.type.capitalize(), enemies[newTilePos].type, hit_chance
                     ])
 
@@ -186,9 +178,9 @@ func _input(event_ :InputEvent) -> void:
                     else: terminal.print_message("Attack MISSES")
 
             # movement is successful
-            elif _movement_bounds_checking(newTilePos, reset_unit):
+            elif _movement_bounds_checking(newTilePos):
                 if not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].move_cost):
-                    reset_unit.call("Not enough action points to move this unit")
+                    _reset_unit(newTilePos, "Not enough action points to move this unit")
                 else:
                     allies[newTilePos] = selected_instance
                     allies.erase(selected_instance_tile_pos)
@@ -210,9 +202,8 @@ func _input(event_ :InputEvent) -> void:
             selected_instance = null	
             moving = false
             moving_range.hide_range()
-            send_data(allies)
+            _send_data(allies)
 
-#...
 
 
 ## ooooooooo.             o8o                            .
@@ -245,6 +236,19 @@ func _handle_attack_hit (tile_pos_ :Vector2i) -> void:
             rpc("damage_enemy", new_loc, damage)
 
 
+func _send_data(instances_ :Dictionary):
+    var data_to_send :Dictionary = {}
+    for key in instances_.keys():
+        data_to_send[key] = {
+            health = instances_[key].current_health,
+            type = instances_[key].type,
+            visible = instances_[key].isit_visible
+        }
+
+    rpc("receive_data", data_to_send)
+#...
+
+
 
 #  888b.             8
 #  8wwwP .d8b. .d8b. 8
@@ -252,22 +256,23 @@ func _handle_attack_hit (tile_pos_ :Vector2i) -> void:
 #  888P' `Y8P' `Y8P' 8
 
 
-func _movement_bounds_checking (tile_pos_ :Vector2i, reset_unit_ :Callable) -> bool:
+func _movement_bounds_checking (tile_pos_ :Vector2i) -> bool:
     if !BOUNDARY.has_point(tile_pos_):
-        reset_unit_.call("Cannot move outside of game area")
+        _reset_unit(tile_pos_, "Cannot move outside of game area")
         return false
 
     # check unit movement is in range
     elif !Rect2(old_world_pos -(moving_range.size/2), moving_range.size).has_point(selected_instance.global_position):
-        reset_unit_.call("Cannot move outside of range")
+        _reset_unit(tile_pos_, "Cannot move outside of range")
         return false
 
     # check movement location is empty
     elif tile_pos_ in allies.keys():
-        reset_unit_.call("Cannot move into space of other units")
+        _reset_unit(tile_pos_, "Cannot move into space of other units")
         return false
 
     return true
+
 
 
 #  888b. 8
@@ -285,13 +290,12 @@ func _movement_bounds_checking (tile_pos_ :Vector2i, reset_unit_ :Callable) -> b
 ##
 ## < void
 
-func update_enemy_pieces(instances_ :Dictionary) -> void:
+func _update_enemy_pieces(instances_ :Dictionary) -> void:
     if instances_.is_empty(): return
     for enemy in enemies.values(): enemy.free()
     enemies.clear()
     for pos in instances_.keys():    
-        place_enemy(pos, unit_data[ instances_[pos].type ].scene, instances_[pos])
-#...
+        _place_enemy(pos, unit_data[ instances_[pos].type ].scene, instances_[pos])
 
 
 ## places an enemy piece on the board
@@ -303,7 +307,7 @@ func update_enemy_pieces(instances_ :Dictionary) -> void:
 ##
 ## < void
 
-func place_enemy(tile_pos_ :Vector2i, scene_ :PackedScene, unit_data_ :Dictionary) -> void:
+func _place_enemy(tile_pos_ :Vector2i, scene_ :PackedScene, unit_data_ :Dictionary) -> void:
     var translated_pos = GridToIndex.translate_180(tile_pos_)
     enemies[translated_pos] = scene_.instantiate()
 
@@ -314,7 +318,6 @@ func place_enemy(tile_pos_ :Vector2i, scene_ :PackedScene, unit_data_ :Dictionar
     enemies[translated_pos].get_node(TEAM_STRINGS[(int(team)+1) %2].capitalize()).visible = true
     enemies[translated_pos].global_position = tilemap.to_global(tilemap.map_to_local(translated_pos))
     add_child(enemies[translated_pos])
-#...
 
 
 ## places and ally piece on the board
@@ -327,7 +330,7 @@ func place_enemy(tile_pos_ :Vector2i, scene_ :PackedScene, unit_data_ :Dictionar
 ##
 ## < int = the updated number of this unit pieces placed so far
 
-func place_ally(tile_pos_ :Vector2i, scene_ :PackedScene, num_of_pieces_ :int) -> int:
+func _place_ally(tile_pos_ :Vector2i, scene_ :PackedScene, num_of_pieces_ :int) -> int:
     if tile_pos_ in allies.keys(): return num_of_pieces_
 
     var newAlly = scene_.instantiate()
@@ -343,51 +346,33 @@ func place_ally(tile_pos_ :Vector2i, scene_ :PackedScene, num_of_pieces_ :int) -
         TEAM_STRINGS[int(team)].capitalize(), preview_type_str.get_slice('_', 0), GridToIndex.to_index(tile_pos_)
     ])
 
-    send_data(allies)
+    _send_data(allies)
 
     return num_of_pieces_ + 1
-#...
 
 
-##. ... ... ... ... ... ... ... ... ... ... ... ... ### ... ... ... ... ... ... ... ... ... ... ... .##
-##. ... ... ... ... ... ... ... ... ... ... ... ...#### ... ... ... ... ... ... ... ... ... ... ... .##
-##. ... ... ... ... ... ... ... ... ... ... ... ... .## ... ... ... ... ... ... ... ... ... ... ... .##
-##. ... ... ... ... ... ... ... ... ... ... ... ... .## ... ... ... ... ... ... ... ... ... ... ... .##
-##. ... ... ... ... ... ... ... ... ... ... ... ... .## ... ... ... ... ... ... ... ... ... ... ... .##
-##. ... ... ... ... ... ... ... ... ... ... ... ...######.. ... ... ... ... ... ... ... ... ... ... .##
 
-
-func send_data(instances_ :Dictionary):
-    var data_to_send :Dictionary = {}
-    for key in instances_.keys():
-        data_to_send[key] = {
-            health = instances_[key].current_health,
-            type = instances_[key].type,
-            visible = instances_[key].isit_visible
-        }
-
-    rpc("receive_data", data_to_send)
-#...
+#  888b. 888b. .d88b
+#  8  .8 8  .8 8P
+#  8wwK' 8wwP' 8b
+#  8  Yb 8     `Y88P
 
 
 @rpc("any_peer", "call_remote")
 func receive_data(recieve_data_ :Dictionary):
-    update_enemy_pieces(recieve_data_)
-#...
+    _update_enemy_pieces(recieve_data_)
 
 
 @rpc("any_peer", "call_remote")
 func signal_end_placement () -> void:
     num_players_ready += 1
     terminal.print_message("%s's army is in position" %TEAM_STRINGS[(int(team)+1)%2].capitalize())
-#...
 
 
 @rpc("any_peer", "call_remote")
 func damage_enemy (pos_ :Vector2i, damage_ :int) -> void:
     var pos = GridToIndex.translate_180(pos_)
     allies[pos].current_health -= damage_
-#...
 
 
 @rpc("any_peer", "call_remote")
@@ -395,14 +380,19 @@ func remove_enemy (pos_ :Vector2i) -> void:
     var pos = GridToIndex.translate_180(pos_)
     allies[pos].queue_free()
     allies.erase(pos)
-#...
 
 
 @rpc("any_peer", "call_remote")
 func reveal_enemy (pos_ :Vector2i) -> void:
     var pos = GridToIndex.translate_180(pos_)
     allies[pos].isit_visible = true
-#...
+
+
+
+#  888b.                   w
+#  8  .8 8d8b .d88b Yb  dP w .d88b Yb  db  dP
+#  8wwP' 8P   8.dP'  YbdP  8 8.dP'  YbdPYbdP
+#  8     8    `Y88P   YP   8 `Y88P   YP  YP
 
 
 func playing_team (team_ :TeamColor) -> void:
@@ -414,7 +404,7 @@ func playing_team (team_ :TeamColor) -> void:
         unit_data[unit_name] = data
         data.string = unit_name
 
-    # Add preview units
+    # Add _preview units
     for unit in unit_data.keys():
         previews[unit] = unit_data[unit].scene.instantiate()
         previews[unit].global_position = Vector2(0, -400)
@@ -425,36 +415,41 @@ func playing_team (team_ :TeamColor) -> void:
     $Background.set_color(TEAM_COLORS[int(team)])
     terminal.print_message("May the %s nation be victorious! We will destroy the %s nation!" %[TEAM_STRINGS[int(team)], TEAM_STRINGS[(int(team)+1) %TeamColor.NUM_TEAMS]])
     game_state = GameState.PLACEMENT
-#...
 
 
-func preview(preview_):
-
+func _preview(preview_):
     if team == TeamColor.NONE: return
     if GRID_X_LEFT_BOUND < tile_pos.x and tile_pos.x < GRID_X_RIGHT_BOUND: 
         if TEAM_BOUNDS[int(team)][0] < tile_pos.y and tile_pos.y < TEAM_BOUNDS[int(team)][1]:
             preview_.global_position = _get_global_pos(tile_pos)
-#...
 
 
-func preview_piece():
+func _preview_piece():
     if unit_plant_id_counter == len(units): return
     if team == TeamColor.NONE: return
     var unit = units[unit_plant_id_counter]
     preview_type = previews[unit]
     preview_type_str = unit_data[unit].string
-#...
 
 
-func hide_previews():
-
+func _hide_previews():
     for unit in previews:
         previews[unit].queue_free()
     previews.clear()
-#...
 
+
+
+#  8   8       8
+#  8www8 .d88b 8 88b.
+#  8   8 8.dP' 8 8  8
+#  8   8 `Y88P 8 88P'
+#                8
 
 func _get_global_pos(pos_ :Vector2i) -> Vector2:
-
     return tilemap.to_global(tilemap.map_to_local(pos_))
-#...
+
+
+func _reset_unit (tile_pos_ :Vector2i, message_ :String):
+    selected_instance.global_position = old_world_pos             
+    if tile_pos_ != selected_instance_tile_pos:
+        terminal.print_message(message_)
