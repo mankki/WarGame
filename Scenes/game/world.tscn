@@ -6,8 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://f87jkdy2mqaa" path="res://WarGameAssets/tile_yellow.png" id="4_klt7c"]
 [ext_resource type="Texture2D" uid="uid://d0sfmhleajv1c" path="res://WarGameAssets/tile_light_gray.png" id="5_vu4kt"]
 [ext_resource type="Texture2D" uid="uid://du7a2j4bec0v2" path="res://WarGameAssets/tile_red.png" id="6_q4gyb"]
-[ext_resource type="Texture2D" uid="uid://17u56k6yr4wv" path="res://WarGameAssets/tile_green_2.png" id="7_xvrei"]
-[ext_resource type="Texture2D" uid="uid://cb1x0tei2547r" path="res://WarGameAssets/tile_green_3.png" id="8_u7lm3"]
+[ext_resource type="Texture2D" uid="uid://6raqu8nojo0y" path="res://WarGameAssets/tile_green_2.png" id="7_xvrei"]
+[ext_resource type="Texture2D" uid="uid://inra6rd4cgph" path="res://WarGameAssets/tile_green_3.png" id="8_u7lm3"]
 
 [sub_resource type="GDScript" id="GDScript_oacul"]
 script/source = "extends CenterContainer

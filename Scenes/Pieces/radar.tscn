@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://ke2qqvqq85fd"]
 
-[ext_resource type="Texture2D" uid="uid://dasuglag86rb0" path="res://assets/NewPieces/radar.png" id="1_5ubeu"]
+[ext_resource type="Texture2D" uid="uid://cgehv7pja020q" path="res://assets/NewPieces/radar.png" id="1_5ubeu"]
 [ext_resource type="Script" path="res://Scenes/Pieces/piece.gd" id="1_20g3i"]
 
 [node name="Radar" type="Node2D"]

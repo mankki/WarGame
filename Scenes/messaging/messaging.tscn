@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://dpxojkhsba7ir"]
 
 [ext_resource type="Script" path="res://Scenes/messaging/messaging.gd" id="1_4tifn"]
-[ext_resource type="FontFile" uid="uid://bi2yx0q5l38rq" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="1_jwrll"]
+[ext_resource type="FontFile" uid="uid://cx5ue52aefruf" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="1_jwrll"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_43y8f"]
 bg_color = Color(0.133333, 0.219608, 0.0784314, 1)
