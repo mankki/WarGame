@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1_73wps")
 move_range = Vector2(180, 180)
-max_number = 1
+max_number = 2
 scene = ExtResource("1_d8dq0")
 enemy_scan = Vector2i(4, 4)
 health = 1
