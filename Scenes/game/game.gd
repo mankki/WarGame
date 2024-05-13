@@ -1,4 +1,4 @@
-# Red's script
+
 
 extends Control
 
@@ -75,8 +75,6 @@ func _ready():
 	$GUI/HBoxContainer/VBoxContainer/Messaging.connect("blue_signal", playing_team.bind(TeamColor.BLUE))
 #...
 
-	## - --- --- --- --- ,,, ... ''' qp ''' ... ,,, --- --- --- --- - ##
-
 
 func _process (delta) -> void:
 
@@ -97,8 +95,6 @@ func _process (delta) -> void:
 			else:
 				selected_instance.global_position = old_world_pos
 #...
-
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 
 func _input(event_ :InputEvent) -> void:
@@ -198,6 +194,7 @@ func _input(event_ :InputEvent) -> void:
 						var damage = unit_data[selected_instance.type].damage
 						var health = enemies[new_tile_pos].current_health
 						if damage >= health:
+
 							if effect_area == 1:
 								enemies[new_tile_pos].queue_free()
 								enemies.erase(new_tile_pos)
@@ -215,6 +212,7 @@ func _input(event_ :InputEvent) -> void:
 							elif effect_area == 2:
 								for i in range(-1, 2): for j in range(-1, 2):
 									instances[Vector2i(new_tile_pos.x + i, new_tile_pos.y + j)].current_health -= damage
+
 							rpc("damage_enemy", new_tile_pos, damage)
 					else: terminal.print_message("Attack MISSES")
 
@@ -265,8 +263,6 @@ func _input(event_ :InputEvent) -> void:
 
 #...
 
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-
 
 ## updates enemy piece positions on the board
 ##
@@ -284,8 +280,6 @@ func update_enemy_pieces(instances_ :Dictionary) -> void:
 	for pos in instances_.keys():    
 		place_enemy(pos, unit_data[ instances_[pos].type ].scene, instances_[pos])
 #...
-
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 
 ## places an enemy piece on the board
@@ -309,8 +303,6 @@ func place_enemy(tile_pos_ :Vector2i, scene_ :PackedScene, unit_data_ :Dictionar
 	enemies[translated_pos].global_position = tilemap.to_global(tilemap.map_to_local(translated_pos))
 	add_child(enemies[translated_pos])
 #...
-
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 
 ## places and ally piece on the board
@@ -343,8 +335,6 @@ func place_ally(tile_pos_ :Vector2i, scene_ :PackedScene, num_of_pieces_ :int) -
 	return num_of_pieces_ + 1
 #...
 
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-
 
 func send_data(instances_ :Dictionary):
 	var data_to_send :Dictionary = {}
@@ -358,15 +348,12 @@ func send_data(instances_ :Dictionary):
 	rpc("receive_data", data_to_send)
 #...
 
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-		
 
 @rpc("any_peer", "call_remote")
 func receive_data(recieve_data_ :Dictionary):
 	update_enemy_pieces(recieve_data_)
 #...
 
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 @rpc("any_peer", "call_remote")
 func signal_end_placement () -> void:
@@ -374,18 +361,13 @@ func signal_end_placement () -> void:
 	terminal.print_message("%s's army is in position" %TEAM_STRINGS[(int(team)+1)%2].capitalize())
 #...
 
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 @rpc("any_peer", "call_remote")
 func damage_enemy (pos_ :Vector2i, damage_ :int) -> void:
 	var pos = GridToIndex.translate_180(pos_)
 	instances[pos].current_health -= damage_
-		
-			
-				
 #...
 
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 @rpc("any_peer", "call_remote")
 func remove_enemy (pos_ :Vector2i) -> void:
@@ -394,16 +376,12 @@ func remove_enemy (pos_ :Vector2i) -> void:
 	instances.erase(pos)
 #...
 
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-
 
 @rpc("any_peer", "call_remote")
 func reveal_enemy (pos_ :Vector2i) -> void:
 	var pos = GridToIndex.translate_180(pos_)
 	instances[pos].isit_visible = true
 #...
-
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 
 func playing_team (team_ :TeamColor) -> void:
@@ -428,8 +406,6 @@ func playing_team (team_ :TeamColor) -> void:
 	game_state = GameState.PLACEMENT
 #...
 
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-
 
 func preview(preview_):
 
@@ -438,8 +414,6 @@ func preview(preview_):
 		if TEAM_BOUNDS[int(team)][0] < tile_pos.y and tile_pos.y < TEAM_BOUNDS[int(team)][1]:
 			preview_.global_position = _get_global_pos(tile_pos)
 #...
-
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 
 func preview_piece():
@@ -450,9 +424,7 @@ func preview_piece():
 	preview_type_str = unit_data[unit].string
 #...
 
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
-		
 func hide_previews():
 
 	for unit in previews:
@@ -460,12 +432,8 @@ func hide_previews():
 	previews.clear()
 #...
 
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
-	
 
 func _get_global_pos(pos_ :Vector2i) -> Vector2:
 
 	return tilemap.to_global(tilemap.map_to_local(pos_))
 #...
-
-	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
