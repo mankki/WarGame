@@ -21,7 +21,7 @@ func _process(delta):
 
 
 func show_range (range_ :int) -> void:
-    var x :float = 20 + range_*20
+    var x :float = 20 + (range_*20 *2)
     size = Vector2(x, x)
     visible = true
 
