@@ -182,6 +182,11 @@ func _input(event_ :InputEvent) -> void:
                     if attack_roll <= hit_chance: _handle_attack_hit(newTilePos)
                     else: terminal.print_message("Attack MISSES")
 
+                    if len(enemies) == 0:
+                        terminal.print_message("%s won the war!" %[TEAM_STRINGS[int(team)].capitalize()])
+                        $WinnerPopup.show()
+                        $WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[int(team)].capitalize()]
+                        
             # movement is successful
             elif _movement_bounds_checking(newTilePos):
                 if not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].move_cost):
@@ -459,3 +464,7 @@ func _reset_unit (tile_pos_ :Vector2i, message_ :String):
     selected_instance.global_position = old_world_pos             
     if tile_pos_ != selected_instance_tile_pos:
         terminal.print_message(message_)
+
+
+func _on_replay_pressed():
+    get_tree().reload_current_scene()
