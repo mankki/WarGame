@@ -161,6 +161,7 @@ func _input(event_ :InputEvent) -> void:
 #            dPwwYb   8    8   8  8 8    88b  8 8P Y8 8  8
 #           dP    Yb  Y8P  Y8P `Y88 `Y8P 8 Yb 8 8   8 `Y88
 #                                                     wwdP
+#TODO: this also needs to be removed
             if newTilePos in enemies.keys():
                 if unit_data[selected_instance.type].cannot_attack:
                     _reset_unit(newTilePos, "Unit cannot attack")
