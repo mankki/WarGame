@@ -1,13 +1,13 @@
 [gd_scene load_steps=23 format=3 uid="uid://beg5dqywxg5on"]
 
-[ext_resource type="Texture2D" uid="uid://c6qukqgup4m0f" path="res://WarGameAssets/tile_white.png" id="2_loea8"]
-[ext_resource type="Texture2D" uid="uid://dudw2c0k1vmyq" path="res://WarGameAssets/tile_beige.png" id="2_newb0"]
-[ext_resource type="Texture2D" uid="uid://c7iarla2g0n37" path="res://WarGameAssets/tile_black.png" id="3_dnhs7"]
-[ext_resource type="Texture2D" uid="uid://cbqcyy64qau41" path="res://WarGameAssets/tile_yellow.png" id="4_klt7c"]
-[ext_resource type="Texture2D" uid="uid://c7o5cflnao3ca" path="res://WarGameAssets/tile_light_gray.png" id="5_vu4kt"]
-[ext_resource type="Texture2D" uid="uid://bssgjuekbi7au" path="res://WarGameAssets/tile_red.png" id="6_q4gyb"]
-[ext_resource type="Texture2D" uid="uid://byw1u8xlh21qa" path="res://WarGameAssets/tile_green_2.png" id="7_xvrei"]
-[ext_resource type="Texture2D" uid="uid://c0e2o1511a3ut" path="res://WarGameAssets/tile_green_3.png" id="8_u7lm3"]
+[ext_resource type="Texture2D" uid="uid://cpww5wrm2hrvb" path="res://WarGameAssets/tile_white.png" id="2_loea8"]
+[ext_resource type="Texture2D" uid="uid://cdahy1jj4r4bn" path="res://WarGameAssets/tile_beige.png" id="2_newb0"]
+[ext_resource type="Texture2D" uid="uid://dj2d8yub8wwqr" path="res://WarGameAssets/tile_black.png" id="3_dnhs7"]
+[ext_resource type="Texture2D" uid="uid://f87jkdy2mqaa" path="res://WarGameAssets/tile_yellow.png" id="4_klt7c"]
+[ext_resource type="Texture2D" uid="uid://d0sfmhleajv1c" path="res://WarGameAssets/tile_light_gray.png" id="5_vu4kt"]
+[ext_resource type="Texture2D" uid="uid://du7a2j4bec0v2" path="res://WarGameAssets/tile_red.png" id="6_q4gyb"]
+[ext_resource type="Texture2D" uid="uid://6raqu8nojo0y" path="res://WarGameAssets/tile_green_2.png" id="7_xvrei"]
+[ext_resource type="Texture2D" uid="uid://inra6rd4cgph" path="res://WarGameAssets/tile_green_3.png" id="8_u7lm3"]
 
 [sub_resource type="GDScript" id="GDScript_oacul"]
 script/source = "extends CenterContainer
