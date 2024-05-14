@@ -154,9 +154,12 @@ func _input(event_ :InputEvent) -> void:
 
             var newTilePos :Vector2i = tilemap.local_to_map(tilemap.to_local(selected_instance.global_position))
             old_world_pos = _get_global_pos(selected_instance_tile_pos)
-            
 
-            # check if player is attacking enemy
+#              db     w    w             8    w
+#             dPYb   w8ww w8ww .d88 .d8b 8.dP w 8d8b. .d88
+#            dPwwYb   8    8   8  8 8    88b  8 8P Y8 8  8
+#           dP    Yb  Y8P  Y8P `Y88 `Y8P 8 Yb 8 8   8 `Y88
+#                                                     wwdP
             if newTilePos in enemies.keys():
                 if unit_data[selected_instance.type].cannot_attack:
                     _reset_unit(newTilePos, "Unit cannot attack")
@@ -186,8 +189,11 @@ func _input(event_ :InputEvent) -> void:
                         terminal.print_message("%s won the war!" %[TEAM_STRINGS[int(team)].capitalize()])
                         $WinnerPopup.show()
                         $WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[int(team)].capitalize()]
-                        
-            # movement is successful
+
+#           8b   d8                                           w
+#           8YbmdP8 .d8b. Yb  dP .d88b 8d8b.d8b. .d88b 8d8b. w8ww
+#           8  "  8 8' .8  YbdP  8.dP' 8P Y8P Y8 8.dP' 8P Y8  8
+#           8     8 `Y8P'   YP   `Y88P 8   8   8 `Y88P 8   8  Y8P
             elif _movement_bounds_checking(newTilePos):
                 if not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].move_cost):
                     _reset_unit(newTilePos, "Not enough action points to move this unit")
