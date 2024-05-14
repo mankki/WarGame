@@ -155,6 +155,7 @@ func _input(event_ :InputEvent) -> void:
             var newTilePos :Vector2i = tilemap.local_to_map(tilemap.to_local(selected_instance.global_position))
             old_world_pos = _get_global_pos(selected_instance_tile_pos)
 
+#TODO: remove this comment
 #              db     w    w             8    w
 #             dPYb   w8ww w8ww .d88 .d8b 8.dP w 8d8b. .d88
 #            dPwwYb   8    8   8  8 8    88b  8 8P Y8 8  8
