@@ -29,10 +29,20 @@ var unit_data :Dictionary = {}
 
 var team = TeamColor.NONE
 var game_state :GameState = GameState.TEAM
+
+#TODO: this logic doesn't work if one player has pressed their color before the other player pressed 'play game'
 var num_players_ready :int = 0:
+<<<<<<< HEAD
 	set (value_):
 		num_players_ready += 1
 		if num_players_ready == 2: game_state = GameState.PLAYING
+=======
+    set (value_):
+        num_players_ready += 1
+        if num_players_ready == 2: 
+            game_state = GameState.PLAYING
+            _Turn_Action_System.indicate_turn()
+>>>>>>> 44fcf5fe4eaa140b1d9c8c688eebaaf7852d0786
 
 var instances :Dictionary = {}
 var enemies :Dictionary = {}
@@ -264,6 +274,7 @@ func _input(event_ :InputEvent) -> void:
 			if _Turn_Action_System.action_taken == false:
 				_Turn_Action_System.take_action(1)
 
+<<<<<<< HEAD
 			selected_instance = null	
 			moving = false
 			moving_range.size = Vector2(0, 0)
@@ -271,6 +282,149 @@ func _input(event_ :InputEvent) -> void:
 #...
 
 	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+=======
+                    var distance = Vector2(selected_instance_tile_pos).distance_to(Vector2(newTilePos))
+                    var hit_chance = 1 - (unit_data[selected_instance.type].hit_chance/32.0) *distance
+                    _reset_unit(newTilePos, "%s is attacking enemy %s with hit chance %.2f" %[
+                        selected_instance.type.capitalize(), enemies[newTilePos].type, hit_chance
+                    ])
+
+                    var attack_roll :float = randf_range(0.0, 1.0)
+                    
+                    #TODO: convert this into boolean check for 'unit_data.death_on_attack' or something
+                    if selected_instance.type == 'missile':
+                        selected_instance.queue_free()
+                        allies.erase(selected_instance_tile_pos)
+
+                    if attack_roll <= hit_chance: _handle_attack_hit(newTilePos)
+                    else: terminal.print_message("Attack MISSES")
+
+            # movement is successful
+            elif _movement_bounds_checking(newTilePos):
+                if not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].move_cost):
+                    _reset_unit(newTilePos, "Not enough action points to move this unit")
+                else:
+                    allies[newTilePos] = selected_instance
+                    allies.erase(selected_instance_tile_pos)
+
+                    selected_instance.global_position = _get_global_pos(newTilePos)
+                    terminal.print_message("%s %s charging from %s to %s!" %[
+                        TEAM_STRINGS[int(team)].capitalize(), selected_instance.type,
+                        GridToIndex.to_index(selected_instance_tile_pos), GridToIndex.to_index(newTilePos)
+                    ])
+
+                    _Turn_Action_System.take_action(unit_data[selected_instance.type].move_cost)
+                    moving = false
+                    selected_instance.isit_visible = false
+            
+            # This makes a click count as an action
+            if _Turn_Action_System.action_taken == false:
+                _Turn_Action_System.take_action(1)
+
+            selected_instance = null	
+            moving = false
+            moving_range.hide_range()
+            _send_data(allies)
+
+
+
+## ooooooooo.             o8o                            .
+## `888   `Y88.           `"'                          .o8
+##  888   .d88' oooo d8b oooo  oooo    ooo  .oooo.   .o888oo  .ooooo.
+##  888ooo88P'  `888""8P `888   `88.  .8'  `P  )88b    888   d88' `88b
+##  888          888      888    `88..8'    .oP"888    888   888ooo888
+##  888          888      888     `888'    d8(  888    888 . 888    .o
+## o888o        d888b    o888o     `8'     `Y888""8o   "888" `Y8bod8P'
+
+
+func _handle_attack_hit (tile_pos_ :Vector2i) -> void:
+    terminal.print_message("Attack Hits")
+
+    var damage = unit_data[selected_instance.type].primary_attack_damage
+    var health = enemies[tile_pos_].current_health
+    var atk_range = unit_data[selected_instance.type].primary_attack_range
+
+    for i in range(-atk_range, atk_range +1): for j in range(-atk_range, atk_range +1):   
+        var new_loc = tile_pos_ + Vector2i(i, j)
+        if not enemies.has(new_loc): continue
+
+        if damage >= health: # unit is killed
+            enemies[new_loc].queue_free()
+            enemies.erase(new_loc)
+            rpc('remove_enemy', new_loc)
+
+        else: # unit is only hurt
+            enemies[new_loc].current_health -= damage
+            rpc("damage_enemy", new_loc, damage)
+
+
+func _send_data(instances_ :Dictionary):
+    var data_to_send :Dictionary = {}
+    for key in instances_.keys():
+        data_to_send[key] = {
+            health = instances_[key].current_health,
+            type = instances_[key].type,
+            visible = instances_[key].isit_visible
+        }
+
+    rpc("receive_data", data_to_send)
+#...
+
+
+func playing_team (team_ :TeamColor) -> void:
+    team = team_
+
+    # create unit_data
+    for data in unit_data_tres:
+        var unit_name = data.resource_path.get_file().get_slice('.', 0)
+        unit_data[unit_name] = data
+        data.string = unit_name
+
+    # Add _preview units
+    for unit in unit_data.keys():
+        previews[unit] = unit_data[unit].scene.instantiate()
+        previews[unit].global_position = Vector2(0, -400)
+        previews[unit].get_node(TEAM_STRINGS[int(team)].capitalize()).visible = true
+        previews[unit].get_node(TEAM_STRINGS[int(team)].capitalize()).modulate = Color(1, 1, 1, 0.5)
+        add_child(previews[unit])
+
+    $Background.set_color(TEAM_COLORS[int(team)])
+    terminal.print_message("May the %s nation be victorious! We will destroy the %s nation!" %[TEAM_STRINGS[int(team)], TEAM_STRINGS[(int(team)+1) %TeamColor.NUM_TEAMS]])
+    game_state = GameState.PLACEMENT
+
+
+
+#  888b.             8
+#  8wwwP .d8b. .d8b. 8
+#  8   b 8' .8 8' .8 8
+#  888P' `Y8P' `Y8P' 8
+
+
+func _movement_bounds_checking (tile_pos_ :Vector2i) -> bool:
+    # check unit movement is on grid
+    if !BOUNDARY.has_point(tile_pos_):
+        _reset_unit(tile_pos_, "Cannot move outside of game area")
+        return false
+
+    # check unit movement is in range
+    elif !Rect2(old_world_pos -(moving_range.size/2), moving_range.size).has_point(selected_instance.global_position):
+        _reset_unit(tile_pos_, "Cannot move outside of range")
+        return false
+
+    # check movement location is empty
+    elif tile_pos_ in allies.keys():
+        _reset_unit(tile_pos_, "Cannot move into space of other units")
+        return false
+
+    return true
+
+
+
+#  888b. 8
+#  8  .8 8 .d88 .d8b .d88b
+#  8wwP' 8 8  8 8    8.dP'
+#  8     8 `Y88 `Y8P `Y88P
+>>>>>>> 44fcf5fe4eaa140b1d9c8c688eebaaf7852d0786
 
 
 ## updates enemy piece positions on the board
@@ -411,6 +565,7 @@ func reveal_enemy (pos_ :Vector2i) -> void:
 	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
 
 
+<<<<<<< HEAD
 func playing_team (team_ :TeamColor) -> void:
 	team = team_
 
@@ -445,6 +600,13 @@ func preview(preview_):
 #...
 
 	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+=======
+func _preview(preview_):
+    if team == TeamColor.NONE: return
+    if GRID_X_LEFT_BOUND < tile_pos.x and tile_pos.x < GRID_X_RIGHT_BOUND: 
+        if TEAM_BOUNDS[int(team)][0] < tile_pos.y and tile_pos.y < TEAM_BOUNDS[int(team)][1]:
+            preview_.global_position = _get_global_pos(tile_pos)
+>>>>>>> 44fcf5fe4eaa140b1d9c8c688eebaaf7852d0786
 
 
 func preview_piece():

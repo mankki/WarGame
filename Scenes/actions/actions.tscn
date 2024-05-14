@@ -35,8 +35,10 @@ height = 20
 fill_from = Vector2(0.542735, 1)
 fill_to = Vector2(0.491453, 0)
 
-[node name="Actions" type="HBoxContainer" node_paths=PackedStringArray("_Green", "_Yellow", "_Red")]
+[node name="Actions" type="HBoxContainer" node_paths=PackedStringArray("_Ally", "_Enemy", "_Green", "_Yellow", "_Red")]
 script = ExtResource("1_aya8v")
+_Ally = NodePath("Ally/Label")
+_Enemy = NodePath("Enemy/Label")
 _Green = NodePath("Green")
 _Yellow = NodePath("Yellow")
 _Red = NodePath("Red")
@@ -45,6 +47,24 @@ _Red = NodePath("Red")
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="Ally" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(46, 20)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Ally"]
+layout_mode = 2
+text = "ALLY"
+horizontal_alignment = 1
+
+[node name="Enemy" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(63, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Enemy"]
+layout_mode = 2
+text = "ENEMY"
+horizontal_alignment = 1
 
 [node name="Green" type="TextureRect" parent="."]
 layout_mode = 2
