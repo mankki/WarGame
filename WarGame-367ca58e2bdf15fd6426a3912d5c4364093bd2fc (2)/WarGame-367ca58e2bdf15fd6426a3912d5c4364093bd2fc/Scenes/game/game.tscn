@@ -1,0 +1,157 @@
+[gd_scene load_steps=18 format=3 uid="uid://3avurqi4fyf3"]
+
+[ext_resource type="Script" path="res://Scenes/game/game.gd" id="1_yf783"]
+[ext_resource type="Resource" uid="uid://c4u71hj7la25l" path="res://custom/unit_data/soldier.tres" id="2_gssht"]
+[ext_resource type="Resource" uid="uid://dak761a1e1k8k" path="res://custom/unit_data/tank.tres" id="3_gkamh"]
+[ext_resource type="Resource" uid="uid://dpjwu6n0doey4" path="res://custom/unit_data/radar.tres" id="4_xa6lx"]
+[ext_resource type="Resource" uid="uid://1nslhxw3wotc" path="res://custom/unit_data/missile.tres" id="5_ji0a1"]
+[ext_resource type="Resource" uid="uid://cmvmi6gtstcaw" path="res://custom/unit_data/airplane.tres" id="6_cqb5m"]
+[ext_resource type="Script" path="res://Scenes/game/turn_action_system.gd" id="7_plssi"]
+[ext_resource type="Texture2D" uid="uid://dhkqsnlbvpv1i" path="res://assets/NewPieces/soldier.png" id="8_1kriu"]
+[ext_resource type="PackedScene" uid="uid://beg5dqywxg5on" path="res://Scenes/game/world.tscn" id="8_ovuaw"]
+[ext_resource type="PackedScene" uid="uid://fubkmfvydhjp" path="res://Scenes/terminal/terminal.tscn" id="9_am1rv"]
+[ext_resource type="Texture2D" uid="uid://cyn52wk2iuc2h" path="res://assets/NewPieces/tank.png" id="9_hog0p"]
+[ext_resource type="Texture2D" uid="uid://dasuglag86rb0" path="res://assets/NewPieces/radar.png" id="10_3jup0"]
+[ext_resource type="PackedScene" uid="uid://dpxojkhsba7ir" path="res://Scenes/messaging/messaging.tscn" id="10_u6axs"]
+[ext_resource type="Texture2D" uid="uid://bcf7gmsm71k8b" path="res://assets/NewPieces/missile.png" id="11_kdily"]
+[ext_resource type="PackedScene" uid="uid://j6fvjbuxudii" path="res://Scenes/gui_buttons/gui_buttons.tscn" id="11_m2n8l"]
+[ext_resource type="Texture2D" uid="uid://10wehnv886uf" path="res://assets/NewPieces/airplane.png" id="12_d1ye2"]
+[ext_resource type="PackedScene" uid="uid://t10ktqvqp8fn" path="res://Scenes/actions/actions.tscn" id="16_rqq7e"]
+
+[node name="Game" type="Control" node_paths=PackedStringArray("_Turn_Action_System")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_yf783")
+unit_data_tres = Array[Resource("res://custom/unit_data/UnitData.gd")]([ExtResource("2_gssht"), ExtResource("3_gkamh"), ExtResource("4_xa6lx"), ExtResource("5_ji0a1"), ExtResource("6_cqb5m")])
+_Turn_Action_System = NodePath("TurnActionSystem")
+
+[node name="TurnActionSystem" type="Node" parent="." node_paths=PackedStringArray("_Actions")]
+script = ExtResource("7_plssi")
+_Actions = NodePath("../GUI/HBoxContainer/VBoxContainer/Actions")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.596078, 0.717647, 0.517647, 1)
+
+[node name="GUI" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GUI"]
+layout_mode = 2
+
+[node name="Enemy Units" type="VBoxContainer" parent="GUI/HBoxContainer"]
+layout_mode = 2
+
+[node name="Soldier" type="HBoxContainer" parent="GUI/HBoxContainer/Enemy Units"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Soldier"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("8_1kriu")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Soldier"]
+layout_mode = 2
+text = "1"
+
+[node name="Tank" type="HBoxContainer" parent="GUI/HBoxContainer/Enemy Units"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Tank"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("9_hog0p")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Tank"]
+layout_mode = 2
+text = "1"
+
+[node name="Radar" type="HBoxContainer" parent="GUI/HBoxContainer/Enemy Units"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Radar"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("10_3jup0")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Radar"]
+layout_mode = 2
+text = "1"
+
+[node name="Missile" type="HBoxContainer" parent="GUI/HBoxContainer/Enemy Units"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Missile"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("11_kdily")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Missile"]
+layout_mode = 2
+text = "1"
+
+[node name="Airplane" type="HBoxContainer" parent="GUI/HBoxContainer/Enemy Units"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Airplane"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("12_d1ye2")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Airplane"]
+layout_mode = 2
+text = "1"
+
+[node name="Buffer" type="Control" parent="GUI/HBoxContainer/Enemy Units"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.25
+
+[node name="World" parent="GUI/HBoxContainer" instance=ExtResource("8_ovuaw")]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GUI/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.47
+
+[node name="GUIButtons" parent="GUI/HBoxContainer/VBoxContainer" instance=ExtResource("11_m2n8l")]
+layout_mode = 2
+
+[node name="Terminal" parent="GUI/HBoxContainer/VBoxContainer" instance=ExtResource("9_am1rv")]
+layout_mode = 2
+
+[node name="Actions" parent="GUI/HBoxContainer/VBoxContainer" instance=ExtResource("16_rqq7e")]
+layout_mode = 2
+
+[node name="Messaging" parent="GUI/HBoxContainer/VBoxContainer" instance=ExtResource("10_u6axs")]
+layout_mode = 2

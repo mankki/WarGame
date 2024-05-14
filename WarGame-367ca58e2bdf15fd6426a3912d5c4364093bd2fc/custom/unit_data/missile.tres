@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UnitData" load_steps=3 format=3 uid="uid://1nslhxw3wotc"]
+
+[ext_resource type="Script" path="res://custom/unit_data/UnitData.gd" id="1_fy1f4"]
+[ext_resource type="PackedScene" uid="uid://du1jxymkddq6o" path="res://Scenes/Pieces/missile.tscn" id="1_nfwjv"]
+
+[resource]
+script = ExtResource("1_fy1f4")
+move_range = Vector2(0, 0)
+max_number = 1
+scene = ExtResource("1_nfwjv")
+enemy_scan = Vector2i(0, 0)
+health = 3
+hit_chance = 0.0
+damage = 3
+effect_area = 2
+can_attack = true

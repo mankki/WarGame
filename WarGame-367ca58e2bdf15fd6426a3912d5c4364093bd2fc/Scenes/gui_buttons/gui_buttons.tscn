@@ -1,0 +1,92 @@
+[gd_scene load_steps=2 format=3 uid="uid://j6fvjbuxudii"]
+
+[ext_resource type="Script" path="res://Scenes/gui_buttons/gui_buttons.gd" id="1_sflee"]
+
+[node name="GUIButtons" type="BoxContainer"]
+offset_right = 182.0
+offset_bottom = 31.0
+size_flags_horizontal = 8
+vertical = true
+script = ExtResource("1_sflee")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Help" type="Button" parent="HBoxContainer"]
+z_index = 1
+layout_mode = 2
+text = "?
+"
+
+[node name="Menu" type="Button" parent="HBoxContainer"]
+z_index = 1
+layout_mode = 2
+text = "MENU"
+
+[node name="Options" type="Button" parent="HBoxContainer"]
+z_index = 1
+layout_mode = 2
+text = "OPTIONS"
+
+[node name="Exit" type="Button" parent="HBoxContainer"]
+z_index = 1
+layout_mode = 2
+text = "X"
+
+[node name="Popup" type="Popup" parent="."]
+title = "HELP"
+initial_position = 1
+size = Vector2i(500, 628)
+
+[node name="PopupLabelLabel" type="Label" parent="Popup"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "HELP"
+horizontal_alignment = 1
+
+[node name="PopupLabel" type="RichTextLabel" parent="Popup"]
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.1
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+text = "- The objective is to destroy all enemies - the first player to do so wins the game.
+-You cannot see the enemy unless it's in one of your pawn's moving range.
+-Just clicking a pawn counts as an action!
+- You have 20 pawns:
+	-10 soldiers
+		-Moving range: 1
+		-Health: 1
+		-Damage: 1
+	-6 tanks
+		-Moving range: 2
+		-Health: 2
+		-Damage: 2
+	-2 radars
+		-Moving range: 3
+		-Health: 1
+		-Damage: 0
+	-1 missile
+		-Moving range: 0
+		-Health: 3
+		-Damage: 3
+	-1 airplane
+		-Moving range: 4
+		-Health: 1
+		-Damage: 3
+"
+fit_content = true
+scroll_following = true
+
+[connection signal="pressed" from="HBoxContainer/Help" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/Menu" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="HBoxContainer/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="HBoxContainer/Exit" to="." method="_on_exit_pressed"]

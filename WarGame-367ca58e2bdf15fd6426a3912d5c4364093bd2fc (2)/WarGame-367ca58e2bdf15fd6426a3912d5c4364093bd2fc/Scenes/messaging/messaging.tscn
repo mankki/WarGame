@@ -1,0 +1,150 @@
+[gd_scene load_steps=10 format=3 uid="uid://dpxojkhsba7ir"]
+
+[ext_resource type="Script" path="res://Scenes/messaging/messaging.gd" id="1_4tifn"]
+[ext_resource type="FontFile" uid="uid://bi2yx0q5l38rq" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="1_jwrll"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_43y8f"]
+bg_color = Color(0.133333, 0.219608, 0.0784314, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hch54"]
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ia56"]
+bg_color = Color(0.133333, 0.219608, 0.0784314, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="Theme" id="Theme_wmu5m"]
+Button/fonts/font = ExtResource("1_jwrll")
+LineEdit/fonts/font = ExtResource("1_jwrll")
+LineEdit/styles/normal = SubResource("StyleBoxFlat_43y8f")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_hch54")
+TextEdit/fonts/font = ExtResource("1_jwrll")
+TextEdit/styles/read_only = SubResource("StyleBoxFlat_5ia56")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gsd7y"]
+bg_color = Color(0.376471, 0.121569, 0.121569, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dacot"]
+bg_color = Color(0.180392, 0.0862745, 0.376471, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4xdj1"]
+bg_color = Color(0.411765, 0.392157, 0.0784314, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="PanelContainer" type="PanelContainer" node_paths=PackedStringArray("_Received", "_Username", "_Message", "_Port", "_Ip", "_Send", "_Host", "_Join")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource("Theme_wmu5m")
+script = ExtResource("1_4tifn")
+_Received = NodePath("MarginContainer/Messaging/ReceivedMessages")
+_Username = NodePath("MarginContainer/Messaging/BoxContainer2/Username")
+_Message = NodePath("MarginContainer/Messaging/Message")
+_Port = NodePath("MarginContainer/Messaging/BoxContainer/Port")
+_Ip = NodePath("MarginContainer/Messaging/BoxContainer/Ip")
+_Send = NodePath("MarginContainer/Messaging/BoxContainer2/Send")
+_Host = NodePath("MarginContainer/Messaging/BoxContainer/Host")
+_Join = NodePath("MarginContainer/Messaging/BoxContainer2/Join")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 8
+
+[node name="Messaging" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ReceivedMessages" type="TextEdit" parent="MarginContainer/Messaging"]
+layout_mode = 2
+size_flags_vertical = 3
+text = ">>> Placeholder
+"
+editable = false
+context_menu_enabled = false
+shortcut_keys_enabled = false
+selecting_enabled = false
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false
+virtual_keyboard_enabled = false
+middle_mouse_paste_enabled = false
+wrap_mode = 1
+
+[node name="Message" type="LineEdit" parent="MarginContainer/Messaging"]
+layout_mode = 2
+placeholder_text = "MESSAGE"
+
+[node name="BoxContainer" type="HBoxContainer" parent="MarginContainer/Messaging"]
+layout_mode = 2
+
+[node name="Host" type="Button" parent="MarginContainer/Messaging/BoxContainer"]
+custom_minimum_size = Vector2(136, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_gsd7y")
+text = "PLAY RED (HOST)"
+
+[node name="Ip" type="LineEdit" parent="MarginContainer/Messaging/BoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "localhost"
+placeholder_text = "IP ADDRESS"
+
+[node name="Port" type="LineEdit" parent="MarginContainer/Messaging/BoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "8080"
+placeholder_text = "PORT"
+
+[node name="BoxContainer2" type="HBoxContainer" parent="MarginContainer/Messaging"]
+layout_mode = 2
+
+[node name="Join" type="Button" parent="MarginContainer/Messaging/BoxContainer2"]
+custom_minimum_size = Vector2(136, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_dacot")
+text = "PLAY BLUE (JOIN)
+"
+
+[node name="Username" type="LineEdit" parent="MarginContainer/Messaging/BoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "USERNAME"
+
+[node name="Send" type="Button" parent="MarginContainer/Messaging/BoxContainer2"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_4xdj1")
+text = "SEND
+"
+
+[connection signal="pressed" from="MarginContainer/Messaging/BoxContainer2/Join" to="MarginContainer/Messaging" method="_on_join_pressed"]
+[connection signal="pressed" from="MarginContainer/Messaging/BoxContainer2/Send" to="MarginContainer/Messaging" method="_on_send_pressed"]

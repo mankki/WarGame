@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://xuy6vr6cta0p"]
+
+[sub_resource type="GDScript" id="GDScript_qt3j4"]
+script/source = "extends Node
+
+
+var br = Vector2i(1, 1)
+var bl = Vector2i(-1, 1)
+var tl = Vector2i(-1, -1)
+var tr = Vector2i(1, -1)
+
+func _ready ():
+    
+    if tl > Vector2i.ZERO: print(\"tl\")
+    if tr > Vector2i.ZERO: print(\"tr\")
+    if bl > Vector2i.ZERO: print(\"bl\")
+    if br > Vector2i.ZERO: print(\"br\")
+"
+
+[node name="Test" type="Node"]
+script = SubResource("GDScript_qt3j4")

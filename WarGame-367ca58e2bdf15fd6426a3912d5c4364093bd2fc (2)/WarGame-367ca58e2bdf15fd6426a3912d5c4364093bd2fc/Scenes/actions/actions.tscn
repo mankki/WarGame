@@ -1,0 +1,67 @@
+[gd_scene load_steps=8 format=3 uid="uid://t10ktqvqp8fn"]
+
+[ext_resource type="Script" path="res://Scenes/actions/actions.gd" id="1_aya8v"]
+
+[sub_resource type="Gradient" id="Gradient_xkbak"]
+offsets = PackedFloat32Array(0, 0.529032, 0.993548)
+colors = PackedColorArray(0, 0.51, 0.034, 1, 0, 0.9, 0.0599999, 1, 0, 0.51, 0.034, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_qwi3k"]
+gradient = SubResource("Gradient_xkbak")
+width = 30
+height = 20
+fill_from = Vector2(0.542735, 1)
+fill_to = Vector2(0.491453, 0)
+
+[sub_resource type="Gradient" id="Gradient_gv1tl"]
+offsets = PackedFloat32Array(0, 0.53871, 1)
+colors = PackedColorArray(0.51, 0.459, 0, 1, 0.9, 0.84, 0, 1, 0.51, 0.459, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_xik4v"]
+gradient = SubResource("Gradient_gv1tl")
+width = 30
+height = 20
+fill_from = Vector2(0.542735, 1)
+fill_to = Vector2(0.491453, 0)
+
+[sub_resource type="Gradient" id="Gradient_r3bip"]
+offsets = PackedFloat32Array(0, 0.525806, 1)
+colors = PackedColorArray(0.51, 0.136, 0, 1, 0.9, 0.12, 0, 1, 0.51, 0.085, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_51ks5"]
+gradient = SubResource("Gradient_r3bip")
+width = 30
+height = 20
+fill_from = Vector2(0.542735, 1)
+fill_to = Vector2(0.491453, 0)
+
+[node name="Actions" type="HBoxContainer" node_paths=PackedStringArray("_Green", "_Yellow", "_Red")]
+script = ExtResource("1_aya8v")
+_Green = NodePath("Green")
+_Yellow = NodePath("Yellow")
+_Red = NodePath("Red")
+
+[node name="Buffer1" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Green" type="TextureRect" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+texture = SubResource("GradientTexture2D_qwi3k")
+
+[node name="Yellow" type="TextureRect" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+texture = SubResource("GradientTexture2D_xik4v")
+
+[node name="Red" type="TextureRect" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+texture = SubResource("GradientTexture2D_51ks5")
+
+[node name="Buffer2" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
