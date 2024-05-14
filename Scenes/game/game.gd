@@ -217,6 +217,12 @@ func _input(event_ :InputEvent) -> void:
 									instances[Vector2i(new_tile_pos.x + i, new_tile_pos.y + j)].current_health -= damage
 							rpc("damage_enemy", new_tile_pos, damage)
 					else: terminal.print_message("Attack MISSES")
+					
+					if len(enemies) == 0:
+						terminal.print_message("%s won the war!" %[TEAM_STRINGS[int(team)].capitalize()])
+						$WinnerPopup.show()
+						$WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[int(team)].capitalize()]
+						
 
 			# check movement is on board
 			elif !BOUNDARY.has_point(new_tile_pos):
@@ -468,3 +474,7 @@ func _get_global_pos(pos_ :Vector2i) -> Vector2:
 #...
 
 	## - --- --- --- --- ,,, ... ''' qFp ''' ... ,,, --- --- --- --- - ##
+
+
+func _on_replay_pressed():
+	get_tree().reload_current_scene()
