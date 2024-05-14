@@ -155,13 +155,13 @@ func _input(event_ :InputEvent) -> void:
 			var newTilePos :Vector2i = tilemap.local_to_map(tilemap.to_local(selected_instance.global_position))
 			old_world_pos = _get_global_pos(selected_instance_tile_pos)
 
-#TODO: remove this comment
+
 #              db     w    w             8    w
 #             dPYb   w8ww w8ww .d88 .d8b 8.dP w 8d8b. .d88
 #            dPwwYb   8    8   8  8 8    88b  8 8P Y8 8  8
 #           dP    Yb  Y8P  Y8P `Y88 `Y8P 8 Yb 8 8   8 `Y88
 #                                                     wwdP
-#TODO: this also needs to be removed
+
 			if newTilePos in enemies.keys():
 				if unit_data[selected_instance.type].cannot_attack:
 					_reset_unit(newTilePos, "Unit cannot attack")
@@ -191,6 +191,7 @@ func _input(event_ :InputEvent) -> void:
 						terminal.print_message("%s won the war!" %[TEAM_STRINGS[int(team)].capitalize()])
 						$WinnerPopup.show()
 						$WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[int(team)].capitalize()]
+						rpc("end_game")
 
 #           8b   d8                                           w
 #           8YbmdP8 .d8b. Yb  dP .d88b 8d8b.d8b. .d88b 8d8b. w8ww
@@ -234,7 +235,7 @@ func _input(event_ :InputEvent) -> void:
 
 
 func _handle_attack_hit (tile_pos_ :Vector2i) -> void:
-	terminal.print_message("Attack Hits")
+	terminal.print_message("Attack HITS")
 
 	var damage = unit_data[selected_instance.type].primary_attack_damage
 	var health = enemies[tile_pos_].current_health
@@ -427,6 +428,12 @@ func remove_enemy (pos_ :Vector2i) -> void:
 func reveal_enemy (pos_ :Vector2i) -> void:
 	var pos = GridToIndex.translate_180(pos_)
 	allies[pos].isit_visible = true
+	
+@rpc("any_peer", "call_remote")
+func end_game():
+	terminal.print_message("%s won the war!" %[TEAM_STRINGS[int(team)].capitalize()])
+	$WinnerPopup.show()
+	$WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[int(team)].capitalize()]
 
 
 

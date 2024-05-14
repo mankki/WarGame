@@ -187,8 +187,8 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="WinnerPopup" type="Popup" parent="."]
-initial_position = 1
-size = Vector2i(300, 200)
+position = Vector2i(150, 253)
+size = Vector2i(300, 130)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="WinnerPopup"]
 anchors_preset = 8
