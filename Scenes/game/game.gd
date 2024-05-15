@@ -164,7 +164,7 @@ func _input(event_ :InputEvent) -> void:
 			if newTilePos in enemies.keys():
 				if unit_data[selected_instance.type].cannot_attack:
 					_reset_unit(newTilePos, "Unit cannot attack")
-				elif (event_.button_index == MOUSE_BUTTON_LEFT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost)) or (event_.button_index == MOUSE_BUTTON_RIGHT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost)):
+				if (event_.button_index == MOUSE_BUTTON_LEFT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost)) or (event_.button_index == MOUSE_BUTTON_RIGHT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost)):
 					if event_.button_index == MOUSE_BUTTON_LEFT:
 						_reset_unit(newTilePos, "Not enough action points for primary attack")
 					elif event_.button_index == MOUSE_BUTTON_LEFT:
