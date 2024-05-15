@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1_ecj3q")
 scene = ExtResource("1_dkutg")
-max_number = 1
+max_number = 10
 health = 1
 cannot_attack = false
 move_range = Vector2i(2, 2)
@@ -15,10 +15,10 @@ move_cost = 1
 primary_attack_damage = 1
 primary_attack_range = 0
 primary_attack_hit_chance = 1.0
-primary_attack_ammunition = 0
+primary_attack_ammunition = 30
 primary_attack_cost = 1
-secondary_attack_damage = 0
-secondary_attack_range = 0
-secondary_attack_hit_chance = 0.0
-secondary_attack_ammunition = 0
-secondary_attack_cost = 0
+secondary_attack_damage = 1
+secondary_attack_range = 1
+secondary_attack_hit_chance = 0.7
+secondary_attack_ammunition = 1
+secondary_attack_cost = 2

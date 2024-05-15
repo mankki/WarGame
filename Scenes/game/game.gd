@@ -99,8 +99,8 @@ func _process (delta) -> void:
 
 
 func _input(event_ :InputEvent) -> void:
-	# left mouse button pressed
-	if event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_LEFT and event_.pressed: match game_state:
+	# left or right mouse button pressed
+	if event_ is InputEventMouseButton and (event_.button_index == MOUSE_BUTTON_LEFT or event_.button_index == MOUSE_BUTTON_RIGHT) and event_.pressed: match game_state:
 		GameState.PLACEMENT:
 			if unit_plant_id_counter == len(units): return
 			if not (GRID_X_LEFT_BOUND < tile_pos.x and tile_pos.x < GRID_X_RIGHT_BOUND): return
@@ -146,7 +146,7 @@ func _input(event_ :InputEvent) -> void:
 
 
 	# left mouse button released
-	if event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_LEFT and !event_.pressed: match game_state:
+	if event_ is InputEventMouseButton and (event_.button_index == MOUSE_BUTTON_LEFT or event_.button_index == MOUSE_BUTTON_RIGHT) and !event_.pressed: match game_state:
 		GameState.PLAYING:
 			if not selected_instance: return
 
@@ -160,19 +160,30 @@ func _input(event_ :InputEvent) -> void:
 #             dPYb   w8ww w8ww .d88 .d8b 8.dP w 8d8b. .d88
 #            dPwwYb   8    8   8  8 8    88b  8 8P Y8 8  8
 #           dP    Yb  Y8P  Y8P `Y88 `Y8P 8 Yb 8 8   8 `Y88
-#                                                     wwdP
 
 			if newTilePos in enemies.keys():
 				if unit_data[selected_instance.type].cannot_attack:
 					_reset_unit(newTilePos, "Unit cannot attack")
-				elif not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost):
-					_reset_unit(newTilePos, "Not enough action points for primary attack")
+				elif (event_.button_index == MOUSE_BUTTON_LEFT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost)) or (event_.button_index == MOUSE_BUTTON_RIGHT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost)):
+					if event_.button_index == MOUSE_BUTTON_LEFT:
+						_reset_unit(newTilePos, "Not enough action points for primary attack")
+					elif event_.button_index == MOUSE_BUTTON_LEFT:
+						_reset_unit(newTilePos, "Not enough action points for secondary attack")
 				else:
-					_Turn_Action_System.take_action(unit_data[selected_instance.type].primary_attack_cost)
+					if event_.button_index == MOUSE_BUTTON_LEFT:
+						_Turn_Action_System.take_action(unit_data[selected_instance.type].primary_attack_cost)
+					elif event_.button_index == MOUSE_BUTTON_RIGHT:
+						_Turn_Action_System.take_action(unit_data[selected_instance.type].secondary_attack_cost)
+
 					selected_instance.isit_visible = true
 
 					var distance = Vector2(selected_instance_tile_pos).distance_to(Vector2(newTilePos))
-					var hit_chance = 1 - (unit_data[selected_instance.type].primary_attack_hit_chance/32.0) *distance
+					
+					var hit_chance = 0
+					if event_.button_index == MOUSE_BUTTON_LEFT:
+						hit_chance = 1 - (unit_data[selected_instance.type].primary_attack_hit_chance/32.0) *distance
+					elif event_.button_index == MOUSE_BUTTON_RIGHT:
+						hit_chance = 1 - (unit_data[selected_instance.type].secondary_attack_hit_chance/32.0) *distance
 					_reset_unit(newTilePos, "%s is attacking enemy %s with hit chance %.2f" %[
 						selected_instance.type.capitalize(), enemies[newTilePos].type, hit_chance
 					])
@@ -184,8 +195,13 @@ func _input(event_ :InputEvent) -> void:
 						selected_instance.queue_free()
 						allies.erase(selected_instance_tile_pos)
 
-					if attack_roll <= hit_chance: _handle_attack_hit(newTilePos)
-					else: terminal.print_message("Attack MISSES")
+					if attack_roll <= hit_chance: 
+						if event_.button_index == MOUSE_BUTTON_LEFT: 
+							_handle_attack_hit(newTilePos, 'primary')
+						elif event_.button_index == MOUSE_BUTTON_RIGHT:
+							_handle_attack_hit(newTilePos, 'secondary')
+				
+					else: terminal.print_message("Attack MISSES!")
 
 					if len(enemies) == 0:
 						terminal.print_message("%s won the war!" %[TEAM_STRINGS[int(team)].capitalize()])
@@ -234,15 +250,22 @@ func _input(event_ :InputEvent) -> void:
 ## o888o        d888b    o888o     `8'     `Y888""8o   "888" `Y8bod8P'
 
 
-func _handle_attack_hit (tile_pos_ :Vector2i) -> void:
-	terminal.print_message("Attack HITS")
+func _handle_attack_hit (tile_pos_ :Vector2i, weapon : String) -> void:
 
 	var damage = unit_data[selected_instance.type].primary_attack_damage
 	var health = enemies[tile_pos_].current_health
-	var atk_range = unit_data[selected_instance.type].primary_attack_range
+	var atk_range = 0
+	if weapon == 'primary':
+		terminal.print_message("Primary attack HITS!")
+		atk_range = unit_data[selected_instance.type].primary_attack_range
+	elif weapon == 'secondary':
+		terminal.print_message("Secondary attack HITS!")
+		atk_range = unit_data[selected_instance.type].secondary_attack_range
 
 	for i in range(-atk_range, atk_range +1): for j in range(-atk_range, atk_range +1):   
 		var new_loc = tile_pos_ + Vector2i(i, j)
+		if enemies.has(new_loc):
+			health = enemies[new_loc].current_health
 		if not enemies.has(new_loc): continue
 
 		if damage >= health: # unit is killed
@@ -253,6 +276,8 @@ func _handle_attack_hit (tile_pos_ :Vector2i) -> void:
 		else: # unit is only hurt
 			enemies[new_loc].current_health -= damage
 			rpc("damage_enemy", new_loc, damage)
+
+
 
 
 func _send_data(instances_ :Dictionary):
