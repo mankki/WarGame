@@ -455,7 +455,7 @@ func reveal_enemy (pos_ :Vector2i) -> void:
 func end_game():
 	terminal.print_message("%s won the war!" %[TEAM_STRINGS[int(team)].capitalize()])
 	$WinnerPopup.show()
-	$WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[int(team)].capitalize()]
+	$WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[(int(team)+1) %TeamColor.NUM_TEAMS].capitalize()]
 
 
 
