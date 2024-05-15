@@ -169,15 +169,15 @@ func _input(event_ :InputEvent) -> void:
 			if newTilePos in enemies.keys():
 				if unit_data[selected_instance.type].cannot_attack:
 					_reset_unit(newTilePos, "Unit cannot attack")
-				if event_ is InputEventMouseButton and (event_.button_index == MOUSE_BUTTON_LEFT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost)) or (event_.button_index == MOUSE_BUTTON_RIGHT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].secondary_attack_cost)):
+				if (event_.button_index == MOUSE_BUTTON_LEFT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost)) or (event_.button_index == MOUSE_BUTTON_RIGHT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].secondary_attack_cost)):
 					if event_.button_index == MOUSE_BUTTON_LEFT:
 						_reset_unit(newTilePos, "Not enough action points for primary attack")
-					elif event_.button_index == MOUSE_BUTTON_LEFT:
+					elif event_.button_index == MOUSE_BUTTON_RIGHT:
 						_reset_unit(newTilePos, "Not enough action points for secondary attack")
 				else:
-					if event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_LEFT:
+					if event_.button_index == MOUSE_BUTTON_LEFT:
 						_Turn_Action_System.take_action(unit_data[selected_instance.type].primary_attack_cost)
-					elif event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_RIGHT:
+					elif event_.button_index == MOUSE_BUTTON_RIGHT:
 						_Turn_Action_System.take_action(unit_data[selected_instance.type].secondary_attack_cost)
 
 					selected_instance.isit_visible = true
