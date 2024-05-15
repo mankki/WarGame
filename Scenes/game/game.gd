@@ -164,15 +164,15 @@ func _input(event_ :InputEvent) -> void:
 			if newTilePos in enemies.keys():
 				if unit_data[selected_instance.type].cannot_attack:
 					_reset_unit(newTilePos, "Unit cannot attack")
-				if (event_.button_index == MOUSE_BUTTON_LEFT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost)) or (event_.button_index == MOUSE_BUTTON_RIGHT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost)):
+				if event_ is InputEventMouseButton and (event_.button_index == MOUSE_BUTTON_LEFT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost)) or (event_.button_index == MOUSE_BUTTON_RIGHT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].secondary_attack_cost)):
 					if event_.button_index == MOUSE_BUTTON_LEFT:
 						_reset_unit(newTilePos, "Not enough action points for primary attack")
 					elif event_.button_index == MOUSE_BUTTON_LEFT:
 						_reset_unit(newTilePos, "Not enough action points for secondary attack")
 				else:
-					if event_.button_index == MOUSE_BUTTON_LEFT:
+					if event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_LEFT:
 						_Turn_Action_System.take_action(unit_data[selected_instance.type].primary_attack_cost)
-					elif event_.button_index == MOUSE_BUTTON_RIGHT:
+					elif event_ is InputEventMouseButton and event_.button_index == MOUSE_BUTTON_RIGHT:
 						_Turn_Action_System.take_action(unit_data[selected_instance.type].secondary_attack_cost)
 
 					selected_instance.isit_visible = true
@@ -194,6 +194,7 @@ func _input(event_ :InputEvent) -> void:
 					if selected_instance.type == 'missile':
 						selected_instance.queue_free()
 						allies.erase(selected_instance_tile_pos)
+						winner_popup()
 
 					if attack_roll <= hit_chance: 
 						if event_.button_index == MOUSE_BUTTON_LEFT: 
@@ -203,17 +204,13 @@ func _input(event_ :InputEvent) -> void:
 				
 					else: terminal.print_message("Attack MISSES!")
 
-					if len(enemies) == 0:
-						terminal.print_message("%s won the war!" %[TEAM_STRINGS[int(team)].capitalize()])
-						$WinnerPopup.show()
-						$WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[int(team)].capitalize()]
-						rpc("end_game")
+					winner_popup()
 
 #           8b   d8                                           w
 #           8YbmdP8 .d8b. Yb  dP .d88b 8d8b.d8b. .d88b 8d8b. w8ww
 #           8  "  8 8' .8  YbdP  8.dP' 8P Y8P Y8 8.dP' 8P Y8  8
 #           8     8 `Y8P'   YP   `Y88P 8   8   8 `Y88P 8   8  Y8P
-			elif _movement_bounds_checking(newTilePos):
+			elif _movement_bounds_checking(newTilePos) and event_.button_index == MOUSE_BUTTON_LEFT:
 				if not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].move_cost):
 					_reset_unit(newTilePos, "Not enough action points to move this unit")
 				else:
@@ -508,3 +505,10 @@ func _reset_unit (tile_pos_ :Vector2i, message_ :String):
 
 func _on_replay_pressed():
 	get_tree().reload_current_scene()
+	
+func winner_popup():
+	if len(enemies) == 0:
+		terminal.print_message("%s won the war!" %[TEAM_STRINGS[int(team)].capitalize()])
+		$WinnerPopup.show()
+		$WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[int(team)].capitalize()]
+		rpc("end_game")
