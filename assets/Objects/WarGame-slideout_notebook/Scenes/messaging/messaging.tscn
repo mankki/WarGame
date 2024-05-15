@@ -87,7 +87,7 @@ size_flags_vertical = 3
 [node name="ReceivedMessages" type="TextEdit" parent="MarginContainer/Messaging"]
 layout_mode = 2
 size_flags_vertical = 3
-text = ">>> Initializing communicaiton system...
+text = ">>> Placeholder
 "
 editable = false
 context_menu_enabled = false

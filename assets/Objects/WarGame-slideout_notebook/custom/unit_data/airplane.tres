@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="UnitData" load_steps=3 format=3 uid="uid://cmvmi6gtstcaw"]
+
+[ext_resource type="Script" path="res://custom/unit_data/UnitData.gd" id="1_anaml"]
+[ext_resource type="PackedScene" uid="uid://csjx0aqvsnen7" path="res://Scenes/Pieces/airplane.tscn" id="1_n0m5t"]
+
+[resource]
+script = ExtResource("1_anaml")
+scene = ExtResource("1_n0m5t")
+max_number = 1
+health = 1
+cannot_attack = false
+move_range = Vector2i(6, 6)
+scan_range = Vector2i(6, 6)
+move_cost = 2
+primary_attack_damage = 3
+primary_attack_range = 0
+primary_attack_hit_chance = 0.6
+primary_attack_ammunition = 30
+primary_attack_cost = 1
+secondary_attack_damage = 2
+secondary_attack_range = 1
+secondary_attack_hit_chance = 0.5
+secondary_attack_ammunition = 2
+secondary_attack_cost = 2

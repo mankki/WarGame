@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="UnitData" load_steps=3 format=3 uid="uid://c4u71hj7la25l"]
+
+[ext_resource type="PackedScene" uid="uid://b6afw04s1rerp" path="res://Scenes/Pieces/soldier.tscn" id="1_dkutg"]
+[ext_resource type="Script" path="res://custom/unit_data/UnitData.gd" id="1_ecj3q"]
+
+[resource]
+script = ExtResource("1_ecj3q")
+scene = ExtResource("1_dkutg")
+max_number = 1
+health = 1
+cannot_attack = false
+move_range = Vector2i(2, 2)
+scan_range = Vector2i(2, 2)
+move_cost = 1
+primary_attack_damage = 1
+primary_attack_range = 0
+primary_attack_hit_chance = 1.0
+primary_attack_ammunition = 30
+primary_attack_cost = 1
+secondary_attack_damage = 1
+secondary_attack_range = 2
+secondary_attack_hit_chance = 0.7
+secondary_attack_ammunition = 1
+secondary_attack_cost = 2

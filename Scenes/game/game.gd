@@ -63,6 +63,7 @@ var old_world_pos: Vector2
 
 @onready var world_node = $GUI/HBoxContainer/World
 @onready var terminal = $GUI/HBoxContainer/VBoxContainer/Terminal
+@onready var overview = $PanelContainer
 @onready var moving_range = moving_range_scene.instantiate()
 
 
@@ -520,18 +521,20 @@ func update_notebook(action: String):
 	if not selected_instance: return
 	
 	if action == 'erase':
-		$Notebook/RichTextLabel.text = 'Notes:'
+		overview.erase_message()
+		overview.print_message('Unit overview:')
 		
 	if action == 'write':
 		var piece_type = allies[tile_pos].type.get_slice('_', 0)
-		$Notebook/RichTextLabel.text = 'Notes:'
-		$Notebook/RichTextLabel.text += "\n" + "Unit: " + str(selected_instance.type).capitalize()
-		$Notebook/RichTextLabel.text += "\n" + "Move range: " + str(unit_data[piece_type].move_range.x)
-		$Notebook/RichTextLabel.text += "\n" + "1st atk dmg: " + str(unit_data[piece_type].primary_attack_damage)
-		$Notebook/RichTextLabel.text += "\n" + "1st atk rng: " + str(unit_data[piece_type].primary_attack_range)
-		$Notebook/RichTextLabel.text += "\n" + "1st atk cost: " + str(unit_data[piece_type].primary_attack_cost)
-		$Notebook/RichTextLabel.text += "\n" + "1st atk ammo: " + str(unit_data[piece_type].primary_attack_ammunition)
-		$Notebook/RichTextLabel.text += "\n" + "2nd atk dmg: " + str(unit_data[piece_type].secondary_attack_damage)
-		$Notebook/RichTextLabel.text += "\n" + "2nd atk rng: " + str(unit_data[piece_type].secondary_attack_range)
-		$Notebook/RichTextLabel.text += "\n" + "2nd atk rng: " + str(unit_data[piece_type].secondary_attack_cost)
-		$Notebook/RichTextLabel.text += "\n" + "2nd atk ammo: " + str(unit_data[piece_type].secondary_attack_ammunition)
+		overview.erase_message()
+		overview.print_message('Unit overview:')
+		overview.print_message("Unit: " + str(selected_instance.type).capitalize())
+		overview.print_message("Move range: " + str(unit_data[piece_type].move_range.x))
+		overview.print_message("1st atk dmg: " + str(unit_data[piece_type].primary_attack_damage))
+		overview.print_message("1st atk rng: " + str(unit_data[piece_type].primary_attack_range))
+		overview.print_message("1st atk cost: " + str(unit_data[piece_type].primary_attack_cost))
+		overview.print_message("1st atk ammo: " + str(unit_data[piece_type].primary_attack_ammunition))
+		overview.print_message("2nd atk dmg: " + str(unit_data[piece_type].secondary_attack_damage))
+		overview.print_message("2nd atk rng: " + str(unit_data[piece_type].secondary_attack_range))
+		overview.print_message("2nd atk rng: " + str(unit_data[piece_type].secondary_attack_cost))
+		overview.print_message("2nd atk ammo: " + str(unit_data[piece_type].secondary_attack_ammunition))

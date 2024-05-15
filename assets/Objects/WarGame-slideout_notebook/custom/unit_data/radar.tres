@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="UnitData" load_steps=3 format=3 uid="uid://dpjwu6n0doey4"]
+
+[ext_resource type="Script" path="res://custom/unit_data/UnitData.gd" id="1_73wps"]
+[ext_resource type="PackedScene" uid="uid://ke2qqvqq85fd" path="res://Scenes/Pieces/radar.tscn" id="1_d8dq0"]
+
+[resource]
+script = ExtResource("1_73wps")
+scene = ExtResource("1_d8dq0")
+max_number = 1
+health = 1
+cannot_attack = true
+move_range = Vector2i(4, 4)
+scan_range = Vector2i(4, 4)
+move_cost = 1
+primary_attack_damage = 0
+primary_attack_range = 0
+primary_attack_hit_chance = 0.0
+primary_attack_ammunition = 0
+primary_attack_cost = 0
+secondary_attack_damage = 0
+secondary_attack_range = 0
+secondary_attack_hit_chance = 0.0
+secondary_attack_ammunition = 0
+secondary_attack_cost = 0

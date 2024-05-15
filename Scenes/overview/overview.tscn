@@ -1,7 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://fubkmfvydhjp"]
+[gd_scene load_steps=6 format=3 uid="uid://cmb5gjyymvlty"]
 
-[ext_resource type="Script" path="res://Scenes/terminal/terminal.gd" id="1_cw61l"]
-[ext_resource type="FontFile" uid="uid://cx5ue52aefruf" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="2_n4r8h"]
+[ext_resource type="FontFile" uid="uid://cx5ue52aefruf" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="1_yqd7d"]
+[ext_resource type="Script" path="res://Scenes/overview/overview.gd" id="2_wgu1w"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hch54"]
 bg_color = Color(0, 0, 0, 1)
@@ -19,7 +19,7 @@ corner_radius_bottom_left = 12
 
 [sub_resource type="Theme" id="Theme_jff3d"]
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_hch54")
-TextEdit/fonts/font = ExtResource("2_n4r8h")
+TextEdit/fonts/font = ExtResource("1_yqd7d")
 TextEdit/styles/read_only = SubResource("StyleBoxFlat_5ia56")
 
 [node name="PanelContainer" type="PanelContainer"]
@@ -30,7 +30,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 theme = SubResource("Theme_jff3d")
-script = ExtResource("1_cw61l")
+script = ExtResource("2_wgu1w")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -39,10 +39,10 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 18
 theme_override_constants/margin_bottom = 8
 
-[node name="TerminalText" type="TextEdit" parent="MarginContainer"]
+[node name="OverviewText" type="TextEdit" parent="MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-text = ">>> Commander, our nation is under attack!"
+text = "Unit overview:"
 editable = false
 context_menu_enabled = false
 shortcut_keys_enabled = false

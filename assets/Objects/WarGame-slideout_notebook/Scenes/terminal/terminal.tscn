@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://fubkmfvydhjp"]
 
 [ext_resource type="Script" path="res://Scenes/terminal/terminal.gd" id="1_cw61l"]
-[ext_resource type="FontFile" uid="uid://cx5ue52aefruf" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="2_n4r8h"]
+[ext_resource type="FontFile" uid="uid://dgomg720kkooq" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="2_n4r8h"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hch54"]
 bg_color = Color(0, 0, 0, 1)
