@@ -63,7 +63,6 @@ var old_world_pos: Vector2
 
 @onready var world_node = $GUI/HBoxContainer/World
 @onready var terminal = $GUI/HBoxContainer/VBoxContainer/Terminal
-@onready var overview = $PanelContainer
 @onready var moving_range = moving_range_scene.instantiate()
 
 
@@ -138,7 +137,7 @@ func _input(event_ :InputEvent) -> void:
 			selected_instance_tile_pos = tile_pos
 			selected_instance = allies[tile_pos]
 			
-			update_notebook("write")
+			#update_notebook("write")
 
 			for i in range(-scan.x, scan.x +1): for j in range(-scan.y, scan.y +1):
 				var vec := Vector2i(i, j)
@@ -154,7 +153,7 @@ func _input(event_ :InputEvent) -> void:
 		GameState.PLAYING:
 			if not selected_instance: return
 			
-			update_notebook("erase")
+			#update_notebook("erase")
 
 			_Turn_Action_System.action_taken = false
 
@@ -517,24 +516,4 @@ func winner_popup():
 		$WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[int(team)].capitalize()]
 		rpc("end_game")
 
-func update_notebook(action: String):
-	if not selected_instance: return
-	
-	if action == 'erase':
-		overview.erase_message()
-		overview.print_message('Unit overview:')
-		
-	if action == 'write':
-		var piece_type = allies[tile_pos].type.get_slice('_', 0)
-		overview.erase_message()
-		overview.print_message('Unit overview:')
-		overview.print_message("Unit: " + str(selected_instance.type).capitalize())
-		overview.print_message("Move range: " + str(unit_data[piece_type].move_range.x))
-		overview.print_message("1st atk dmg: " + str(unit_data[piece_type].primary_attack_damage))
-		overview.print_message("1st atk rng: " + str(unit_data[piece_type].primary_attack_range))
-		overview.print_message("1st atk cost: " + str(unit_data[piece_type].primary_attack_cost))
-		overview.print_message("1st atk ammo: " + str(unit_data[piece_type].primary_attack_ammunition))
-		overview.print_message("2nd atk dmg: " + str(unit_data[piece_type].secondary_attack_damage))
-		overview.print_message("2nd atk rng: " + str(unit_data[piece_type].secondary_attack_range))
-		overview.print_message("2nd atk rng: " + str(unit_data[piece_type].secondary_attack_cost))
-		overview.print_message("2nd atk ammo: " + str(unit_data[piece_type].secondary_attack_ammunition))
+
