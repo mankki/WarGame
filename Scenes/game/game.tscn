@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://3avurqi4fyf3"]
+[gd_scene load_steps=21 format=3 uid="uid://3avurqi4fyf3"]
 
 [ext_resource type="Script" path="res://Scenes/game/game.gd" id="1_yf783"]
 [ext_resource type="Resource" uid="uid://c4u71hj7la25l" path="res://custom/unit_data/soldier.tres" id="2_gssht"]
@@ -17,6 +17,8 @@
 [ext_resource type="PackedScene" uid="uid://j6fvjbuxudii" path="res://Scenes/gui_buttons/gui_buttons.tscn" id="11_m2n8l"]
 [ext_resource type="Texture2D" uid="uid://njvm6qyqbne0" path="res://assets/NewPieces/airplane.png" id="12_d1ye2"]
 [ext_resource type="PackedScene" uid="uid://t10ktqvqp8fn" path="res://Scenes/actions/actions.tscn" id="16_rqq7e"]
+[ext_resource type="Texture2D" uid="uid://cju6k3iduubol" path="res://assets/Objects/notebook.png" id="18_lo78r"]
+[ext_resource type="FontFile" uid="uid://canoihvcyrskp" path="res://assets/fonts/light_stories/Light Stories.ttf" id="19_ckuux"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_4eb4l"]
 size = Vector2(40, 40)
@@ -209,5 +211,24 @@ layout_mode = 2
 [node name="Replay" type="Button" parent="WinnerPopup/VBoxContainer"]
 layout_mode = 2
 text = "REPLAY"
+
+[node name="Notebook" type="NinePatchRect" parent="."]
+layout_mode = 0
+offset_left = -14.0
+offset_top = 326.0
+offset_right = 97.0
+offset_bottom = 492.0
+texture = ExtResource("18_lo78r")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Notebook"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = 21.0
+offset_top = 19.0
+offset_right = 92.0
+offset_bottom = 156.0
+theme_override_fonts/normal_font = ExtResource("19_ckuux")
+theme_override_font_sizes/normal_font_size = 10
+text = "Notes:"
 
 [connection signal="pressed" from="WinnerPopup/VBoxContainer/Replay" to="." method="_on_replay_pressed"]

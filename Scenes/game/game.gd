@@ -123,6 +123,7 @@ func _input(event_ :InputEvent) -> void:
 			if not _Turn_Action_System.check_is_turn(int(team)): return
 			if not allies.has(tile_pos): return
 			
+			
 			moving = true
 
 			var piece_type = allies[tile_pos].type.get_slice('_', 0)
@@ -135,6 +136,8 @@ func _input(event_ :InputEvent) -> void:
 
 			selected_instance_tile_pos = tile_pos
 			selected_instance = allies[tile_pos]
+			
+			update_notebook("write")
 
 			for i in range(-scan.x, scan.x +1): for j in range(-scan.y, scan.y +1):
 				var vec := Vector2i(i, j)
@@ -149,6 +152,8 @@ func _input(event_ :InputEvent) -> void:
 	if event_ is InputEventMouseButton and (event_.button_index == MOUSE_BUTTON_LEFT or event_.button_index == MOUSE_BUTTON_RIGHT) and !event_.pressed: match game_state:
 		GameState.PLAYING:
 			if not selected_instance: return
+			
+			update_notebook("erase")
 
 			_Turn_Action_System.action_taken = false
 
@@ -413,9 +418,7 @@ func _place_ally(tile_pos_ :Vector2i, scene_ :PackedScene, num_of_pieces_ :int) 
 	_send_data(allies)
 
 	return num_of_pieces_ + 1
-
-
-
+	
 #  888b. 888b. .d88b
 #  8  .8 8  .8 8P
 #  8wwK' 8wwP' 8b
@@ -512,3 +515,23 @@ func winner_popup():
 		$WinnerPopup.show()
 		$WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[int(team)].capitalize()]
 		rpc("end_game")
+
+func update_notebook(action: String):
+	if not selected_instance: return
+	
+	if action == 'erase':
+		$Notebook/RichTextLabel.text = 'Notes:'
+		
+	if action == 'write':
+		var piece_type = allies[tile_pos].type.get_slice('_', 0)
+		$Notebook/RichTextLabel.text = 'Notes:'
+		$Notebook/RichTextLabel.text += "\n" + "Unit: " + str(selected_instance.type).capitalize()
+		$Notebook/RichTextLabel.text += "\n" + "Move range: " + str(unit_data[piece_type].move_range.x)
+		$Notebook/RichTextLabel.text += "\n" + "1st atk dmg: " + str(unit_data[piece_type].primary_attack_damage)
+		$Notebook/RichTextLabel.text += "\n" + "1st atk rng: " + str(unit_data[piece_type].primary_attack_range)
+		$Notebook/RichTextLabel.text += "\n" + "1st atk cost: " + str(unit_data[piece_type].primary_attack_cost)
+		$Notebook/RichTextLabel.text += "\n" + "1st atk ammo: " + str(unit_data[piece_type].primary_attack_ammunition)
+		$Notebook/RichTextLabel.text += "\n" + "2nd atk dmg: " + str(unit_data[piece_type].secondary_attack_damage)
+		$Notebook/RichTextLabel.text += "\n" + "2nd atk rng: " + str(unit_data[piece_type].secondary_attack_range)
+		$Notebook/RichTextLabel.text += "\n" + "2nd atk rng: " + str(unit_data[piece_type].secondary_attack_cost)
+		$Notebook/RichTextLabel.text += "\n" + "2nd atk ammo: " + str(unit_data[piece_type].secondary_attack_ammunition)
