@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://3avurqi4fyf3"]
+[gd_scene load_steps=21 format=3 uid="uid://3avurqi4fyf3"]
 
 [ext_resource type="Script" path="res://Scenes/game/game.gd" id="1_yf783"]
 [ext_resource type="Resource" uid="uid://c4u71hj7la25l" path="res://custom/unit_data/soldier.tres" id="2_gssht"]
@@ -19,7 +19,6 @@
 [ext_resource type="PackedScene" uid="uid://t10ktqvqp8fn" path="res://Scenes/actions/actions.tscn" id="16_rqq7e"]
 [ext_resource type="Texture2D" uid="uid://cju6k3iduubol" path="res://assets/Objects/notebook.png" id="18_lo78r"]
 [ext_resource type="FontFile" uid="uid://canoihvcyrskp" path="res://assets/fonts/light_stories/Light Stories.ttf" id="19_ckuux"]
-[ext_resource type="PackedScene" uid="uid://cmb5gjyymvlty" path="res://Scenes/overview/overview.tscn" id="20_tv8tr"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_4eb4l"]
 size = Vector2(40, 40)
@@ -67,82 +66,6 @@ layout_mode = 2
 [node name="Enemy Units" type="VBoxContainer" parent="GUI/HBoxContainer"]
 layout_mode = 2
 
-[node name="Soldier" type="HBoxContainer" parent="GUI/HBoxContainer/Enemy Units"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Soldier"]
-texture_filter = 1
-layout_mode = 2
-texture = ExtResource("8_1kriu")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Soldier"]
-layout_mode = 2
-text = "1"
-
-[node name="Tank" type="HBoxContainer" parent="GUI/HBoxContainer/Enemy Units"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Tank"]
-texture_filter = 1
-layout_mode = 2
-texture = ExtResource("9_hog0p")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Tank"]
-layout_mode = 2
-text = "1"
-
-[node name="Radar" type="HBoxContainer" parent="GUI/HBoxContainer/Enemy Units"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Radar"]
-texture_filter = 1
-layout_mode = 2
-texture = ExtResource("10_3jup0")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Radar"]
-layout_mode = 2
-text = "1"
-
-[node name="Missile" type="HBoxContainer" parent="GUI/HBoxContainer/Enemy Units"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Missile"]
-texture_filter = 1
-layout_mode = 2
-texture = ExtResource("11_kdily")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Missile"]
-layout_mode = 2
-text = "1"
-
-[node name="Airplane" type="HBoxContainer" parent="GUI/HBoxContainer/Enemy Units"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Enemy Units/Airplane"]
-texture_filter = 1
-layout_mode = 2
-texture = ExtResource("12_d1ye2")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="GUI/HBoxContainer/Enemy Units/Airplane"]
-layout_mode = 2
-text = "1"
-
-[node name="Buffer" type="Control" parent="GUI/HBoxContainer/Enemy Units"]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 8.25
-
 [node name="TextureButton" type="TextureButton" parent="GUI/HBoxContainer/Enemy Units"]
 visible = false
 layout_mode = 2
@@ -178,7 +101,81 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.47
 
-[node name="GUIButtons" parent="GUI/HBoxContainer/VBoxContainer" instance=ExtResource("11_m2n8l")]
+[node name="HBoxContainer" type="HBoxContainer" parent="GUI/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Soldier" type="HBoxContainer" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Soldier"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("8_1kriu")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Soldier"]
+layout_mode = 2
+text = "1"
+
+[node name="Tank" type="HBoxContainer" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Tank"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("9_hog0p")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Tank"]
+layout_mode = 2
+text = "1"
+
+[node name="Radar" type="HBoxContainer" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Radar"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("10_3jup0")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Radar"]
+layout_mode = 2
+text = "1"
+
+[node name="Missile" type="HBoxContainer" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Missile"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("11_kdily")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Missile"]
+layout_mode = 2
+text = "1"
+
+[node name="Airplane" type="HBoxContainer" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Airplane"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("12_d1ye2")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Airplane"]
+layout_mode = 2
+text = "1"
+
+[node name="GUIButtons" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource("11_m2n8l")]
 layout_mode = 2
 
 [node name="Terminal" parent="GUI/HBoxContainer/VBoxContainer" instance=ExtResource("9_am1rv")]
@@ -233,12 +230,5 @@ offset_bottom = 156.0
 theme_override_fonts/normal_font = ExtResource("19_ckuux")
 theme_override_font_sizes/normal_font_size = 10
 text = "Notes:"
-
-[node name="PanelContainer" parent="." instance=ExtResource("20_tv8tr")]
-layout_mode = 1
-offset_left = 3.0
-offset_top = 366.0
-offset_right = -943.0
-offset_bottom = -6.0
 
 [connection signal="pressed" from="WinnerPopup/VBoxContainer/Replay" to="." method="_on_replay_pressed"]
