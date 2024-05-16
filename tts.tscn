@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://duyh1bxy2otpb"]
+
+[ext_resource type="AudioStream" uid="uid://dupdo5ld417um" path="res://TTS/Commander.mp3" id="1_cot2d"]
+[ext_resource type="AudioStream" uid="uid://d3k52uii8qec7" path="res://TTS/CommanderOurNationIsUnderAttack.mp3" id="2_v7sk7"]
+[ext_resource type="AudioStream" uid="uid://cskkleodxqtqo" path="res://TTS/CommanderWeAreReadyToAttack.mp3" id="3_010m7"]
+
+[node name="TTS" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Commander" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_cot2d")
+
+[node name="CommanderOurNationIsUnderAttack" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_v7sk7")
+
+[node name="CommanderWeAreReadyToAttack" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_010m7")

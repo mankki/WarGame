@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://3avurqi4fyf3"]
+[gd_scene load_steps=22 format=3 uid="uid://3avurqi4fyf3"]
 
 [ext_resource type="Script" path="res://Scenes/game/game.gd" id="1_yf783"]
 [ext_resource type="Resource" uid="uid://c4u71hj7la25l" path="res://custom/unit_data/soldier.tres" id="2_gssht"]
@@ -7,18 +7,19 @@
 [ext_resource type="Resource" uid="uid://1nslhxw3wotc" path="res://custom/unit_data/missile.tres" id="5_ji0a1"]
 [ext_resource type="Resource" uid="uid://cmvmi6gtstcaw" path="res://custom/unit_data/airplane.tres" id="6_cqb5m"]
 [ext_resource type="Script" path="res://Scenes/game/turn_action_system.gd" id="7_plssi"]
-[ext_resource type="Texture2D" uid="uid://m1pf844rys1k" path="res://assets/NewPieces/soldier.png" id="8_1kriu"]
+[ext_resource type="Texture2D" uid="uid://bcom06mvt0iwg" path="res://assets/NewPieces/soldier.png" id="8_1kriu"]
 [ext_resource type="PackedScene" uid="uid://beg5dqywxg5on" path="res://Scenes/game/world.tscn" id="8_ovuaw"]
 [ext_resource type="PackedScene" uid="uid://fubkmfvydhjp" path="res://Scenes/terminal/terminal.tscn" id="9_am1rv"]
-[ext_resource type="Texture2D" uid="uid://cjme4u2xxjms4" path="res://assets/NewPieces/tank.png" id="9_hog0p"]
-[ext_resource type="Texture2D" uid="uid://cgehv7pja020q" path="res://assets/NewPieces/radar.png" id="10_3jup0"]
+[ext_resource type="Texture2D" uid="uid://ceh1n7yw7uw33" path="res://assets/NewPieces/tank.png" id="9_hog0p"]
+[ext_resource type="Texture2D" uid="uid://d25pt6qwx63c2" path="res://assets/NewPieces/radar.png" id="10_3jup0"]
 [ext_resource type="PackedScene" uid="uid://dpxojkhsba7ir" path="res://Scenes/messaging/messaging.tscn" id="10_u6axs"]
-[ext_resource type="Texture2D" uid="uid://dumpbigdrikng" path="res://assets/NewPieces/missile.png" id="11_kdily"]
+[ext_resource type="Texture2D" uid="uid://i2cjenk0pqi4" path="res://assets/NewPieces/missile.png" id="11_kdily"]
 [ext_resource type="PackedScene" uid="uid://j6fvjbuxudii" path="res://Scenes/gui_buttons/gui_buttons.tscn" id="11_m2n8l"]
-[ext_resource type="Texture2D" uid="uid://njvm6qyqbne0" path="res://assets/NewPieces/airplane.png" id="12_d1ye2"]
+[ext_resource type="Texture2D" uid="uid://b7cwxw4qv3w5a" path="res://assets/NewPieces/airplane.png" id="12_d1ye2"]
 [ext_resource type="PackedScene" uid="uid://t10ktqvqp8fn" path="res://Scenes/actions/actions.tscn" id="16_rqq7e"]
-[ext_resource type="Texture2D" uid="uid://cju6k3iduubol" path="res://assets/Objects/notebook.png" id="18_lo78r"]
-[ext_resource type="FontFile" uid="uid://canoihvcyrskp" path="res://assets/fonts/light_stories/Light Stories.ttf" id="19_ckuux"]
+[ext_resource type="Texture2D" uid="uid://bpw1bir2n04j" path="res://assets/Objects/notebook.png" id="18_lo78r"]
+[ext_resource type="FontFile" uid="uid://dfu4n722h4doj" path="res://assets/fonts/light_stories/Light Stories.ttf" id="19_ckuux"]
+[ext_resource type="PackedScene" uid="uid://bjmddkgsjelwk" path="res://Scenes/game/tts.tscn" id="20_e4sg1"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_4eb4l"]
 size = Vector2(40, 40)
@@ -230,5 +231,10 @@ offset_bottom = 156.0
 theme_override_fonts/normal_font = ExtResource("19_ckuux")
 theme_override_font_sizes/normal_font_size = 10
 text = "Notes:"
+
+[node name="TTS" parent="." instance=ExtResource("20_e4sg1")]
+layout_mode = 1
+offset_right = -1152.0
+offset_bottom = -683.0
 
 [connection signal="pressed" from="WinnerPopup/VBoxContainer/Replay" to="." method="_on_replay_pressed"]
