@@ -97,7 +97,7 @@ func _process (delta) -> void:
             else:
                 selected_instance.global_position = old_world_pos
             if _Turn_Action_System._curr_turn_actions == 2:
-                audio(1)
+                send_audio(1)
 
 
 func _input(event_ :InputEvent) -> void:
@@ -462,6 +462,9 @@ func end_game():
     $WinnerPopup.show()
     $WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[(int(team)+1) %TeamColor.NUM_TEAMS].capitalize()]
 
+@rpc("any_peer", "call_remote")
+func send_audio(file: int):
+    audio(file)
 
 
 #  888b.                   w
