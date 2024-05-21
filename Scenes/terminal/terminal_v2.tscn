@@ -1,0 +1,68 @@
+[gd_scene load_steps=7 format=3 uid="uid://c4lyf8c5sy5c3"]
+
+[ext_resource type="FontFile" uid="uid://dgomg720kkooq" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="1_65axr"]
+[ext_resource type="StyleBox" uid="uid://j0nlw3v8nouo" path="res://assets/styleboxes/terminal_outline.stylebox" id="1_ww4cf"]
+[ext_resource type="Script" path="res://Scenes/terminal/terminal_v2.gd" id="2_mnh1h"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hch54"]
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ia56"]
+bg_color = Color(0.133333, 0.219608, 0.0784314, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="Theme" id="Theme_jff3d"]
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_hch54")
+TextEdit/fonts/font = ExtResource("1_65axr")
+TextEdit/styles/read_only = SubResource("StyleBoxFlat_5ia56")
+
+[node name="PanelContainer" type="PanelContainer" node_paths=PackedStringArray("terminal")]
+texture_filter = 1
+offset_right = 1152.0
+offset_bottom = 683.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = ExtResource("1_ww4cf")
+script = ExtResource("2_mnh1h")
+terminal = NodePath("MarginContainer/PanelContainer/MarginContainer/TerminalText")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = -5
+theme_override_constants/margin_top = -5
+theme_override_constants/margin_right = -5
+theme_override_constants/margin_bottom = -5
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = SubResource("Theme_jff3d")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 8
+
+[node name="TerminalText" type="TextEdit" parent="MarginContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = ">>> Commander, our nation is under attack!"
+editable = false
+context_menu_enabled = false
+shortcut_keys_enabled = false
+selecting_enabled = false
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false
+virtual_keyboard_enabled = false
+middle_mouse_paste_enabled = false
+wrap_mode = 1
+scroll_smooth = true
