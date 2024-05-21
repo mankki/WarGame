@@ -78,6 +78,7 @@ func _ready():
     $GUI/HBoxContainer/VBoxContainer/Messaging.connect("red_signal", playing_team.bind(TeamColor.RED))
     $GUI/HBoxContainer/VBoxContainer/Messaging.connect("blue_signal", playing_team.bind(TeamColor.BLUE))
 
+    update_unit_count()
 
 func _process (delta) -> void:
     mouse_pos = get_global_mouse_position()
@@ -120,6 +121,8 @@ func _input(event_ :InputEvent) -> void:
                 num_players_ready += 1
                 (func(): moving = false).call_deferred()
                 _hide_previews()
+            
+            update_unit_count()
         
         GameState.PLAYING:
             if not _Turn_Action_System.check_is_turn(int(team)): return
@@ -139,6 +142,7 @@ func _input(event_ :InputEvent) -> void:
             selected_instance_tile_pos = tile_pos
             selected_instance = allies[tile_pos]
 
+            update_unit_count()
 
             for i in range(-scan.x, scan.x +1): for j in range(-scan.y, scan.y +1):
                 var vec := Vector2i(i, j)
@@ -449,6 +453,8 @@ func remove_enemy (pos_ :Vector2i) -> void:
     var pos = GridToIndex.translate_180(pos_)
     allies[pos].queue_free()
     allies.erase(pos)
+    
+    update_unit_count()
 
 
 @rpc("any_peer", "call_remote")
@@ -516,7 +522,7 @@ func _on_replay_pressed():
     
 func winner_popup():
     if len(enemies) == 0:
-        terminal.print_message("%s won the war!" %[TEAM_STRINGS[int(team)].capitalize()])
+        terminal.print_message("%s nation won the war!" %[TEAM_STRINGS[int(team)].capitalize()])
         $WinnerPopup.show()
         $WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[int(team)].capitalize()]
         rpc("end_game")
@@ -525,9 +531,34 @@ func audio(file: int):
     var player
     
     if file == 1: player = $TTS/Commander
-    if file == 2: player = $TTS/CommanderOurNationIsUnderAttack
-    if file == 3: player = $TTS/CommanderWeAreReadyToAttack
+    if file == 2: player = $TTS/CommanderOurNationIsUnderAttack # Blue player
+    if file == 3: player = $TTS/CommanderWeAreReadyToAttack # Red player
     
     player.play()
+
+func update_unit_count():
+    calc_num_of_units()
+    for pos in allies:
+        for unit in units:
+            if allies[pos].type == unit:
+                var label_path = "GUI/HBoxContainer/VBoxContainer/HBoxContainer/%s/Label" %[unit.capitalize()]
+                var label = get_node(label_path)
+                label.text = str(num_of_units[unit])
+
+                
+                
+var num_of_units = {
+    soldier = 0,
+    tank = 0,
+    radar = 0,
+    missile = 0,
+    airplane = 0
+}
+func calc_num_of_units():
+    for unit in units:
+        num_of_units[unit] = 0
+        for pos in allies:
+            if allies[pos].type == unit:
+                num_of_units[unit] += 1 
     
 

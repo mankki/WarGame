@@ -118,7 +118,7 @@ expand_mode = 2
 
 [node name="Label" type="Label" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Soldier"]
 layout_mode = 2
-text = "1"
+text = "0"
 
 [node name="Tank" type="HBoxContainer" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -132,7 +132,7 @@ expand_mode = 2
 
 [node name="Label" type="Label" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Tank"]
 layout_mode = 2
-text = "1"
+text = "0"
 
 [node name="Radar" type="HBoxContainer" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -146,7 +146,7 @@ expand_mode = 2
 
 [node name="Label" type="Label" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Radar"]
 layout_mode = 2
-text = "1"
+text = "0"
 
 [node name="Missile" type="HBoxContainer" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -160,7 +160,7 @@ expand_mode = 2
 
 [node name="Label" type="Label" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Missile"]
 layout_mode = 2
-text = "1"
+text = "0"
 
 [node name="Airplane" type="HBoxContainer" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -174,7 +174,7 @@ expand_mode = 2
 
 [node name="Label" type="Label" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer/Airplane"]
 layout_mode = 2
-text = "1"
+text = "0"
 
 [node name="GUIButtons" parent="GUI/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource("11_m2n8l")]
 layout_mode = 2
