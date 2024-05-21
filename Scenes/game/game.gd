@@ -581,20 +581,21 @@ func update_notebook(action: String):
             terminal.display_overview("", false)
 
     if action == 'write':
-            var format = "%s: %s \n"
+            var no_pad_format = "%s %s \n"
+            var padded_format = "%-22s %2s \n"
             var message :String = ""
 
             var piece_type = allies[tile_pos].type.get_slice('_', 0)
-            message += format %["Unit overview", ""]
-            message += format %["Unit", str(piece_type).capitalize()]
-            message += format %["Move range", str(unit_data[piece_type].move_range.x)]
-            message += format %["1st atk dmg", str(unit_data[piece_type].primary_attack_damage)]
-            message += format %["1st atk rng", str(unit_data[piece_type].primary_attack_range)]
-            message += format %["1st atk cost", str(unit_data[piece_type].primary_attack_cost)]
-            message += format %["1st atk ammo", str(unit_data[piece_type].primary_attack_ammunition)]
-            message += format %["2nd atk dmg", str(unit_data[piece_type].secondary_attack_damage)]
-            message += format %["2nd atk rng", str(unit_data[piece_type].secondary_attack_range)]
-            message += format %["2nd atk rng", str(unit_data[piece_type].secondary_attack_cost)]
-            message += format %["2nd atk ammo", str(unit_data[piece_type].secondary_attack_ammunition)]
+            message += no_pad_format %["UNIT OVERVIEW:", ""]
+            message += no_pad_format %["Unit:", str(piece_type).capitalize()]
+            message += padded_format %["Move Range:", str(unit_data[piece_type].move_range.x)]
+            message += padded_format %["First Attack Damage:", str(unit_data[piece_type].primary_attack_damage)]
+            message += padded_format %["First Attack Range:", str(unit_data[piece_type].primary_attack_range)]
+            message += padded_format %["First Attack Cost:", str(unit_data[piece_type].primary_attack_cost)]
+            message += padded_format %["First Attack Ammo:", str(unit_data[piece_type].primary_attack_ammunition)]
+            message += padded_format %["Second Attack Damage:", str(unit_data[piece_type].secondary_attack_damage)]
+            message += padded_format %["Second Attack Range:", str(unit_data[piece_type].secondary_attack_range)]
+            message += padded_format %["Second Attack Rng:", str(unit_data[piece_type].secondary_attack_cost)]
+            message += padded_format %["Second Attack Ammo:", str(unit_data[piece_type].secondary_attack_ammunition)]
 
             terminal.display_overview(message, true)

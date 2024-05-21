@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://d0ilcl74v80tx"]
 
 [ext_resource type="Texture2D" uid="uid://ciumrj2jxmyjw" path="res://assets/images/terminal_interior_window.png" id="1_0p7o1"]
-[ext_resource type="FontFile" uid="uid://dgomg720kkooq" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="2_fw5lr"]
+[ext_resource type="FontFile" uid="uid://crj4kcgp1evtd" path="res://assets/fonts/ucka/Ucka-Regular.otf" id="2_qv202"]
 
 [sub_resource type="GDScript" id="GDScript_p88fk"]
 script/source = "
@@ -25,8 +25,11 @@ texture_margin_right = 4.0
 texture_margin_bottom = 4.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_vdej6"]
-font = ExtResource("2_fw5lr")
-font_color = Color(0.87451, 0.87451, 0.87451, 0.501961)
+font = ExtResource("2_qv202")
+font_size = 10
+font_color = Color(0.745098, 0.831373, 0.631373, 0.67451)
+outline_size = 1
+outline_color = Color(0.87451, 0.87451, 0.87451, 0.501961)
 
 [node name="MarginContainer2" type="MarginContainer" node_paths=PackedStringArray("_Label_")]
 offset_left = 4.0
@@ -49,9 +52,9 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_vjset")
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-theme_override_constants/margin_left = 2
+theme_override_constants/margin_left = 6
 theme_override_constants/margin_top = 2
-theme_override_constants/margin_right = 2
+theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 2
 
 [node name="Label" type="Label" parent="UnitOverview/MarginContainer"]
