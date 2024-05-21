@@ -94,11 +94,15 @@ func _process (delta) -> void:
         GameState.PLAYING:
             if tile_pos in allies.keys():
                 if overview_showing == false:
-                    update_notebook('write')
+                    update_notebook('write', 'ally')
+                    overview_showing = true
+            elif tile_pos in enemies.keys():
+                if overview_showing == false:
+                    update_notebook('write', 'enemy')
                     overview_showing = true
             else:
                 if overview_showing == true:
-                    update_notebook('erase')
+                    update_notebook('erase', 'ally')
                     overview_showing = false
 
 
@@ -484,6 +488,8 @@ func end_game():
 @rpc("any_peer", "call_remote")
 func send_audio(file: int):
     audio(file)
+    
+
 
 
 #  888b.                   w
@@ -574,13 +580,15 @@ func calc_num_of_units():
             if allies[pos].type == unit:
                 num_of_units[unit] += 1 
     
-func update_notebook(action: String):
+func update_notebook(action: String, side: String):
     # if not selected_instance: return
     
     if action == 'erase':
-            terminal.display_overview("", false)
+                terminal.display_overview("", false)
+    
+    if side == 'ally':
 
-    if action == 'write':
+        if action == 'write':
             var no_pad_format = "%s %s \n"
             var padded_format = "%-22s %2s \n"
             var message :String = ""
@@ -588,6 +596,7 @@ func update_notebook(action: String):
             var piece_type = allies[tile_pos].type.get_slice('_', 0)
             message += no_pad_format %["UNIT OVERVIEW:", ""]
             message += no_pad_format %["Unit:", str(piece_type).capitalize()]
+            message += padded_format %["Health:", str(unit_data[piece_type].health)]
             message += padded_format %["Move Range:", str(unit_data[piece_type].move_range.x)]
             message += padded_format %["First Attack Damage:", str(unit_data[piece_type].primary_attack_damage)]
             message += padded_format %["First Attack Range:", str(unit_data[piece_type].primary_attack_range)]
@@ -597,5 +606,19 @@ func update_notebook(action: String):
             message += padded_format %["Second Attack Range:", str(unit_data[piece_type].secondary_attack_range)]
             message += padded_format %["Second Attack Cost:", str(unit_data[piece_type].secondary_attack_cost)]
             message += padded_format %["Second Attack Ammo:", str(unit_data[piece_type].secondary_attack_ammunition)]
+
+            terminal.display_overview(message, true)
+            
+    elif side == 'enemy':
+        if action == 'write':
+            var no_pad_format = "%s %s \n"
+            var padded_format = "%-22s %2s \n"
+            var message :String = ""
+
+            var piece_type = enemies[tile_pos].type.get_slice('_', 0)
+            message += no_pad_format %["ENEMY OVERVIEW:", ""]
+            message += no_pad_format %["Unit:", piece_type.capitalize()]
+            message += padded_format %["Health:", str(unit_data[piece_type].health)]
+            message += padded_format %["Current Health: ", str(enemies[tile_pos].current_health)]
 
             terminal.display_overview(message, true)
