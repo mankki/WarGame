@@ -56,7 +56,8 @@ var selected_instance_tile_pos :Vector2i
 
 var tilemap
 
-var moving = false
+var moving :bool = false
+var overview_showing :bool = false
 var piece_instance
 
 var old_world_pos: Vector2
@@ -91,6 +92,16 @@ func _process (delta) -> void:
             _preview(preview_type)
 
         GameState.PLAYING:
+            if tile_pos in allies.keys():
+                if overview_showing == false:
+                    update_notebook('write')
+                    overview_showing = true
+            else:
+                if overview_showing == true:
+                    update_notebook('erase')
+                    overview_showing = false
+
+
             if selected_instance == null: return
             # moving = true
             if moving == true:
@@ -102,6 +113,7 @@ func _process (delta) -> void:
 
 
 func _input(event_ :InputEvent) -> void:
+    
     # left or right mouse button pressed
     if event_ is InputEventMouseButton and (event_.button_index == MOUSE_BUTTON_LEFT or event_.button_index == MOUSE_BUTTON_RIGHT) and event_.pressed: match game_state:
         GameState.PLACEMENT:
@@ -141,6 +153,7 @@ func _input(event_ :InputEvent) -> void:
 
             selected_instance_tile_pos = tile_pos
             selected_instance = allies[tile_pos]
+            # update_notebook('write')
 
             update_unit_count()
 
@@ -158,7 +171,7 @@ func _input(event_ :InputEvent) -> void:
         GameState.PLAYING:
             if not selected_instance: return
             
-            #update_notebook("erase")
+            # update_notebook('erase')
 
             _Turn_Action_System.action_taken = false
 
@@ -561,4 +574,27 @@ func calc_num_of_units():
             if allies[pos].type == unit:
                 num_of_units[unit] += 1 
     
+func update_notebook(action: String):
+    # if not selected_instance: return
+    
+    if action == 'erase':
+            terminal.display_overview("", false)
 
+    if action == 'write':
+            var format = "%s: %s \n"
+            var message :String = ""
+
+            var piece_type = allies[tile_pos].type.get_slice('_', 0)
+            message += format %["Unit overview", ""]
+            message += format %["Unit", str(piece_type).capitalize()]
+            message += format %["Move range", str(unit_data[piece_type].move_range.x)]
+            message += format %["1st atk dmg", str(unit_data[piece_type].primary_attack_damage)]
+            message += format %["1st atk rng", str(unit_data[piece_type].primary_attack_range)]
+            message += format %["1st atk cost", str(unit_data[piece_type].primary_attack_cost)]
+            message += format %["1st atk ammo", str(unit_data[piece_type].primary_attack_ammunition)]
+            message += format %["2nd atk dmg", str(unit_data[piece_type].secondary_attack_damage)]
+            message += format %["2nd atk rng", str(unit_data[piece_type].secondary_attack_range)]
+            message += format %["2nd atk rng", str(unit_data[piece_type].secondary_attack_cost)]
+            message += format %["2nd atk ammo", str(unit_data[piece_type].secondary_attack_ammunition)]
+
+            terminal.display_overview(message, true)

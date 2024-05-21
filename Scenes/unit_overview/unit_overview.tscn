@@ -1,0 +1,64 @@
+[gd_scene load_steps=6 format=3 uid="uid://d0ilcl74v80tx"]
+
+[ext_resource type="Texture2D" uid="uid://ciumrj2jxmyjw" path="res://assets/images/terminal_interior_window.png" id="1_0p7o1"]
+[ext_resource type="FontFile" uid="uid://dgomg720kkooq" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="2_fw5lr"]
+
+[sub_resource type="GDScript" id="GDScript_p88fk"]
+script/source = "
+
+extends MarginContainer
+
+
+@export var _Label_ :Label
+
+
+func update_text (text_ :String) -> void:
+    _Label_.text = text_
+
+"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vjset"]
+texture = ExtResource("1_0p7o1")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_vdej6"]
+font = ExtResource("2_fw5lr")
+font_color = Color(0.87451, 0.87451, 0.87451, 0.501961)
+
+[node name="MarginContainer2" type="MarginContainer" node_paths=PackedStringArray("_Label_")]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 211.0
+offset_bottom = 65.0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+script = SubResource("GDScript_p88fk")
+_Label_ = NodePath("UnitOverview/MarginContainer/Label")
+
+[node name="UnitOverview" type="PanelContainer" parent="."]
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxTexture_vjset")
+
+[node name="MarginContainer" type="MarginContainer" parent="UnitOverview"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="Label" type="Label" parent="UnitOverview/MarginContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.87451, 0.87451, 0.87451, 0.501961)
+text = "this is some text
+this is some more: and more
+this is very much more
+"
+label_settings = SubResource("LabelSettings_vdej6")
