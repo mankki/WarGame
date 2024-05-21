@@ -595,7 +595,7 @@ func update_notebook(action: String):
             message += padded_format %["First Attack Ammo:", str(unit_data[piece_type].primary_attack_ammunition)]
             message += padded_format %["Second Attack Damage:", str(unit_data[piece_type].secondary_attack_damage)]
             message += padded_format %["Second Attack Range:", str(unit_data[piece_type].secondary_attack_range)]
-            message += padded_format %["Second Attack Rng:", str(unit_data[piece_type].secondary_attack_cost)]
+            message += padded_format %["Second Attack Cost:", str(unit_data[piece_type].secondary_attack_cost)]
             message += padded_format %["Second Attack Ammo:", str(unit_data[piece_type].secondary_attack_ammunition)]
 
             terminal.display_overview(message, true)
