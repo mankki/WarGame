@@ -168,7 +168,7 @@ func _input(event_ :InputEvent) -> void:
                 if enemies.has(new_loc): 
                     enemies[new_loc].visible = true
                     rpc("reveal_enemy", new_loc)
-
+        
 
     # leftor right mouse button released
     if event_ is InputEventMouseButton and (event_.button_index == MOUSE_BUTTON_LEFT or event_.button_index == MOUSE_BUTTON_RIGHT) and !event_.pressed: match game_state:
@@ -230,6 +230,7 @@ func _input(event_ :InputEvent) -> void:
                             _handle_attack_hit(newTilePos, 'secondary')
                 
                     else: terminal.print_message("Attack MISSES!")
+                
 
                     winner_popup()
 
@@ -237,6 +238,14 @@ func _input(event_ :InputEvent) -> void:
 #           8YbmdP8 .d8b. Yb  dP .d88b 8d8b.d8b. .d88b 8d8b. w8ww
 #           8  "  8 8' .8  YbdP  8.dP' 8P Y8P Y8 8.dP' 8P Y8  8
 #           8     8 `Y8P'   YP   `Y88P 8   8   8 `Y88P 8   8  Y8P
+            # Radar superpower
+            elif event_.button_index == MOUSE_BUTTON_RIGHT and selected_instance.type == 'radar':
+                if _Turn_Action_System.can_take_action(unit_data['radar'].secondary_attack_cost):
+                    reveal_all_enemies()
+                    _Turn_Action_System.take_action(unit_data['radar'].secondary_attack_cost)
+                    _reset_unit(newTilePos, "Cannot move while using super scan")
+                else:
+                    _reset_unit(newTilePos, "Not enough points for the radar super scan")
             elif _movement_bounds_checking(newTilePos) and (event_.button_index == MOUSE_BUTTON_LEFT or event_.button_index == MOUSE_BUTTON_RIGHT):
                 if not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].move_cost):
                     _reset_unit(newTilePos, "Not enough action points to move this unit")
@@ -622,3 +631,9 @@ func update_notebook(action: String, side: String):
             message += padded_format %["Current Health: ", str(enemies[tile_pos].current_health)]
 
             terminal.display_overview(message, true)
+
+func reveal_all_enemies():
+    for pos in enemies:
+        if enemies[pos].type != 'missile':
+            enemies[pos].visible = true
+            rpc("reveal_enemy", pos)

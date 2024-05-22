@@ -21,4 +21,4 @@ secondary_attack_damage = 0
 secondary_attack_range = 0
 secondary_attack_hit_chance = 0.0
 secondary_attack_ammunition = 0
-secondary_attack_cost = 1
+secondary_attack_cost = 3

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bjmddkgsjelwk"]
 
-[ext_resource type="AudioStream" uid="uid://deivlqa2tn822" path="res://TTS/CommanderOurNationIsUnderAttack.mp3" id="1_03y63"]
-[ext_resource type="AudioStream" uid="uid://dupdo5ld417um" path="res://TTS/Commander.mp3" id="2_hfbh1"]
+[ext_resource type="AudioStream" uid="uid://bfy3l10apevg3" path="res://TTS/CommanderOurNationIsUnderAttack.mp3" id="1_03y63"]
+[ext_resource type="AudioStream" uid="uid://dgvkinxqbbbm2" path="res://TTS/Commander.mp3" id="2_hfbh1"]
 
 [node name="TTS" type="Control"]
 layout_mode = 3
