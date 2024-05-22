@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://d0ilcl74v80tx"]
 
-[ext_resource type="Texture2D" uid="uid://ciumrj2jxmyjw" path="res://assets/images/terminal_interior_window.png" id="1_0p7o1"]
+[ext_resource type="Texture2D" uid="uid://ciumrj2jxmyjw" path="res://assets/images/terminal_interior_window_normal.png" id="1_vr6s3"]
 [ext_resource type="FontFile" uid="uid://crj4kcgp1evtd" path="res://assets/fonts/ucka/Ucka-Regular.otf" id="2_qv202"]
 
 [sub_resource type="GDScript" id="GDScript_p88fk"]
@@ -18,7 +18,7 @@ func update_text (text_ :String) -> void:
 "
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vjset"]
-texture = ExtResource("1_0p7o1")
+texture = ExtResource("1_vr6s3")
 texture_margin_left = 4.0
 texture_margin_top = 4.0
 texture_margin_right = 4.0
