@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://c4lyf8c5sy5c3"]
+[gd_scene load_steps=8 format=3 uid="uid://8ep3vyeyn5kc"]
 
-[ext_resource type="FontFile" uid="uid://dgomg720kkooq" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="1_65axr"]
 [ext_resource type="StyleBox" uid="uid://j0nlw3v8nouo" path="res://assets/styleboxes/terminal_outline.stylebox" id="1_ww4cf"]
 [ext_resource type="Script" path="res://Scenes/terminal/terminal_v2.gd" id="2_mnh1h"]
+[ext_resource type="FontFile" uid="uid://crj4kcgp1evtd" path="res://assets/fonts/ucka/Ucka-Regular.otf" id="3_cwvkr"]
+[ext_resource type="PackedScene" uid="uid://d0ilcl74v80tx" path="res://Scenes/unit_overview/unit_overview.tscn" id="4_mvxh5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hch54"]
 bg_color = Color(0, 0, 0, 1)
@@ -20,10 +21,13 @@ corner_radius_bottom_left = 12
 
 [sub_resource type="Theme" id="Theme_jff3d"]
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_hch54")
-TextEdit/fonts/font = ExtResource("1_65axr")
+TextEdit/colors/font_readonly_color = Color(0.745098, 0.831373, 0.631373, 0.67451)
+TextEdit/constants/outline_size = 1
+TextEdit/font_sizes/font_size = 12
+TextEdit/fonts/font = ExtResource("3_cwvkr")
 TextEdit/styles/read_only = SubResource("StyleBoxFlat_5ia56")
 
-[node name="PanelContainer" type="PanelContainer" node_paths=PackedStringArray("terminal")]
+[node name="PanelContainer" type="PanelContainer" node_paths=PackedStringArray("terminal", "unit_overview")]
 texture_filter = 1
 offset_right = 1152.0
 offset_bottom = 683.0
@@ -32,6 +36,7 @@ size_flags_vertical = 3
 theme_override_styles/panel = ExtResource("1_ww4cf")
 script = ExtResource("2_mnh1h")
 terminal = NodePath("MarginContainer/PanelContainer/MarginContainer/TerminalText")
+unit_overview = NodePath("MarginContainer/PanelContainer/UnitOverview")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -66,3 +71,7 @@ virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
 wrap_mode = 1
 scroll_smooth = true
+
+[node name="UnitOverview" parent="MarginContainer/PanelContainer" instance=ExtResource("4_mvxh5")]
+visible = false
+layout_mode = 2

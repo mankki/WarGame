@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://xnlo2a12qwsy"]
+[gd_scene load_steps=10 format=3 uid="uid://bfet4jxq8gd3k"]
 
-[ext_resource type="FontFile" uid="uid://dgomg720kkooq" path="res://assets/fonts/ds_terminal/DS-TERM.TTF" id="1_6qpc6"]
 [ext_resource type="StyleBox" uid="uid://j0nlw3v8nouo" path="res://assets/styleboxes/terminal_outline.stylebox" id="1_ciy6e"]
+[ext_resource type="Script" path="res://Scenes/messaging/messaging_v2.gd" id="2_r63lg"]
+[ext_resource type="FontFile" uid="uid://crj4kcgp1evtd" path="res://assets/fonts/ucka/Ucka-Regular.otf" id="3_h52r8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_43y8f"]
 bg_color = Color(0.133333, 0.219608, 0.0784314, 1)
@@ -25,14 +26,29 @@ corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
 [sub_resource type="Theme" id="Theme_wmu5m"]
-Button/fonts/font = ExtResource("1_6qpc6")
-LineEdit/fonts/font = ExtResource("1_6qpc6")
+Button/colors/font_color = Color(0.745098, 0.831373, 0.631373, 0.67451)
+Button/constants/outline_size = 1
+Button/font_sizes/font_size = 12
+Button/fonts/font = ExtResource("3_h52r8")
+Label/colors/font_color = Color(0.745098, 0.831373, 0.631373, 0.67451)
+Label/constants/outline_size = 1
+Label/fonts/font = ExtResource("3_h52r8")
+LineEdit/colors/font_color = Color(0.745098, 0.831373, 0.631373, 0.67451)
+LineEdit/colors/font_placeholder_color = Color(0.246651, 0.40625, 0.145089, 1)
+LineEdit/constants/outline_size = 1
+LineEdit/font_sizes/font_size = 12
+LineEdit/fonts/font = ExtResource("3_h52r8")
 LineEdit/styles/normal = SubResource("StyleBoxFlat_43y8f")
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_hch54")
-TextEdit/fonts/font = ExtResource("1_6qpc6")
+TextEdit/colors/font_readonly_color = Color(0.745098, 0.831373, 0.631373, 0.67451)
+TextEdit/constants/outline_size = 1
+TextEdit/font_sizes/font_size = 12
+TextEdit/fonts/font = ExtResource("3_h52r8")
 TextEdit/styles/read_only = SubResource("StyleBoxFlat_5ia56")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gsd7y"]
+content_margin_left = 2.0
+content_margin_top = 5.0
 bg_color = Color(0.376471, 0.121569, 0.121569, 1)
 corner_radius_top_left = 3
 corner_radius_top_right = 3
@@ -40,20 +56,15 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dacot"]
+content_margin_left = 2.0
+content_margin_top = 5.0
 bg_color = Color(0.180392, 0.0862745, 0.376471, 1)
 corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4xdj1"]
-bg_color = Color(0.411765, 0.392157, 0.0784314, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[node name="PanelContainer" type="PanelContainer"]
+[node name="Messaging" type="PanelContainer" node_paths=PackedStringArray("_Received", "_Username", "_Message", "_Port", "_Ip", "_Host", "_Join", "_Connecting", "_Messaging")]
 texture_filter = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -63,6 +74,16 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/panel = ExtResource("1_ciy6e")
+script = ExtResource("2_r63lg")
+_Received = NodePath("MarginContainer/PanelContainer/MarginContainer/ReceivedMessages")
+_Username = NodePath("MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Messaging/Username")
+_Message = NodePath("MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Messaging/Message")
+_Port = NodePath("MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Connecting/Port")
+_Ip = NodePath("MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Connecting/Ip")
+_Host = NodePath("MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Connecting/Host")
+_Join = NodePath("MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Connecting/Join")
+_Connecting = NodePath("MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Connecting")
+_Messaging = NodePath("MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Messaging")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -75,6 +96,7 @@ theme_override_constants/margin_bottom = -5
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 1
 theme = SubResource("Theme_wmu5m")
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer"]
@@ -87,6 +109,7 @@ theme_override_constants/margin_bottom = 8
 [node name="ReceivedMessages" type="TextEdit" parent="MarginContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 1
 text = ">>> Initializing communicaiton system...
 "
 editable = false
@@ -108,49 +131,58 @@ grow_horizontal = 2
 grow_vertical = 2
 vertical = true
 
-[node name="Message" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3"]
+[node name="Control" type="Control" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3"]
 layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 1
+
+[node name="Messaging" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Username" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Messaging"]
+layout_mode = 2
+mouse_filter = 1
+placeholder_text = "USERNAME"
+expand_to_text_length = true
+
+[node name="Label" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Messaging"]
+layout_mode = 2
+mouse_filter = 1
+text = ":"
+
+[node name="Message" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Messaging"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
 placeholder_text = "MESSAGE"
+expand_to_text_length = true
 
-[node name="BoxContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3"]
+[node name="Connecting" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3"]
 layout_mode = 2
 
-[node name="Host" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/BoxContainer"]
+[node name="Host" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Connecting"]
 custom_minimum_size = Vector2(136, 0)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_gsd7y")
 text = "PLAY RED (HOST)"
 
-[node name="Ip" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/BoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "localhost"
-placeholder_text = "IP ADDRESS"
-
-[node name="Port" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/BoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "8080"
-placeholder_text = "PORT"
-
-[node name="BoxContainer2" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3"]
-layout_mode = 2
-
-[node name="Join" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/BoxContainer2"]
+[node name="Join" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Connecting"]
 custom_minimum_size = Vector2(136, 0)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_dacot")
 text = "PLAY BLUE (JOIN)
 "
 
-[node name="Username" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/BoxContainer2"]
+[node name="Ip" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Connecting"]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "USERNAME"
+text = "localhost"
+placeholder_text = "IP ADDRESS"
 
-[node name="Send" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/BoxContainer2"]
-custom_minimum_size = Vector2(48, 0)
+[node name="Port" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/ReceivedMessages/BoxContainer3/Connecting"]
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_4xdj1")
-text = "SEND
-"
+size_flags_horizontal = 3
+text = "8080"
+placeholder_text = "PORT"

@@ -603,10 +603,10 @@ func update_notebook(action: String, side: String):
             var message :String = ""
 
             var piece_type = allies[tile_pos].type.get_slice('_', 0)
-            message += no_pad_format %["UNIT OVERVIEW:", ""]
-            message += no_pad_format %["Unit:", str(piece_type).capitalize()]
+            message += no_pad_format %["Unit:", str(piece_type).to_upper()]
             message += padded_format %["Health:", str(unit_data[piece_type].health)]
             message += padded_format %["Move Range:", str(unit_data[piece_type].move_range.x)]
+            message += padded_format %["Scan Range:", str(unit_data[piece_type].scan_range.x)]
             message += padded_format %["First Attack Damage:", str(unit_data[piece_type].primary_attack_damage)]
             message += padded_format %["First Attack Range:", str(unit_data[piece_type].primary_attack_range)]
             message += padded_format %["First Attack Cost:", str(unit_data[piece_type].primary_attack_cost)]
