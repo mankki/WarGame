@@ -1,8 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://8ep3vyeyn5kc"]
+[gd_scene load_steps=8 format=3 uid="uid://dpqn7isat3u8e"]
 
 [ext_resource type="StyleBox" uid="uid://j0nlw3v8nouo" path="res://assets/styleboxes/terminal_outline.stylebox" id="1_ww4cf"]
 [ext_resource type="Script" path="res://Scenes/terminal/terminal_v2.gd" id="2_mnh1h"]
-[ext_resource type="FontFile" uid="uid://crj4kcgp1evtd" path="res://assets/fonts/ucka/Ucka-Regular.otf" id="3_cwvkr"]
+[ext_resource type="FontFile" uid="uid://cw61ywuog2n6r" path="res://assets/fonts/ucka/Ucka-Regular.otf" id="3_cwvkr"]
 [ext_resource type="PackedScene" uid="uid://d0ilcl74v80tx" path="res://Scenes/unit_overview/unit_overview.tscn" id="4_mvxh5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hch54"]

@@ -6,24 +6,31 @@ const MAX_TURN_ACTIONS :int = 3
 
 @export var _Actions :Control
 
-
 var _curr_turn_actions :int = 0
 var _team_turn :int = 0
 
 var action_taken: bool
 
+var next_round: bool
+var round: int
 
 
 func _ready () -> void:
     _team_turn = 0
     _curr_turn_actions = 0
     _Actions.set_no_turn()
+    
 
 
 func _pass_turn () -> void:
     _team_turn = (_team_turn +1) %2
     _curr_turn_actions = 0
     indicate_turn()
+    
+    next_round = false
+    if _team_turn == 0:
+        next_round = true
+
 
 func take_action (cost_ :int) -> void:
     rpc("_take_action", cost_)

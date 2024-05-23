@@ -30,6 +30,7 @@ var unit_data :Dictionary = {}
 var team = TeamColor.NONE
 var game_state :GameState = GameState.TEAM
 
+
 #TODO: this logic doesn't work if one player has pressed their color before the other player pressed 'play game'
 var num_players_ready :int = 0:
     set (value_):
@@ -62,6 +63,12 @@ var piece_instance
 
 var old_world_pos: Vector2
 
+var round: int
+var last_round_str: String
+var reveal_all = {}
+
+
+
 @onready var world_node = $GUI/HBoxContainer/World
 @onready var terminal = $GUI/HBoxContainer/VBoxContainer/Terminal
 @onready var moving_range = moving_range_scene.instantiate()
@@ -70,6 +77,8 @@ var old_world_pos: Vector2
 
 func _ready():
     randomize()
+    
+    round = 1
 
     tilemap = world_node.tilemap
 
@@ -80,6 +89,7 @@ func _ready():
     $GUI/HBoxContainer/VBoxContainer/Messaging.connect("blue_signal", playing_team.bind(TeamColor.BLUE))
 
     update_unit_count()
+
 
 func _process (delta) -> void:
     mouse_pos = get_global_mouse_position()
@@ -173,6 +183,7 @@ func _input(event_ :InputEvent) -> void:
     # leftor right mouse button released
     if event_ is InputEventMouseButton and (event_.button_index == MOUSE_BUTTON_LEFT or event_.button_index == MOUSE_BUTTON_RIGHT) and !event_.pressed: match game_state:
         GameState.PLAYING:
+            
             if not selected_instance: return
             
             # update_notebook('erase')
@@ -230,23 +241,24 @@ func _input(event_ :InputEvent) -> void:
                             _handle_attack_hit(newTilePos, 'secondary')
                 
                     else: terminal.print_message("Attack MISSES!")
-                
 
                     winner_popup()
 
+            
 #           8b   d8                                           w
 #           8YbmdP8 .d8b. Yb  dP .d88b 8d8b.d8b. .d88b 8d8b. w8ww
 #           8  "  8 8' .8  YbdP  8.dP' 8P Y8P Y8 8.dP' 8P Y8  8
 #           8     8 `Y8P'   YP   `Y88P 8   8   8 `Y88P 8   8  Y8P
+            
             # Radar superpower
-            elif event_.button_index == MOUSE_BUTTON_RIGHT and selected_instance.type == 'radar':
-                if _Turn_Action_System.can_take_action(unit_data['radar'].secondary_attack_cost):
-                    reveal_all_enemies()
-                    _Turn_Action_System.take_action(unit_data['radar'].secondary_attack_cost)
-                    _reset_unit(newTilePos, "Cannot move while using super scan")
-                else:
-                    _reset_unit(newTilePos, "Not enough points for the radar super scan")
-            elif _movement_bounds_checking(newTilePos) and (event_.button_index == MOUSE_BUTTON_LEFT or event_.button_index == MOUSE_BUTTON_RIGHT):
+            #elif event_.button_index == MOUSE_BUTTON_RIGHT and selected_instance.type == 'radar':
+                #if _Turn_Action_System.can_take_action(unit_data['radar'].secondary_attack_cost):
+                #    reveal_all_enemies()
+                #    _Turn_Action_System.take_action(unit_data['radar'].secondary_attack_cost)
+                #    _reset_unit(newTilePos, "Cannot move while using super scan")
+                #else:
+                #    _reset_unit(newTilePos, "Not enough points for the radar super scan")
+            if _movement_bounds_checking(newTilePos) and (event_.button_index == MOUSE_BUTTON_LEFT or event_.button_index == MOUSE_BUTTON_RIGHT):
                 if not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].move_cost):
                     _reset_unit(newTilePos, "Not enough action points to move this unit")
                 else:
@@ -271,6 +283,25 @@ func _input(event_ :InputEvent) -> void:
             moving = false
             moving_range.hide_range()
             _send_data(allies)
+                
+
+            if _Turn_Action_System.next_round == true and last_round_str != "Round " + str(round):
+                last_round_str = "Round " + str(round)
+                round += 1
+                terminal.print_message("Round " + str(round))
+                rpc("send_terminal_message", "Round " + str(round))
+            
+            if round > 14 and round %5 == 0:
+                reveal_all_enemies()
+                rpc("reveal_all_allies_to_enemy")
+                
+                #readJSON("res://lines.json")
+                #var keys = reveal_all.keys()
+                #var randint = randi_range(0, keys.size() - 1)  # Muutettu alueen alku 0:ksi
+                #var rand_key = keys[randint]
+                
+                terminal.print_message("Commander! A mole has revealed all enemy positions\n>>> The mole was a double agent!\n>>> The enemy knows all allied positions")
+                rpc("send_terminal_message", "Commander! A mole has revealed all enemy positions\n>>> The mole was a double agent!\n>>> The enemy knows all allied positions")
 
 
 
@@ -466,6 +497,7 @@ func signal_end_placement () -> void:
     num_players_ready += 1
     terminal.print_message("%s's army is in position" %TEAM_STRINGS[(int(team)+1)%2].capitalize())
     audio(1)
+    terminal.print_message("Round " + str(round))
 
 
 @rpc("any_peer", "call_remote")
@@ -498,8 +530,14 @@ func end_game():
 func send_audio(file: int):
     audio(file)
     
+@rpc("any_peer", "call_remote")
+func send_terminal_message(message):
+    terminal.print_message(message)
+    last_round_str = "Round " + str(round)
 
-
+@rpc("any_peer", "call_remote")
+func reveal_all_allies_to_enemy():
+    reveal_all_enemies()
 
 #  888b.                   w
 #  8  .8 8d8b .d88b Yb  dP w .d88b Yb  db  dP
@@ -637,3 +675,20 @@ func reveal_all_enemies():
         if enemies[pos].type != 'missile':
             enemies[pos].visible = true
             rpc("reveal_enemy", pos)
+
+#func readJSON(json_file_path):
+#    var file = FileAccess.open(json_file_path, FileAccess.READ)
+#    var json_str = file.get_as_text()
+#    file.close()
+
+#    var json_parser = JSON.new()
+#    var json_data = json_parser.parse(json_str) 
+#    print(json_data)
+#    var lines = json_data["lines"] 
+#    var reveal_all = lines["reveal_all"]
+#    return reveal_all
+
+
+
+            
+
