@@ -525,6 +525,7 @@ func end_game():
     terminal.print_message("%s won the war!" %[TEAM_STRINGS[int(team)].capitalize()])
     $WinnerPopup.show()
     $WinnerPopup/VBoxContainer/WinnerLabel.text = "%s nation won the war!" %[TEAM_STRINGS[(int(team)+1) %TeamColor.NUM_TEAMS].capitalize()]
+    
 
 @rpc("any_peer", "call_remote")
 func send_audio(file: int):
@@ -606,10 +607,13 @@ func update_unit_count():
     calc_num_of_units()
     for pos in allies:
         for unit in units:
+            var label_path = "GUI/HBoxContainer/VBoxContainer/HBoxContainer/%s/Label" %[unit.capitalize()]
+            var label = get_node(label_path)
             if allies[pos].type == unit:
-                var label_path = "GUI/HBoxContainer/VBoxContainer/HBoxContainer/%s/Label" %[unit.capitalize()]
-                var label = get_node(label_path)
-                label.text = str(num_of_units[unit])
+                label.text = str(num_of_units[unit]) + "/" + str(unit_data[unit].max_number)
+            elif num_of_units[unit] == 0: 
+                label.text = str(0) + "/" + str(unit_data[unit].max_number)
+            
 
                 
                 

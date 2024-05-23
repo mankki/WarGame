@@ -7,18 +7,18 @@
 [ext_resource type="Resource" uid="uid://1nslhxw3wotc" path="res://custom/unit_data/missile.tres" id="5_ji0a1"]
 [ext_resource type="Resource" uid="uid://cmvmi6gtstcaw" path="res://custom/unit_data/airplane.tres" id="6_cqb5m"]
 [ext_resource type="Script" path="res://Scenes/game/turn_action_system.gd" id="7_plssi"]
-[ext_resource type="Texture2D" uid="uid://bei2xeixe067h" path="res://assets/NewPieces/soldier.png" id="8_1kriu"]
+[ext_resource type="Texture2D" uid="uid://d3xd8no4d0mla" path="res://assets/NewPieces/soldier.png" id="8_1kriu"]
 [ext_resource type="PackedScene" uid="uid://beg5dqywxg5on" path="res://Scenes/game/world.tscn" id="8_ovuaw"]
-[ext_resource type="Texture2D" uid="uid://b0lfvb8yhhib0" path="res://assets/NewPieces/tank.png" id="9_hog0p"]
-[ext_resource type="Texture2D" uid="uid://33536jp3wj3r" path="res://assets/NewPieces/radar.png" id="10_3jup0"]
-[ext_resource type="Texture2D" uid="uid://b1wleuutkp8o4" path="res://assets/NewPieces/missile.png" id="11_kdily"]
+[ext_resource type="Texture2D" uid="uid://g0uuquvxdoor" path="res://assets/NewPieces/tank.png" id="9_hog0p"]
+[ext_resource type="Texture2D" uid="uid://bbhy7b8j4tval" path="res://assets/NewPieces/radar.png" id="10_3jup0"]
+[ext_resource type="Texture2D" uid="uid://uh3oen6m5co7" path="res://assets/NewPieces/missile.png" id="11_kdily"]
 [ext_resource type="PackedScene" uid="uid://j6fvjbuxudii" path="res://Scenes/gui_buttons/gui_buttons.tscn" id="11_m2n8l"]
-[ext_resource type="Texture2D" uid="uid://uduc0c1bnk73" path="res://assets/NewPieces/airplane.png" id="12_d1ye2"]
-[ext_resource type="PackedScene" uid="uid://8ep3vyeyn5kc" path="res://Scenes/terminal/terminal_v2.tscn" id="16_g0jad"]
+[ext_resource type="Texture2D" uid="uid://dgouipfj3oqx" path="res://assets/NewPieces/airplane.png" id="12_d1ye2"]
+[ext_resource type="PackedScene" uid="uid://dpqn7isat3u8e" path="res://Scenes/terminal/terminal_v2.tscn" id="16_g0jad"]
 [ext_resource type="PackedScene" uid="uid://t10ktqvqp8fn" path="res://Scenes/actions/actions.tscn" id="16_rqq7e"]
 [ext_resource type="PackedScene" uid="uid://bfet4jxq8gd3k" path="res://Scenes/messaging/messaging_v2.tscn" id="17_mst5v"]
-[ext_resource type="Texture2D" uid="uid://tibgsm8ip7qo" path="res://assets/Objects/notebook.png" id="18_lo78r"]
-[ext_resource type="FontFile" uid="uid://wqbvjs8hufbq" path="res://assets/fonts/light_stories/Light Stories.ttf" id="19_ckuux"]
+[ext_resource type="Texture2D" uid="uid://bkrohu32bu3qj" path="res://assets/Objects/notebook.png" id="18_lo78r"]
+[ext_resource type="FontFile" uid="uid://ckgndf8uifu33" path="res://assets/fonts/light_stories/Light Stories.ttf" id="19_ckuux"]
 [ext_resource type="PackedScene" uid="uid://bjmddkgsjelwk" path="res://Scenes/game/tts.tscn" id="20_e4sg1"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_4eb4l"]
@@ -189,7 +189,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="WinnerPopup" type="Popup" parent="."]
-position = Vector2i(150, 253)
+position = Vector2i(100, 253)
 size = Vector2i(300, 130)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="WinnerPopup"]
