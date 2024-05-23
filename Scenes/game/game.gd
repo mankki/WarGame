@@ -199,7 +199,7 @@ func _input(event_ :InputEvent) -> void:
 #            dPwwYb   8    8   8  8 8    88b  8 8P Y8 8  8
 #           dP    Yb  Y8P  Y8P `Y88 `Y8P 8 Yb 8 8   8 `Y88
 
-            if newTilePos in enemies.keys():
+            if newTilePos in enemies.keys() and !Rect2(old_world_pos -(moving_range.size/2), moving_range.size).has_point(selected_instance.global_position):
                 if unit_data[selected_instance.type].cannot_attack:
                     _reset_unit(newTilePos, "Unit cannot attack")
                 if (event_.button_index == MOUSE_BUTTON_LEFT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].primary_attack_cost)) or (event_.button_index == MOUSE_BUTTON_RIGHT and not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].secondary_attack_cost)):
