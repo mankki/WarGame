@@ -300,8 +300,8 @@ func _input(event_ :InputEvent) -> void:
                 #var randint = randi_range(0, keys.size() - 1)  # Muutettu alueen alku 0:ksi
                 #var rand_key = keys[randint]
                 
-                terminal.print_message("Commander! A mole has revealed all enemy positions\n>>> The mole was a double agent!\n>>> The enemy knows all allied positions")
-                rpc("send_terminal_message", "Commander! A mole has revealed all enemy positions\n>>> The mole was a double agent!\n>>> The enemy knows all allied positions")
+                terminal.print_message("Commander! A mole has revealed all enemy ground units\n>>> The mole was a double agent!\n>>> The enemy has located all allied ground units!")
+                rpc("send_terminal_message", "Commander! A mole has revealed all enemy ground units\n>>> The mole was a double agent!\n>>> The enemy has located all allied ground units!")
 
 
 
