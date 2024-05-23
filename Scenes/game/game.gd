@@ -672,7 +672,7 @@ func update_notebook(action: String, side: String):
 
 func reveal_all_enemies():
     for pos in enemies:
-        if enemies[pos].type != 'missile':
+        if enemies[pos].type != 'missile' and enemies[pos].type != 'airplane':
             enemies[pos].visible = true
             rpc("reveal_enemy", pos)
 
