@@ -258,7 +258,7 @@ func _input(event_ :InputEvent) -> void:
                 #    _reset_unit(newTilePos, "Cannot move while using super scan")
                 #else:
                 #    _reset_unit(newTilePos, "Not enough points for the radar super scan")
-            if _movement_bounds_checking(newTilePos) and (event_.button_index == MOUSE_BUTTON_LEFT or event_.button_index == MOUSE_BUTTON_RIGHT):
+            elif _movement_bounds_checking(newTilePos) and (event_.button_index == MOUSE_BUTTON_LEFT or event_.button_index == MOUSE_BUTTON_RIGHT):
                 if not _Turn_Action_System.can_take_action(unit_data[selected_instance.type].move_cost):
                     _reset_unit(newTilePos, "Not enough action points to move this unit")
                 else:
